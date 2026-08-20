@@ -1,0 +1,13 @@
+namespace Gothic_II_Addon {
+
+	ZENGIN_REGISTER_CLASS(oCAskBox);
+	ZENGIN_REGISTER_METHOD(oCAskBox, &oCAskBox::oCAskBox_OnInit, 0x006BBC80);
+	ZENGIN_REGISTER_METHOD(oCAskBox, &oCAskBox::Init, 0x006BBE70);
+	ZENGIN_REGISTER_METHOD(oCAskBox, &oCAskBox::Delete, 0x006BC140);
+	ZENGIN_REGISTER_METHOD(oCAskBox, &oCAskBox::SetNeutral, 0x006BC2F0);
+	ZENGIN_REGISTER_METHOD(oCAskBox, &oCAskBox::SetYes, 0x006BC3F0);
+	ZENGIN_REGISTER_METHOD(oCAskBox, &oCAskBox::SetNo, 0x006BC4F0);
+	ZENGIN_REGISTER_METHOD(oCAskBox, &oCAskBox::SetPosition, 0x006BC5F0);
+	ZENGIN_REGISTER_METHOD(oCAskBox, &oCAskBox::DoAI, 0x006BC150);
+
+} // namespace Gothic_II_Addon

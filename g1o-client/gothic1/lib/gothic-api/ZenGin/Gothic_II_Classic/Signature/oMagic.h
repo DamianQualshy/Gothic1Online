@@ -1,0 +1,56 @@
+namespace Gothic_II_Classic {
+
+	ZENGIN_REGISTER_CLASS(oCMag_Book);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::oCMag_Book_OnInit, 0x00474050);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::CheckConsistency, 0x00474380);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::SetOwner, 0x004746B0);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::SetWorld, 0x00474720);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(oCMag_Book, &oCMag_Book::Register, int(oCMag_Book::*)(oCSpell*, int), 0x00474730);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(oCMag_Book, &oCMag_Book::Register, int(oCMag_Book::*)(oCItem*, int), 0x00474810);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(oCMag_Book, &oCMag_Book::DeRegister, int(oCMag_Book::*)(oCItem*), 0x00474920);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(oCMag_Book, &oCMag_Book::DeRegister, int(oCMag_Book::*)(int), 0x00474A00);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::CreateNewSpell, 0x00474AB0);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(oCMag_Book, &oCMag_Book::Register, int(oCMag_Book::*)(int, int), 0x00474C40);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::IsIn, 0x00474E80);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(oCMag_Book, &oCMag_Book::Spell_Setup, void(oCMag_Book::*)(int, oCNpc*, zCVob*), 0x00474EC0);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(oCMag_Book, &oCMag_Book::Spell_Setup, void(oCMag_Book::*)(oCNpc*, zCVob*, int), 0x00475000);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::Spell_Invest, 0x00475190);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::StartInvestEffect, 0x00475310);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::Spell_Cast, 0x00475400);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::StartCastEffect, 0x00475AC0);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::Spell_InCast, 0x00475BB0);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::Open, 0x00475BC0);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::Close, 0x00475ED0);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::Ease, 0x00476040);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::EasePos, 0x00476070);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::GetAngle, 0x004760F0);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::IsInMovement, 0x004763C0);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::IsActive, 0x004763D0);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::GetSelectedSpell, 0x004763E0);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::GetSelectedSpellNr, 0x00476430);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::Spell_Open, 0x00476440);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::StopSelectedSpell, 0x00476570);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::KillSelectedSpell, 0x004766F0);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::Spell_Stop, 0x004769B0);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::Left, 0x00476C20);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::Right, 0x00476C80);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::CalcPos, 0x00476CD0);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::DoOpen, 0x004770C0);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::DoClose, 0x00477240);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::SetFrontSpell, 0x00477620);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::DoTurn, 0x004779B0);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::ShowHandSymbol, 0x00477AB0);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::SetShowHandSymbol, 0x00477C30);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::DoPerFrame, 0x00477F90);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::GetNoOfSpells, 0x004787C0);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(oCMag_Book, &oCMag_Book::GetSpell, oCSpell*(oCMag_Book::*)(oCItem*, int&), 0x004787D0);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(oCMag_Book, &oCMag_Book::GetSpell, oCSpell*(oCMag_Book::*)(int), 0x00478820);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(oCMag_Book, &oCMag_Book::GetSpellItem, oCItem*(oCMag_Book::*)(int), 0x00478840);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(oCMag_Book, &oCMag_Book::GetSpellItem, oCItem*(oCMag_Book::*)(oCSpell*), 0x00478860);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::NextRegisterAt, 0x004788A0);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::GetSpellByKey, 0x004788C0);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::GetSpellItemByKey, 0x00478900);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::GetNoOfSpellByKey, 0x00478940);
+	ZENGIN_REGISTER_METHOD(oCMag_Book, &oCMag_Book::GetKeyByItem, 0x00478990);
+
+} // namespace Gothic_II_Classic

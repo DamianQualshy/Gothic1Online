@@ -1,0 +1,13 @@
+namespace Gothic_II_Classic {
+
+	ZENGIN_REGISTER_CLASS(oCAskBox);
+	ZENGIN_REGISTER_METHOD(oCAskBox, &oCAskBox::oCAskBox_OnInit, 0x0065F2F0);
+	ZENGIN_REGISTER_METHOD(oCAskBox, &oCAskBox::Init, 0x0065F4E0);
+	ZENGIN_REGISTER_METHOD(oCAskBox, &oCAskBox::Delete, 0x0065F7B0);
+	ZENGIN_REGISTER_METHOD(oCAskBox, &oCAskBox::SetNeutral, 0x0065F960);
+	ZENGIN_REGISTER_METHOD(oCAskBox, &oCAskBox::SetYes, 0x0065FA60);
+	ZENGIN_REGISTER_METHOD(oCAskBox, &oCAskBox::SetNo, 0x0065FB60);
+	ZENGIN_REGISTER_METHOD(oCAskBox, &oCAskBox::SetPosition, 0x0065FC60);
+	ZENGIN_REGISTER_METHOD(oCAskBox, &oCAskBox::DoAI, 0x0065F7C0);
+
+} // namespace Gothic_II_Classic

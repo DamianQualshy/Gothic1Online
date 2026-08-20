@@ -1,0 +1,45 @@
+namespace Gothic_I_Classic {
+
+	ZENGIN_REGISTER_CLASS(oCSpell);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(oCSpell, &oCSpell::oCSpell_OnInit, void(oCSpell::*)(), 0x0047B840);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(oCSpell, &oCSpell::oCSpell_OnInit, void(oCSpell::*)(int), 0x0047B9F0);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::InitValues, 0x0047BC10);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::GetSpellInstanceName, 0x0047BD40);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::CreateEffect, 0x0047BED0);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::InitByScript, 0x0047C1D0);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::SetEnabled, 0x0047C470);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::GetEnabled, 0x0047C5A0);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::Setup, 0x0047C5B0);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::Invest, 0x0047CD40);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::Cast, 0x0047CFB0);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::Stop, 0x0047D120);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::Kill, 0x0047D290);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::Open, 0x0047D3F0);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::Close, 0x0047D4F0);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::Reset, 0x0047D650);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::StopTargetEffects, 0x0047D790);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::CallScriptInvestedMana, 0x0047D930);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::IsValidTarget, 0x0047DD80);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::GetVob, 0x0047E170);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::GetSpellID, 0x0047E180);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::GetEnergyType, 0x0047E190);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::GetCategory, 0x0047E1A0);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::GetName, 0x0047E1B0);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::GetLevel, 0x0047E320);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::IsInvestSpell, 0x0047E340);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::SetInvestedMana, 0x0047E370);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::GetSpellStatus, 0x0047E390);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::CanTurnDuringInvest, 0x0047E3A0);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::SetReleaseStatus, 0x0047E3B0);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::SetSpellInfo, 0x0047E680);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::DoLogicInvestEffect, 0x0047E690);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::CastSpecificSpell, 0x0047EC70);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::EndTimedEffect, 0x0047F330);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::DoTimedEffect, 0x0047F8F0);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::CanBeDeleted, 0x0047FB40);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::DeleteCaster, 0x0047FB50);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::_GetClassDef, 0x0047B9B0);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::Archive, 0x0047FB70);
+	ZENGIN_REGISTER_METHOD(oCSpell, &oCSpell::Unarchive, 0x0047FB80);
+
+} // namespace Gothic_I_Classic

@@ -1,0 +1,152 @@
+namespace Gothic_II_Addon {
+
+	ZENGIN_REGISTER_CLASS(zCMeshOctreeNode);
+	ZENGIN_REGISTER_METHOD(zCMeshOctreeNode, &zCMeshOctreeNode::zCMeshOctreeNode_OnInit, 0x0053B190);
+	ZENGIN_REGISTER_METHOD(zCMeshOctreeNode, &zCMeshOctreeNode::EnlargeBox, 0x0053B280);
+	ZENGIN_REGISTER_METHOD(zCMeshOctreeNode, &zCMeshOctreeNode::CopyPolys, 0x0053B3F0);
+	ZENGIN_REGISTER_METHOD(zCMeshOctreeNode, &zCMeshOctreeNode::Build, 0x0053B550);
+
+	ZENGIN_REGISTER_CLASS(zCRayTurbo);
+	ZENGIN_REGISTER_METHOD(zCRayTurbo, &zCRayTurbo::zCRayTurbo_OnInit, 0x0053ADE0);
+	ZENGIN_REGISTER_METHOD(zCRayTurbo, &zCRayTurbo::CalculateOptimizedPolyList, 0x0053AFD0);
+	ZENGIN_REGISTER_METHOD(zCRayTurbo, &zCRayTurbo::TraverseTree, 0x0053AFF0);
+
+	ZENGIN_REGISTER_CLASS(zCRayTurboAdmin);
+	ZENGIN_REGISTER_METHOD(zCRayTurboAdmin, &zCRayTurboAdmin::zCRayTurboAdmin_OnInit, 0x0053A650);
+	ZENGIN_REGISTER_METHOD(zCRayTurboAdmin, &zCRayTurboAdmin::GetRayTurboItem, 0x0053A9C0);
+	ZENGIN_REGISTER_METHOD(zCRayTurboAdmin, &zCRayTurboAdmin::CreateRayTurboItem, 0x0053AA00);
+	ZENGIN_REGISTER_METHOD(zCRayTurboAdmin, &zCRayTurboAdmin::GetOrCreate, 0x0053AB90);
+	ZENGIN_REGISTER_METHOD(zCRayTurboAdmin, &zCRayTurboAdmin::CanHaveSpatialInfo, 0x0053AC00);
+	ZENGIN_REGISTER_METHOD(zCRayTurboAdmin, &zCRayTurboAdmin::ReleaseSpatialDatabase, 0x0053AC30);
+
+	ZENGIN_REGISTER_CLASS(zCBspBase);
+	ZENGIN_REGISTER_METHOD(zCBspBase, &zCBspBase::DescribeTree, 0x00529A10);
+	ZENGIN_REGISTER_METHOD(zCBspBase, &zCBspBase::CountNodes, 0x0052CBC0);
+	ZENGIN_REGISTER_METHOD(zCBspBase, &zCBspBase::AddVobsToRenderListSubtree, 0x0052EA40);
+	ZENGIN_REGISTER_METHOD(zCBspBase, &zCBspBase::GetScreenBBox2D, 0x0052EB10);
+	ZENGIN_REGISTER_METHOD(zCBspBase, &zCBspBase::CollectNodeLights, 0x0052ED80);
+	ZENGIN_REGISTER_METHOD(zCBspBase, &zCBspBase::RenderTrivInIndoor, 0x0052F0A0);
+	ZENGIN_REGISTER_METHOD(zCBspBase, &zCBspBase::RenderIndoor, 0x0052F0E0);
+	ZENGIN_REGISTER_METHOD(zCBspBase, &zCBspBase::RenderNodeOutdoor, 0x0052F180);
+	ZENGIN_REGISTER_METHOD(zCBspBase, &zCBspBase::AddVobToLeafs, 0x00530B10);
+	ZENGIN_REGISTER_METHOD(zCBspBase, &zCBspBase::AddVobLightToLeafs, 0x00530C50);
+	ZENGIN_REGISTER_METHOD(zCBspBase, &zCBspBase::RemoveVobFromLeafs, 0x00530F60);
+	ZENGIN_REGISTER_METHOD(zCBspBase, &zCBspBase::CollectVobsSubtree, 0x00531100);
+	ZENGIN_REGISTER_METHOD(zCBspBase, &zCBspBase::CollectVobsInBBox3D, 0x00531110);
+	ZENGIN_REGISTER_METHOD(zCBspBase, &zCBspBase::CollectVobsSubtree_I, 0x00531120);
+	ZENGIN_REGISTER_METHOD(zCBspBase, &zCBspBase::CollectLightVobsSubtree, 0x00531300);
+	ZENGIN_REGISTER_METHOD(zCBspBase, &zCBspBase::CollectLightVobsSubtree_I, 0x00531310);
+	ZENGIN_REGISTER_METHOD(zCBspBase, &zCBspBase::CollectVobsInBBox3D_I, 0x005314F0);
+	ZENGIN_REGISTER_METHOD(zCBspBase, &zCBspBase::FindLeaf, 0x00531930);
+	ZENGIN_REGISTER_METHOD(zCBspBase, &zCBspBase::CheckRayAgainstPolys, 0x00531AA0);
+	ZENGIN_REGISTER_METHOD(zCBspBase, &zCBspBase::CheckRayAgainstPolysNearestHit, 0x00531D30);
+	ZENGIN_REGISTER_METHOD(zCBspBase, &zCBspBase::CheckRayAgainstPolysCache, 0x00532040);
+	ZENGIN_REGISTER_METHOD(zCBspBase, &zCBspBase::RayIntersection, 0x005321F0);
+	ZENGIN_REGISTER_METHOD(zCBspBase, &zCBspBase::CollectPolysInBBox3DRec, 0x00532C80);
+	ZENGIN_REGISTER_METHOD(zCBspBase, &zCBspBase::CollectPolysInBBox3D, 0x00532EB0);
+	ZENGIN_REGISTER_METHOD(zCBspBase, &zCBspBase::SortNodePolys, 0x005344C0);
+	ZENGIN_REGISTER_METHOD(zCBspBase, &zCBspBase::SaveBINRec, 0x00537DA0);
+	ZENGIN_REGISTER_METHOD(zCBspBase, &zCBspBase::LoadBINRec, 0x00537E90);
+
+	ZENGIN_REGISTER_CLASS(zCBspNode);
+	ZENGIN_REGISTER_METHOD(zCBspNode, &zCBspNode::zCBspNode_OnInit, 0x0052C6A0);
+	ZENGIN_REGISTER_METHOD(zCBspNode, &zCBspNode::CalcPlaneSignbits, 0x00530AD0);
+
+	ZENGIN_REGISTER_CLASS(zCBspLeaf);
+	ZENGIN_REGISTER_METHOD(zCBspLeaf, &zCBspLeaf::zCBspLeaf_OnInit, 0x0052BC50);
+	ZENGIN_REGISTER_METHOD(zCBspLeaf, &zCBspLeaf::PolyPlueckerAddRef, 0x0052DFB0);
+	ZENGIN_REGISTER_METHOD(zCBspLeaf, &zCBspLeaf::PolyPlueckerRelease, 0x0052E2A0);
+	ZENGIN_REGISTER_METHOD(zCBspLeaf, &zCBspLeaf::AddVobsToRenderList, 0x0052E2D0);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCBspLeaf, &zCBspLeaf::AddVobsToRenderListOutdoor, void(zCBspLeaf::*)(), 0x0052E4D0);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCBspLeaf, &zCBspLeaf::AddVobsToRenderListOutdoor, void(__fastcall zCBspLeaf::*)(zCBspSector*, zTBBox2D const&), 0x0052E840);
+	ZENGIN_REGISTER_METHOD(zCBspLeaf, &zCBspLeaf::RenderLeafIndoor, 0x0052EFF0);
+	ZENGIN_REGISTER_METHOD(zCBspLeaf, &zCBspLeaf::TraceRayCollectVobs, 0x00531720);
+
+	ZENGIN_REGISTER_CLASS(zCBspTree);
+	ZENGIN_REGISTER_METHOD(zCBspTree, &zCBspTree::zCBspTree_OnInit, 0x0052B9E0);
+	ZENGIN_REGISTER_METHOD(zCBspTree, &zCBspTree::InitTree, 0x0052BB70);
+	ZENGIN_REGISTER_METHOD(zCBspTree, &zCBspTree::DisposeTree, 0x0052BCD0);
+	ZENGIN_REGISTER_METHOD(zCBspTree, &zCBspTree::BuildRecursive, 0x0052BFB0);
+	ZENGIN_REGISTER_METHOD(zCBspTree, &zCBspTree::Build, 0x0052C290);
+	ZENGIN_REGISTER_METHOD(zCBspTree, &zCBspTree::OptimizeLight, 0x0052C6C0);
+	ZENGIN_REGISTER_METHOD(zCBspTree, &zCBspTree::UpdateVertexDependencies, 0x0052CC00);
+	ZENGIN_REGISTER_METHOD(zCBspTree, &zCBspTree::CollectPolysInBBox3DAngle, 0x0052CE10);
+	ZENGIN_REGISTER_METHOD(zCBspTree, &zCBspTree::RenderLightList, 0x0052CF80);
+	ZENGIN_REGISTER_METHOD(zCBspTree, &zCBspTree::RenderVobList, 0x0052D0A0);
+	ZENGIN_REGISTER_METHOD(zCBspTree, &zCBspTree::Render, 0x00530080);
+	ZENGIN_REGISTER_METHOD(zCBspTree, &zCBspTree::RemoveVob, 0x00531030);
+	ZENGIN_REGISTER_METHOD(zCBspTree, &zCBspTree::AddVob, 0x00531040);
+	ZENGIN_REGISTER_METHOD(zCBspTree, &zCBspTree::AdjustVob, 0x005310A0);
+	ZENGIN_REGISTER_METHOD(zCBspTree, &zCBspTree::CalcLeafRealBBox3D, 0x00531990);
+	ZENGIN_REGISTER_METHOD(zCBspTree, &zCBspTree::TraceRay, 0x00532550);
+	ZENGIN_REGISTER_METHOD(zCBspTree, &zCBspTree::FindLeaks, 0x005330E0);
+	ZENGIN_REGISTER_METHOD(zCBspTree, &zCBspTree::MarkOccluderPolys, 0x00533430);
+	ZENGIN_REGISTER_METHOD(zCBspTree, &zCBspTree::GetOccluderAreaRec, 0x00534210);
+	ZENGIN_REGISTER_METHOD(zCBspTree, &zCBspTree::GetSectorNameVobIsIn, 0x00535180);
+	ZENGIN_REGISTER_METHOD(zCBspTree, &zCBspTree::GetBspSectorByName, 0x00537960);
+	ZENGIN_REGISTER_METHOD(zCBspTree, &zCBspTree::CreateBspSectors2, 0x00537A10);
+	ZENGIN_REGISTER_METHOD(zCBspTree, &zCBspTree::SaveBIN, 0x00538010);
+	ZENGIN_REGISTER_METHOD(zCBspTree, &zCBspTree::ConnectMaterialsToSectors, 0x00538AA0);
+	ZENGIN_REGISTER_METHOD(zCBspTree, &zCBspTree::LoadBIN, 0x00538E10);
+	ZENGIN_REGISTER_METHOD(zCBspTree, &zCBspTree::CalcStaticLeafLightData, 0x00539D20);
+	ZENGIN_REGISTER_METHOD(zCBspTree, &zCBspTree::PreprocessIndoorPortals, 0x00541DF0);
+	ZENGIN_REGISTER_METHOD(zCBspTree, &zCBspTree::GetPolyNeighbours, 0x005421A0);
+	ZENGIN_REGISTER_METHOD(zCBspTree, &zCBspTree::PostprocessIndoorPortals, 0x00542250);
+
+	ZENGIN_REGISTER_CLASS(zCCBspNode);
+	ZENGIN_REGISTER_METHOD(zCCBspNode, &zCCBspNode::zCCBspNode_OnInit, 0x00540E60);
+	ZENGIN_REGISTER_METHOD(zCCBspNode, &zCCBspNode::CheckRayAgainstPolysNearestHit, 0x005327E0);
+	ZENGIN_REGISTER_METHOD(zCCBspNode, &zCCBspNode::RayIntersectionOctree, 0x00532900);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCCBspNode, &zCCBspNode::TraceRay, int(zCCBspNode::*)(zVEC3 const&, zVEC3 const&, zCPolygon*&, zVEC3&), 0x00532C10);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCCBspNode, &zCCBspNode::TraceRay, int(zCCBspNode::*)(zVEC3 const&, zVEC3 const&, zCPolygon*&), 0x00532C40);
+	ZENGIN_REGISTER_METHOD(zCCBspNode, &zCCBspNode::CollectPolysInBBox3DRec, 0x00532F00);
+	ZENGIN_REGISTER_METHOD(zCCBspNode, &zCCBspNode::CollectPolysInBBox3D, 0x00533090);
+	ZENGIN_REGISTER_METHOD(zCCBspNode, &zCCBspNode::RemovePoly, 0x0053DF70);
+	ZENGIN_REGISTER_METHOD(zCCBspNode, &zCCBspNode::DoesNodeContainPoly, 0x0053E050);
+	ZENGIN_REGISTER_METHOD(zCCBspNode, &zCCBspNode::CheckPortalConsistency, 0x0053E120);
+	ZENGIN_REGISTER_METHOD(zCCBspNode, &zCCBspNode::SplitPortals, 0x0053E890);
+	ZENGIN_REGISTER_METHOD(zCCBspNode, &zCCBspNode::SplitPortalByAllPortals, 0x0053EDA0);
+	ZENGIN_REGISTER_METHOD(zCCBspNode, &zCCBspNode::EnumeratePortals, 0x0053F030);
+	ZENGIN_REGISTER_METHOD(zCCBspNode, &zCCBspNode::ClassifyPortals, 0x0053F160);
+	ZENGIN_REGISTER_METHOD(zCCBspNode, &zCCBspNode::Portalize, 0x0053F1F0);
+	ZENGIN_REGISTER_METHOD(zCCBspNode, &zCCBspNode::SelectPlane, 0x0053F5E0);
+	ZENGIN_REGISTER_METHOD(zCCBspNode, &zCCBspNode::SelectPlaneOctree, 0x0053F830);
+	ZENGIN_REGISTER_METHOD(zCCBspNode, &zCCBspNode::ClassifyRayToNode, 0x0053FA50);
+	ZENGIN_REGISTER_METHOD(zCCBspNode, &zCCBspNode::ClassifyPolyToNode2, 0x0053FD10);
+	ZENGIN_REGISTER_METHOD(zCCBspNode, &zCCBspNode::OutdoorKillRedundantLeafs, 0x0053FF80);
+	ZENGIN_REGISTER_METHOD(zCCBspNode, &zCCBspNode::AddPoly, 0x005401D0);
+	ZENGIN_REGISTER_METHOD(zCCBspNode, &zCCBspNode::BuildTree, 0x00540210);
+	ZENGIN_REGISTER_METHOD(zCCBspNode, &zCCBspNode::PushPolyFront, 0x00540E80);
+	ZENGIN_REGISTER_METHOD(zCCBspNode, &zCCBspNode::CalcBBox3D, 0x00540F10);
+	ZENGIN_REGISTER_METHOD(zCCBspNode, &zCCBspNode::CalcSubtreeBBox3D, 0x00541010);
+	ZENGIN_REGISTER_METHOD(zCCBspNode, &zCCBspNode::CalcSubtreeBBox3DCell, 0x00541200);
+	ZENGIN_REGISTER_METHOD(zCCBspNode, &zCCBspNode::CountNodes, 0x005412F0);
+	ZENGIN_REGISTER_METHOD(zCCBspNode, &zCCBspNode::CountLeafs, 0x00541320);
+	ZENGIN_REGISTER_METHOD(zCCBspNode, &zCCBspNode::CountPolys, 0x00541360);
+	ZENGIN_REGISTER_METHOD(zCCBspNode, &zCCBspNode::CountDepthRec, 0x00541390);
+	ZENGIN_REGISTER_METHOD(zCCBspNode, &zCCBspNode::CountDepth, 0x00541400);
+	ZENGIN_REGISTER_METHOD(zCCBspNode, &zCCBspNode::DescribeTree, 0x005414B0);
+
+	ZENGIN_REGISTER_CLASS(zCCBspTree);
+	ZENGIN_REGISTER_METHOD(zCCBspTree, &zCCBspTree::zCCBspTree_OnInit, 0x0053CF10);
+	ZENGIN_REGISTER_METHOD(zCCBspTree, &zCCBspTree::GetBspSectorByName, 0x005350D0);
+	ZENGIN_REGISTER_METHOD(zCCBspTree, &zCCBspTree::GetPolyNeighbours, 0x005351A0);
+	ZENGIN_REGISTER_METHOD(zCCBspTree, &zCCBspTree::MarkGhostOccluder, 0x00535280);
+	ZENGIN_REGISTER_METHOD(zCCBspTree, &zCCBspTree::CreateBspSectors, 0x005354B0);
+	ZENGIN_REGISTER_METHOD(zCCBspTree, &zCCBspTree::SetBspTreeMode, 0x0053D030);
+	ZENGIN_REGISTER_METHOD(zCCBspTree, &zCCBspTree::DeleteTree, 0x0053D190);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCCBspTree, &zCCBspTree::AddMesh, void(zCCBspTree::*)(zCMesh*), 0x0053D2E0);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCCBspTree, &zCCBspTree::AddMesh, void(zCCBspTree::*)(zCMesh*, zMAT4 const&), 0x0053D310);
+	ZENGIN_REGISTER_METHOD(zCCBspTree, &zCCBspTree::BuildTree, 0x0053D610);
+
+	ZENGIN_REGISTER_CLASS(zCBspSector);
+	ZENGIN_REGISTER_METHOD(zCBspSector, &zCBspSector::CalcCenterByPortals, 0x005292B0);
+	ZENGIN_REGISTER_METHOD(zCBspSector, &zCBspSector::HasManyBigPortals, 0x00529350);
+	ZENGIN_REGISTER_METHOD(zCBspSector, &zCBspSector::RenderSector, 0x00534510);
+	ZENGIN_REGISTER_METHOD(zCBspSector, &zCBspSector::ActivateSectorRec, 0x005345E0);
+	ZENGIN_REGISTER_METHOD(zCBspSector, &zCBspSector::ActivateSectorRecIndoor, 0x00534B70);
+
+	ZENGIN_REGISTER_CLASS(zCBuildPortal);
+	ZENGIN_REGISTER_METHOD(zCBuildPortal, &zCBuildPortal::zCBuildPortal_OnInit, 0x00541CE0);
+
+} // namespace Gothic_II_Addon

@@ -1,0 +1,55 @@
+namespace Gothic_I_Classic {
+
+	ZENGIN_REGISTER_CLASS(zCMovementTracker);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::zCMovementTracker_OnInit, 0x004ABBB0);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCMovementTracker, &zCMovementTracker::GetAzimuth, float(zCMovementTracker::*)(), 0x004AC130);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCMovementTracker, &zCMovementTracker::GetElevation, float(zCMovementTracker::*)(), 0x004AC140);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCMovementTracker, &zCMovementTracker::GetAzimuth, float(zCMovementTracker::*)(zVEC3 const&), 0x004AC150);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCMovementTracker, &zCMovementTracker::GetElevation, float(zCMovementTracker::*)(zVEC3 const&), 0x004AC490);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCMovementTracker, &zCMovementTracker::GetRange, float(zCMovementTracker::*)(zVEC3 const&), 0x004AC720);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::SetAzimuth, 0x004AC750);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::SetElevation, 0x004AC780);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::SetRange, 0x004AC7B0);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCMovementTracker, &zCMovementTracker::GetRange, float(zCMovementTracker::*)(), 0x004AC880);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::ApplyAziToPoint, 0x004AC8B0);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::ApplyElevToPoint, 0x004ACAB0);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::ApplyRangeToPoint, 0x004ACE50);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::GetRangePos, 0x004ACF10);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::GetIdealRangePos, 0x004ACFD0);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::GetDistToIdealRange, 0x004AD090);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::IsIdealOrientation, 0x004AD190);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::IsIdealRange, 0x004AD200);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::UpdateCamPos, 0x004AD320);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::UpdatePlayerPos, 0x004AD3E0);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::SetCamPos, 0x004AD7B0);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::CalcPlayerPose, 0x004AD800);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::CalcPlayerMovements, 0x004AE660);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::SetPlayerPos, 0x004AE950);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::ReceiveMsg, 0x004AE9D0);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::ClearMessages, 0x004AE9E0);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::AutoSetMessages, 0x004AE9F0);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::UpdateMessages, 0x004AEB30);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::Update, 0x004AEB60);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::CheckKeys, 0x004AEF90);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::CheckSpecialMoves, 0x004AEFA0);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::GetLocalRot, 0x004AF280);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::GetLocalRotEnd, 0x004AF400);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::RecalcRingPositions, 0x004AF840);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::GetLastValidWayPoint, 0x004AF8E0);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::UpdateWayPoint, 0x004AFAE0);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::ResetWayPoints, 0x004AFDF0);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::InterpolateTo, 0x004AFEF0);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::CalcPlayerSpline, 0x004B10E0);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::GetFirstPersonCamMat, 0x004B13A0);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::GetPanicCamMat, 0x004B15B0);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::GetShoulderCamMat, 0x004B16A0);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::CalcAziElevRangeApprox, 0x004B1810);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::SetRotateEnabled, 0x004B1C10);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::SaveFrameStates, 0x004B1D70);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::TargetChanged, 0x004B20E0);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::CamVobChanged, 0x004B2240);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::UpdateSampledPlayerPos, 0x004B22D0);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::SetSampledPlayerPos, 0x004B23C0);
+	ZENGIN_REGISTER_METHOD(zCMovementTracker, &zCMovementTracker::GetPlayerFuturePos, 0x004B2400);
+
+} // namespace Gothic_I_Classic

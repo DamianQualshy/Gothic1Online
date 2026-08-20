@@ -1,0 +1,14 @@
+.xmake/
+build/
+.vs/
+*.sdf
+*.opensdf
+*.suo
+*.user
+*.VC.db
+*.VC.opendb
+*.depend
+*.layout
+*.log
+
+/.vscode

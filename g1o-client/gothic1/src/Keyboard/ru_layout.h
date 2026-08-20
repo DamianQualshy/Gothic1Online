@@ -1,0 +1,85 @@
+static char ru_layout[128];
+static char ru_tilde[2];
+
+static void ru_init()
+{
+	for (int i = 0; i < 128; ++i)
+		ru_layout[i] = 0;
+
+	// Define translate
+	ru_layout['q'] = 'é';
+	ru_layout['Q'] = 'É';
+	ru_layout['w'] = 'ö';
+	ru_layout['W'] = 'Ö';
+	ru_layout['e'] = 'ó';
+	ru_layout['E'] = 'Ó';
+	ru_layout['r'] = 'ę';
+	ru_layout['R'] = 'Ę';
+	ru_layout['t'] = 'ĺ';
+	ru_layout['T'] = 'Ĺ';
+	ru_layout['y'] = 'í';
+	ru_layout['Y'] = 'Í';
+	ru_layout['u'] = 'ă';
+	ru_layout['U'] = 'Ă';
+	ru_layout['i'] = 'ř';
+	ru_layout['I'] = 'Ř';
+	ru_layout['o'] = 'ů';
+	ru_layout['O'] = 'Ů';
+	ru_layout['p'] = 'ç';
+	ru_layout['P'] = 'Ç';
+	ru_layout['('] = 'ő';
+	ru_layout['{'] = 'Ő';
+	ru_layout[')'] = 'ú';
+	ru_layout['}'] = 'Ú';
+	ru_layout['a'] = 'ô';
+	ru_layout['A'] = 'Ô';
+	ru_layout['s'] = 'ű';
+	ru_layout['S'] = 'Ű';
+	ru_layout['d'] = 'â';
+	ru_layout['D'] = 'Â';
+	ru_layout['f'] = 'ŕ';
+	ru_layout['F'] = 'Ŕ';
+	ru_layout['g'] = 'ď';
+	ru_layout['G'] = 'Ď';
+	ru_layout['h'] = 'đ';
+	ru_layout['H'] = 'Đ';
+	ru_layout['j'] = 'î';
+	ru_layout['J'] = 'Î';
+	ru_layout['k'] = 'ë';
+	ru_layout['K'] = 'Ë';
+	ru_layout['l'] = 'ä';
+	ru_layout['L'] = 'Ä';
+	ru_layout[';'] = 'ć';
+	ru_layout[':'] = 'Ć';
+	ru_layout['\''] = 'ý';
+	ru_layout['"'] = 'Ý';
+	ru_layout['z'] = '˙';
+	ru_layout['Z'] = 'ß';
+	ru_layout['x'] = '÷';
+	ru_layout['X'] = '×';
+	ru_layout['c'] = 'ń';
+	ru_layout['C'] = 'Ń';
+	ru_layout['v'] = 'ě';
+	ru_layout['V'] = 'Ě';
+	ru_layout['b'] = 'č';
+	ru_layout['B'] = 'Č';
+	ru_layout['n'] = 'ň';
+	ru_layout['N'] = 'Ň';
+	ru_layout['m'] = 'ü';
+	ru_layout['M'] = 'Ü';
+	ru_layout[','] = 'á';
+	ru_layout['<'] = 'Á';
+	ru_layout['.'] = 'ţ';
+	ru_layout['>'] = 'Ţ';
+	ru_layout['/'] = '.';
+	ru_layout['?'] = ',';
+	ru_layout['@'] = '"';
+	ru_layout['#'] = 'ą';
+	ru_layout['$'] = ';';
+	ru_layout['^'] = ':';
+	ru_layout['&'] = '?';
+
+	// Tilde
+	ru_tilde[0] = '¸';
+	ru_tilde[1] = '¨';
+}

@@ -1,0 +1,98 @@
+namespace Gothic_II_Addon {
+
+	ZENGIN_REGISTER_CLASS(zCPar_StringTable);
+	ZENGIN_REGISTER_METHOD(zCPar_StringTable, &zCPar_StringTable::zCPar_StringTable_OnInit, 0x007A0EB0);
+	ZENGIN_REGISTER_METHOD(zCPar_StringTable, &zCPar_StringTable::Clear, 0x007A0FD0);
+	ZENGIN_REGISTER_METHOD(zCPar_StringTable, &zCPar_StringTable::Insert, 0x007A1000);
+	ZENGIN_REGISTER_METHOD(zCPar_StringTable, &zCPar_StringTable::GetLastEntry, 0x007A1150);
+	ZENGIN_REGISTER_METHOD(zCPar_StringTable, &zCPar_StringTable::GetString, 0x007A1160);
+	ZENGIN_REGISTER_METHOD(zCPar_StringTable, &zCPar_StringTable::Save, 0x007A1180);
+	ZENGIN_REGISTER_METHOD(zCPar_StringTable, &zCPar_StringTable::Load, 0x007A12A0);
+	ZENGIN_REGISTER_METHOD(zCPar_StringTable, &zCPar_StringTable::ShrinkToFit, 0x007A1480);
+	ZENGIN_REGISTER_METHOD(zCPar_StringTable, &zCPar_StringTable::Show, 0x007A1500);
+
+	ZENGIN_REGISTER_CLASS(zCPar_Symbol);
+	ZENGIN_REGISTER_METHOD(zCPar_Symbol, &zCPar_Symbol::zCPar_Symbol_OnInit, 0x007A1690);
+	ZENGIN_REGISTER_METHOD(zCPar_Symbol, &zCPar_Symbol::AllocSpace, 0x007A17C0);
+	ZENGIN_REGISTER_METHOD(zCPar_Symbol, &zCPar_Symbol::GetDataAdr, 0x007A1A40);
+	ZENGIN_REGISTER_METHOD(zCPar_Symbol, &zCPar_Symbol::SetDataAdr, 0x007A1D40);
+	ZENGIN_REGISTER_METHOD(zCPar_Symbol, &zCPar_Symbol::SetFlag, 0x007A1D50);
+	ZENGIN_REGISTER_METHOD(zCPar_Symbol, &zCPar_Symbol::HasFlag, 0x007A1D80);
+	ZENGIN_REGISTER_METHOD(zCPar_Symbol, &zCPar_Symbol::SetParent, 0x007A1DA0);
+	ZENGIN_REGISTER_METHOD(zCPar_Symbol, &zCPar_Symbol::GetParent, 0x007A1DB0);
+	ZENGIN_REGISTER_METHOD(zCPar_Symbol, &zCPar_Symbol::GetInstanceAdr, 0x007A1DC0);
+	ZENGIN_REGISTER_METHOD(zCPar_Symbol, &zCPar_Symbol::GetNext, 0x007A1DD0);
+	ZENGIN_REGISTER_METHOD(zCPar_Symbol, &zCPar_Symbol::ArrayCheck, 0x007A1DE0);
+	ZENGIN_REGISTER_METHOD(zCPar_Symbol, &zCPar_Symbol::GetStackPos, 0x007A1E10);
+	ZENGIN_REGISTER_METHOD(zCPar_Symbol, &zCPar_Symbol::SetStackPos, 0x007A1E20);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCPar_Symbol, &zCPar_Symbol::SetValue, void(zCPar_Symbol::*)(int, int), 0x007A1E30);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCPar_Symbol, &zCPar_Symbol::SetValue, void(zCPar_Symbol::*)(float, int), 0x007A1E60);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCPar_Symbol, &zCPar_Symbol::SetValue, void(zCPar_Symbol::*)(zSTRING&, int), 0x007A1E90);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCPar_Symbol, &zCPar_Symbol::GetValue, void(zCPar_Symbol::*)(int&, int), 0x007A1FE0);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCPar_Symbol, &zCPar_Symbol::GetValue, void(zCPar_Symbol::*)(float&, int), 0x007A2010);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCPar_Symbol, &zCPar_Symbol::GetValue, void(zCPar_Symbol::*)(zSTRING&, int), 0x007A2040);
+	ZENGIN_REGISTER_METHOD(zCPar_Symbol, &zCPar_Symbol::SetLineData, 0x007A2190);
+	ZENGIN_REGISTER_METHOD(zCPar_Symbol, &zCPar_Symbol::GetLineData, 0x007A2550);
+	ZENGIN_REGISTER_METHOD(zCPar_Symbol, &zCPar_Symbol::SetFileNr, 0x007A2590);
+	ZENGIN_REGISTER_METHOD(zCPar_Symbol, &zCPar_Symbol::Save, 0x007A2720);
+	ZENGIN_REGISTER_METHOD(zCPar_Symbol, &zCPar_Symbol::SaveFull, 0x007A2940);
+	ZENGIN_REGISTER_METHOD(zCPar_Symbol, &zCPar_Symbol::LoadFull, 0x007A2BA0);
+	ZENGIN_REGISTER_METHOD(zCPar_Symbol, &zCPar_Symbol::Load, 0x007A2D70);
+	ZENGIN_REGISTER_METHOD(zCPar_Symbol, &zCPar_Symbol::SetOffset, 0x007A2F20);
+	ZENGIN_REGISTER_METHOD(zCPar_Symbol, &zCPar_Symbol::GetOffset, 0x007A2F30);
+	ZENGIN_REGISTER_METHOD(zCPar_Symbol, &zCPar_Symbol::SetClassOffset, 0x007A2F40);
+	ZENGIN_REGISTER_METHOD(zCPar_Symbol, &zCPar_Symbol::GetClassOffset, 0x007A2F50);
+
+	ZENGIN_REGISTER_CLASS(zCPar_SymbolTable);
+	ZENGIN_REGISTER_METHOD(zCPar_SymbolTable, &zCPar_SymbolTable::zCPar_SymbolTable_OnInit, 0x007A2F60);
+	ZENGIN_REGISTER_METHOD(zCPar_SymbolTable, &zCPar_SymbolTable::Clear, 0x007A3100);
+	ZENGIN_REGISTER_METHOD(zCPar_SymbolTable, &zCPar_SymbolTable::PreAlloc, 0x007A31F0);
+	ZENGIN_REGISTER_METHOD(zCPar_SymbolTable, &zCPar_SymbolTable::Save, 0x007A32E0);
+	ZENGIN_REGISTER_METHOD(zCPar_SymbolTable, &zCPar_SymbolTable::Load, 0x007A3460);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCPar_SymbolTable, &zCPar_SymbolTable::IsIn, int(zCPar_SymbolTable::*)(zCPar_Symbol*), 0x007A3850);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCPar_SymbolTable, &zCPar_SymbolTable::IsIn, int(zCPar_SymbolTable::*)(zSTRING const&), 0x007A3960);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCPar_SymbolTable, &zCPar_SymbolTable::GetIndex, int(zCPar_SymbolTable::*)(zCPar_Symbol*), 0x007A3A70);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCPar_SymbolTable, &zCPar_SymbolTable::GetIndex, int(zCPar_SymbolTable::*)(zSTRING const&), 0x007A3B60);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCPar_SymbolTable, &zCPar_SymbolTable::GetIndex, int(zCPar_SymbolTable::*)(zSTRING const&, int), 0x007A3C50);
+	ZENGIN_REGISTER_METHOD(zCPar_SymbolTable, &zCPar_SymbolTable::Search, 0x007A3D60);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCPar_SymbolTable, &zCPar_SymbolTable::GetSymbol, zCPar_Symbol*(zCPar_SymbolTable::*)(zSTRING const&), 0x007A3E40);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCPar_SymbolTable, &zCPar_SymbolTable::GetSymbol, zCPar_Symbol*(zCPar_SymbolTable::*)(int), 0x007A3EE0);
+	ZENGIN_REGISTER_METHOD(zCPar_SymbolTable, &zCPar_SymbolTable::Insert, 0x007A3F00);
+	ZENGIN_REGISTER_METHOD(zCPar_SymbolTable, &zCPar_SymbolTable::InsertEnd, 0x007A4140);
+	ZENGIN_REGISTER_METHOD(zCPar_SymbolTable, &zCPar_SymbolTable::ShrinkToFit, 0x007A4350);
+	ZENGIN_REGISTER_METHOD(zCPar_SymbolTable, &zCPar_SymbolTable::SetSize, 0x007A4430);
+	ZENGIN_REGISTER_METHOD(zCPar_SymbolTable, &zCPar_SymbolTable::GetNumInList, 0x007A44E0);
+	ZENGIN_REGISTER_METHOD(zCPar_SymbolTable, &zCPar_SymbolTable::GetLastSymbol, 0x007A44F0);
+	ZENGIN_REGISTER_METHOD(zCPar_SymbolTable, &zCPar_SymbolTable::GetFirstSymbol, 0x007A4500);
+	ZENGIN_REGISTER_METHOD(zCPar_SymbolTable, &zCPar_SymbolTable::Show, 0x007A4510);
+
+	ZENGIN_REGISTER_CLASS(zCPar_Stack);
+	ZENGIN_REGISTER_METHOD(zCPar_Stack, &zCPar_Stack::zCPar_Stack_OnInit, 0x007A4AC0);
+	ZENGIN_REGISTER_METHOD(zCPar_Stack, &zCPar_Stack::GetPopPos, 0x007A4B10);
+	ZENGIN_REGISTER_METHOD(zCPar_Stack, &zCPar_Stack::SetPopPos, 0x007A4B20);
+	ZENGIN_REGISTER_METHOD(zCPar_Stack, &zCPar_Stack::GetDynSize, 0x007A4B30);
+	ZENGIN_REGISTER_METHOD(zCPar_Stack, &zCPar_Stack::GetStatSize, 0x007A4B40);
+	ZENGIN_REGISTER_METHOD(zCPar_Stack, &zCPar_Stack::PushByte, 0x007A4B50);
+	ZENGIN_REGISTER_METHOD(zCPar_Stack, &zCPar_Stack::PushWord, 0x007A4B70);
+	ZENGIN_REGISTER_METHOD(zCPar_Stack, &zCPar_Stack::PushInt, 0x007A4B90);
+	ZENGIN_REGISTER_METHOD(zCPar_Stack, &zCPar_Stack::PushString, 0x007A4BB0);
+	ZENGIN_REGISTER_METHOD(zCPar_Stack, &zCPar_Stack::PopByte, 0x007A4C20);
+	ZENGIN_REGISTER_METHOD(zCPar_Stack, &zCPar_Stack::PopWord, 0x007A4C30);
+	ZENGIN_REGISTER_METHOD(zCPar_Stack, &zCPar_Stack::PopInt, 0x007A4C40);
+	ZENGIN_REGISTER_METHOD(zCPar_Stack, &zCPar_Stack::PopString, 0x007A4C50);
+	ZENGIN_REGISTER_METHOD(zCPar_Stack, &zCPar_Stack::CheckOverflow, 0x007A4E10);
+	ZENGIN_REGISTER_METHOD(zCPar_Stack, &zCPar_Stack::Set, 0x007A4E80);
+	ZENGIN_REGISTER_METHOD(zCPar_Stack, &zCPar_Stack::ReachedEnd, 0x007A4E90);
+	ZENGIN_REGISTER_METHOD(zCPar_Stack, &zCPar_Stack::Clear, 0x007A4EA0);
+	ZENGIN_REGISTER_METHOD(zCPar_Stack, &zCPar_Stack::Save, 0x007A4EB0);
+	ZENGIN_REGISTER_METHOD(zCPar_Stack, &zCPar_Stack::Load, 0x007A4EF0);
+
+	ZENGIN_REGISTER_CLASS(zCPar_DataStack);
+	ZENGIN_REGISTER_METHOD(zCPar_DataStack, &zCPar_DataStack::zCPar_DataStack_OnInit, 0x007A4F50);
+	ZENGIN_REGISTER_METHOD(zCPar_DataStack, &zCPar_DataStack::Push, 0x007A4F80);
+	ZENGIN_REGISTER_METHOD(zCPar_DataStack, &zCPar_DataStack::Pop, 0x007A5070);
+	ZENGIN_REGISTER_METHOD(zCPar_DataStack, &zCPar_DataStack::PopFloat, 0x007A5090);
+	ZENGIN_REGISTER_METHOD(zCPar_DataStack, &zCPar_DataStack::IsEmpty, 0x007A5170);
+	ZENGIN_REGISTER_METHOD(zCPar_DataStack, &zCPar_DataStack::Clear, 0x007A5180);
+
+} // namespace Gothic_II_Addon

@@ -1,0 +1,15 @@
+namespace Gothic_I_Classic {
+
+	ZENGIN_REGISTER_CLASS(oCWaypoint);
+	ZENGIN_REGISTER_METHOD(oCWaypoint, &oCWaypoint::oCWaypoint_OnInit, 0x006D4FC0);
+	ZENGIN_REGISTER_METHOD(oCWaypoint, &oCWaypoint::CanBeUsed, 0x006D5030);
+
+	ZENGIN_REGISTER_CLASS(oCWay);
+	ZENGIN_REGISTER_METHOD(oCWay, &oCWay::oCWay_OnInit, 0x006D50A0);
+	ZENGIN_REGISTER_METHOD(oCWay, &oCWay::GetLadder, 0x006D5970);
+	ZENGIN_REGISTER_METHOD(oCWay, &oCWay::GetDoor, 0x006D5980);
+	ZENGIN_REGISTER_METHOD(oCWay, &oCWay::Init, 0x006D5260);
+	ZENGIN_REGISTER_METHOD(oCWay, &oCWay::CanBeUsed, 0x006D5170);
+	ZENGIN_REGISTER_METHOD(oCWay, &oCWay::IsObjectOnWay, 0x006D5950);
+
+} // namespace Gothic_I_Classic

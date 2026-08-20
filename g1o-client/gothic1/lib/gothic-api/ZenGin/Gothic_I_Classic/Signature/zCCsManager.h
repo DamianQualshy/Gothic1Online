@@ -1,0 +1,55 @@
+namespace Gothic_I_Classic {
+
+	ZENGIN_REGISTER_CLASS(zCCSManager);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::zCCSManager_OnInit, 0x00419E70);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::InitiateCSwithContext, 0x0041A350);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::InitiateOUwithContext, 0x0041A4C0);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::CreateNewCutscene, 0x0041A4F0);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::CreateNewOutputUnit, 0x0041A660);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::IsDeactivated, 0x0041A710);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::PoolCountStart, 0x0041A730);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::PoolCountStop, 0x0041A750);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::PoolHasFlags, 0x0041A770);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::PoolClrFlags, 0x0041A7A0);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::PoolSetFlags, 0x0041A7C0);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::PoolNumPlayed, 0x0041A7E0);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::PoolAllowedToStart, 0x0041A800);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::PoolResetAll, 0x0041AA70);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::PoolResetByHour, 0x0041AAA0);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::PoolResetByDay, 0x0041AAE0);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::AddCommand, 0x0041AB20);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::GetNumOfShortCom, 0x0041AC90);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::GetShortCom, 0x0041ACA0);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::LibForceToLoad, 0x0041BE70);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::_GetClassDef, 0x00419F80);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::Archive, 0x0041AE20);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::Unarchive, 0x0041AFF0);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::CreateMessage, 0x00419F90);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::CreateOuMessage, 0x00419FA0);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::CreateCutscenePlayer, 0x0041A120);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::CreateProperties, 0x0041BE90);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::RemoveCutscenePlayer, 0x0041A1E0);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::LibIsLoaded, 0x0041BE80);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::LibGet, 0x0041BA30);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCCSManager, &zCCSManager::LibGetFirst, zCCSBlock*(zCCSManager::*)(), 0x0041B8B0);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCCSManager, &zCCSManager::LibGetFirst, zCCSBlock*(zCCSManager::*)(int&), 0x0041B960);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCCSManager, &zCCSManager::LibGetNext, zCCSBlock*(zCCSManager::*)(), 0x0041B910);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCCSManager, &zCCSManager::LibGetNext, zCCSBlock*(zCCSManager::*)(int&), 0x0041B9D0);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::LibAddOU, 0x0041BA60);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::LibDelOU, 0x0041BA80);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::LibNullOU, 0x0041BAA0);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::LibLoad, 0x0041B270);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::LibStore, 0x0041BAC0);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCCSManager, &zCCSManager::LibValidateOU, int(zCCSManager::*)(int), 0x0041BE20);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCCSManager, &zCCSManager::LibValidateOU, int(zCCSManager::*)(zSTRING&), 0x0041BE50);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::LibGetSvmModuleName, 0x004196C0);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::LibIsSvmModuleRunning, 0x00419980);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::LibSvmModuleStart, 0x00419AC0);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::LibSvmModuleStop, 0x00419C60);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::InsertPlayerInList, 0x0041A1F0);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::RemovePlayerFromList, 0x0041A2F0);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::LibCheckLoaded, 0x0041B890);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::PoolFindItem, 0x0041A920);
+	ZENGIN_REGISTER_METHOD(zCCSManager, &zCCSManager::PoolInsertItem, 0x0041A830);
+
+} // namespace Gothic_I_Classic

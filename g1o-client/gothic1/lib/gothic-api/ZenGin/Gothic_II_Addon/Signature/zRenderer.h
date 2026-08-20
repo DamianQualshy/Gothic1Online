@@ -1,0 +1,81 @@
+namespace Gothic_II_Addon {
+
+	ZENGIN_REGISTER_CLASS(zCRenderLight);
+	ZENGIN_REGISTER_METHOD(zCRenderLight, &zCRenderLight::zCRenderLight_OnInit, 0x0057A7C0);
+
+	ZENGIN_REGISTER_CLASS(zCRndAlphaSortObject);
+	ZENGIN_REGISTER_METHOD(zCRndAlphaSortObject, &zCRndAlphaSortObject::IsAlphaPoly, 0x00528C00);
+
+	ZENGIN_REGISTER_CLASS(zTRnd_DeviceInfo);
+	ZENGIN_REGISTER_METHOD(zTRnd_DeviceInfo, &zTRnd_DeviceInfo::zTRnd_DeviceInfo_OnInit, 0x00638F80);
+
+	ZENGIN_REGISTER_CLASS(zCRenderer);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::AlphaBlendFuncStringToType, 0x005D38B0);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::AlphaBlendFuncTypeToString, 0x005D39A0);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::Vid_SetMode_novt, 0x005D3C20);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::GetTexFormatInfo, 0x005D3CC0);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::DrawTile, 0x005D3CF0);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::DrawLightmapList, 0x00649FE0);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::DrawLineZ, 0x00649FF0);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::DrawPolySimple, 0x0064A000);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::GetFog, 0x0064A010);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::GetRadialFog, 0x0064A020);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::GetFogColor, 0x0064A030);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::GetFogRange, 0x0064A060);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::GetPolyDrawMode, 0x0064A070);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::SetPolyDrawMode, 0x0064A080);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::GetSurfaceLost, 0x0064A090);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::SetSurfaceLost, 0x0064A0A0);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::GetSyncOnAmbientCol, 0x0064A0B0);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::SetSyncOnAmbientCol, 0x0064A0C0);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::SetTextureWrapEnabled, 0x0064A0D0);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::GetTextureWrapEnabled, 0x0064A0E0);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::SetDitherEnabled, 0x0064A0F0);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::GetDitherEnabled, 0x0064A100);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::GetPolySortMode, 0x0064A110);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::SetPolySortMode, 0x0064A120);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::GetZBufferWriteEnabled, 0x0064A130);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::SetZBufferWriteEnabled, 0x0064A140);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::SetZBias, 0x0064A150);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::GetZBias, 0x0064A160);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::GetZBufferCompare, 0x0064A170);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::SetZBufferCompare, 0x0064A180);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::GetPixelWriteEnabled, 0x0064A190);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::SetPixelWriteEnabled, 0x0064A1A0);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::SetAlphaBlendSource, 0x0064A1B0);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::GetAlphaBlendSource, 0x0064A1C0);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::SetAlphaBlendFunc, 0x0064A1D0);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::GetAlphaBlendFunc, 0x0064A1E0);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::GetAlphaBlendFactor, 0x0064A1F0);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::SetAlphaBlendFactor, 0x0064A200);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::SetAlphaReference, 0x0064A210);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::GetAlphaReference, 0x0064A220);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::GetCacheAlphaPolys, 0x0064A230);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::SetCacheAlphaPolys, 0x0064A240);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::GetAlphaLimitReached, 0x0064A250);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::AddAlphaPoly, 0x0064A260);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::FlushAlphaPolys, 0x0064A270);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::SetRenderMode, 0x0064A280);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::GetRenderMode, 0x0064A290);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::HasCapability, 0x0064A2A0);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::GetGuardBandBorders, 0x0064A2B0);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::ResetZTest, 0x0064A2C0);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::HasPassedZTest, 0x0064A2D0);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::CreateTextureConvert, 0x0064A2E0);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::SupportsTextureFormat, 0x0064A2F0);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::SupportsTextureFormatHardware, 0x0064A300);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::GetMaxTextureSize, 0x0064A310);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::SetTransform, 0x0064A320);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::SetViewport, 0x0064A330);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::SetLight, 0x0064A340);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::GetMaterial, 0x0064A350);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::SetMaterial, 0x0064A360);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::SetTexture, 0x0064A370);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::SetTextureStageState, 0x0064A380);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::SetAlphaBlendFuncImmed, 0x0064A390);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::SetRenderState, 0x0064A3A0);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::GetRenderState, 0x0064A3B0);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::AddAlphaSortObject, 0x0064A3C0);
+	ZENGIN_REGISTER_METHOD(zCRenderer, &zCRenderer::RenderAlphaSortList, 0x0064A3D0);
+
+} // namespace Gothic_II_Addon

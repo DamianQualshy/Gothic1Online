@@ -1,0 +1,26 @@
+namespace Gothic_II_Addon {
+
+	ZENGIN_REGISTER_CLASS(zCPose);
+	ZENGIN_REGISTER_METHOD(zCPose, &zCPose::zCPose_OnInit, 0x004D9A30);
+	ZENGIN_REGISTER_METHOD(zCPose, &zCPose::SetPose, 0x004C39E0);
+	ZENGIN_REGISTER_METHOD(zCPose, &zCPose::SetInertiaRot, 0x004D90E0);
+	ZENGIN_REGISTER_METHOD(zCPose, &zCPose::SetInertiaPos, 0x004D9160);
+	ZENGIN_REGISTER_METHOD(zCPose, &zCPose::SetInertiaSamplesRot, 0x004D91D0);
+	ZENGIN_REGISTER_METHOD(zCPose, &zCPose::SetInertiaSamplesPos, 0x004D9240);
+	ZENGIN_REGISTER_METHOD(zCPose, &zCPose::CalcAvgRot, 0x004D92A0);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCPose, &zCPose::UpdatePose, void(zCPose::*)(zMAT4&), 0x004D94B0);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCPose, &zCPose::UpdatePose, void(zCPose::*)(zCQuat&, zVEC3&), 0x004D9660);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCPose, &zCPose::UpdateRot, void(zCPose::*)(zMAT4&), 0x004D9800);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCPose, &zCPose::UpdateRot, void(zCPose::*)(zCQuat&), 0x004D9880);
+	ZENGIN_REGISTER_METHOD(zCPose, &zCPose::UpdatePos, 0x004D9900);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCPose, &zCPose::SetRot, void(zCPose::*)(zMAT4&), 0x004D9AA0);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCPose, &zCPose::SetRot, void(zCPose::*)(zCQuat&), 0x004D9B20);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCPose, &zCPose::SetPos, void(zCPose::*)(zMAT4&), 0x004D9B90);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCPose, &zCPose::SetPos, void(zCPose::*)(zVEC3&), 0x004D9C30);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCPose, &zCPose::GetPose, void(zCPose::*)(zMAT4&), 0x004D9C90);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCPose, &zCPose::GetPose, zMAT4&(zCPose::*)(), 0x004D9CD0);
+	ZENGIN_REGISTER_METHOD(zCPose, &zCPose::GetPoseAbs, 0x004D9D20);
+	ZENGIN_REGISTER_METHOD(zCPose, &zCPose::GetRotMatAbs, 0x004D9D60);
+	ZENGIN_REGISTER_METHOD(zCPose, &zCPose::GetRotMat, 0x004D9D90);
+
+} // namespace Gothic_II_Addon

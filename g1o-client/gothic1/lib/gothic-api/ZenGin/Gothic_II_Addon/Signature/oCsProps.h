@@ -1,0 +1,12 @@
+namespace Gothic_II_Addon {
+
+	ZENGIN_REGISTER_CLASS(oCCSProps);
+	ZENGIN_REGISTER_METHOD(oCCSProps, &oCCSProps::oCCSProps_OnInit, 0x00403F00);
+	ZENGIN_REGISTER_METHOD(oCCSProps, &oCCSProps::_GetClassDef, 0x00403EF0);
+	ZENGIN_REGISTER_METHOD(oCCSProps, &oCCSProps::Archive, 0x00403F60);
+	ZENGIN_REGISTER_METHOD(oCCSProps, &oCCSProps::Unarchive, 0x00403F70);
+	ZENGIN_REGISTER_METHOD(oCCSProps, &oCCSProps::AcceptRole, 0x00403F80);
+	ZENGIN_REGISTER_METHOD(oCCSProps, &oCCSProps::CheckRole, 0x00403F90);
+	ZENGIN_REGISTER_METHOD(oCCSProps, &oCCSProps::CheckRoleResult, 0x00403FE0);
+
+} // namespace Gothic_II_Addon

@@ -1,0 +1,87 @@
+namespace Gothic_II_Classic {
+
+	ZENGIN_REGISTER_CLASS(zCCamTrj_KeyFrame);
+	ZENGIN_REGISTER_METHOD(zCCamTrj_KeyFrame, &zCCamTrj_KeyFrame::zCCamTrj_KeyFrame_OnInit, 0x004BB890);
+	ZENGIN_REGISTER_METHOD(zCCamTrj_KeyFrame, &zCCamTrj_KeyFrame::Changed, 0x004BBE20);
+	ZENGIN_REGISTER_METHOD(zCCamTrj_KeyFrame, &zCCamTrj_KeyFrame::_GetClassDef, 0x004BB960);
+	ZENGIN_REGISTER_METHOD(zCCamTrj_KeyFrame, &zCCamTrj_KeyFrame::Archive, 0x004BBB90);
+	ZENGIN_REGISTER_METHOD(zCCamTrj_KeyFrame, &zCCamTrj_KeyFrame::Unarchive, 0x004BBCE0);
+	ZENGIN_REGISTER_METHOD(zCCamTrj_KeyFrame, &zCCamTrj_KeyFrame::ThisVobAddedToWorld, 0x004BBA20);
+	ZENGIN_REGISTER_METHOD(zCCamTrj_KeyFrame, &zCCamTrj_KeyFrame::ThisVobRemovedFromWorld, 0x004BBA30);
+
+	ZENGIN_REGISTER_CLASS(zCCSCamera_EventMsg);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCCSCamera_EventMsg, &zCCSCamera_EventMsg::zCCSCamera_EventMsg_OnInit, void(zCCSCamera_EventMsg::*)(), 0x004C4690);
+	ZENGIN_REGISTER_METHOD_EXPLICIT(zCCSCamera_EventMsg, &zCCSCamera_EventMsg::zCCSCamera_EventMsg_OnInit, void(zCCSCamera_EventMsg::*)(zCCSCamera_EventMsg::zTCSCam_EvSubType), 0x004C4800);
+	ZENGIN_REGISTER_METHOD(zCCSCamera_EventMsg, &zCCSCamera_EventMsg::_GetClassDef, 0x004C14D0);
+	ZENGIN_REGISTER_METHOD(zCCSCamera_EventMsg, &zCCSCamera_EventMsg::Archive, 0x004C4970);
+	ZENGIN_REGISTER_METHOD(zCCSCamera_EventMsg, &zCCSCamera_EventMsg::Unarchive, 0x004C4A00);
+	ZENGIN_REGISTER_METHOD(zCCSCamera_EventMsg, &zCCSCamera_EventMsg::IsHighPriority, 0x004C1500);
+	ZENGIN_REGISTER_METHOD(zCCSCamera_EventMsg, &zCCSCamera_EventMsg::IsJob, 0x004C14E0);
+	ZENGIN_REGISTER_METHOD(zCCSCamera_EventMsg, &zCCSCamera_EventMsg::Delete, 0x004C1520);
+	ZENGIN_REGISTER_METHOD(zCCSCamera_EventMsg, &zCCSCamera_EventMsg::IsDeleted, 0x004C1510);
+	ZENGIN_REGISTER_METHOD(zCCSCamera_EventMsg, &zCCSCamera_EventMsg::MD_GetNumOfSubTypes, 0x004C4A90);
+	ZENGIN_REGISTER_METHOD(zCCSCamera_EventMsg, &zCCSCamera_EventMsg::MD_GetSubTypeString, 0x004C4AA0);
+	ZENGIN_REGISTER_METHOD(zCCSCamera_EventMsg, &zCCSCamera_EventMsg::MD_GetTimeBehavior, 0x004C1530);
+	ZENGIN_REGISTER_METHOD(zCCSCamera_EventMsg, &zCCSCamera_EventMsg::MD_GetMinTime, 0x004C4CB0);
+
+	ZENGIN_REGISTER_CLASS(zCCSCamera_EventMsgActivate);
+	ZENGIN_REGISTER_METHOD(zCCSCamera_EventMsgActivate, &zCCSCamera_EventMsgActivate::zCCSCamera_EventMsgActivate_OnInit, 0x004B1C30);
+	ZENGIN_REGISTER_METHOD(zCCSCamera_EventMsgActivate, &zCCSCamera_EventMsgActivate::_GetClassDef, 0x004021E0);
+	ZENGIN_REGISTER_METHOD(zCCSCamera_EventMsgActivate, &zCCSCamera_EventMsgActivate::Archive, 0x004C4CD0);
+	ZENGIN_REGISTER_METHOD(zCCSCamera_EventMsgActivate, &zCCSCamera_EventMsgActivate::Unarchive, 0x004C4D00);
+	ZENGIN_REGISTER_METHOD(zCCSCamera_EventMsgActivate, &zCCSCamera_EventMsgActivate::Delete, 0x00402200);
+	ZENGIN_REGISTER_METHOD(zCCSCamera_EventMsgActivate, &zCCSCamera_EventMsgActivate::IsDeleted, 0x004021F0);
+	ZENGIN_REGISTER_METHOD(zCCSCamera_EventMsgActivate, &zCCSCamera_EventMsgActivate::MD_GetNumOfSubTypes, 0x004C4E90);
+	ZENGIN_REGISTER_METHOD(zCCSCamera_EventMsgActivate, &zCCSCamera_EventMsgActivate::MD_GetSubTypeString, 0x004C4EA0);
+	ZENGIN_REGISTER_METHOD(zCCSCamera_EventMsgActivate, &zCCSCamera_EventMsgActivate::MD_GetVobRefName, 0x004C4FC0);
+	ZENGIN_REGISTER_METHOD(zCCSCamera_EventMsgActivate, &zCCSCamera_EventMsgActivate::MD_SetVobRefName, 0x004C5010);
+	ZENGIN_REGISTER_METHOD(zCCSCamera_EventMsgActivate, &zCCSCamera_EventMsgActivate::MD_SetVobParam, 0x004C5150);
+
+	ZENGIN_REGISTER_CLASS(zCCSCamera);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::zCCSCamera_OnInit, 0x004BBEA0);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::GetCamKey, 0x004B1D20);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::GetTargetKey, 0x004B1D40);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::InsertCamKey, 0x004BC480);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::InsertCamKeyAtPos, 0x004BC5B0);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::RemoveCamKey, 0x004BC700);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::InsertTargetKey, 0x004BC7D0);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::InsertTargetKeyAtPos, 0x004BC900);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::RemoveTargetKey, 0x004BCA50);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::Refresh, 0x004BCB20);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::Draw, 0x004BCC60);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::EV_Play, 0x004BDF10);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::EV_Resume, 0x004BE3C0);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::EV_Pause, 0x004BE3F0);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::EV_Stop, 0x004BE4B0);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::EV_GotoKey, 0x004BE9B0);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::EV_SetDuration, 0x004BEE60);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::EV_SetTime, 0x004BEEA0);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::EV_Deactivate, 0x004BEEC0);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::EV_SetCamReference, 0x004BEF40);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::EV_SetTargetReference, 0x004BEFE0);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::DeleteEvMsgOfSubType, 0x004BF080);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::RecalcTrajectories, 0x004C17D0);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::CheckAndResetAdjustedKeys, 0x004C1910);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::CheckAndCorrectKey, 0x004C19D0);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::CheckAndCorrectPose, 0x004C1A80);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::PreKFProcessing, 0x004C1C60);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::PostKFProcessing, 0x004C2A80);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::AutoSetKeyTimes, 0x004C2AB0);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::Changed, 0x004C2FA0);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::Initialize, 0x004C2FD0);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::Reset, 0x004C3C20);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::CalcPrevNextActKeyOfTime, 0x004C3CA0);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::IsPointNearWall, 0x004C3D90);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::GetPolyNearestPoint, 0x004C3F30);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::AdjustCenterSphere, 0x004C4460);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::_GetClassDef, 0x004BC220);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::Archive, 0x004BD430);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::Unarchive, 0x004BD650);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::OnTrigger, 0x004C0D00);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::OnUntrigger, 0x004C1550);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::OnMessage, 0x004BDC10);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::OnTick, 0x004BF120);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::ThisVobAddedToWorld, 0x004BDA90);
+	ZENGIN_REGISTER_METHOD(zCCSCamera, &zCCSCamera::ThisVobRemovedFromWorld, 0x004BDAA0);
+
+} // namespace Gothic_II_Classic
