@@ -48,7 +48,7 @@ xmake f -p windows -a x86 -m release \
 
 These are build-time settings, not values from the client or server XML files. `master_server_address` is the RakNet host used by `GO_Server`; `master_server_port` is both its destination port and the port listened on by `GO_Master`. `master_server_list_url` is the separate HTTP(S) `list.txt` endpoint read by the launcher, and `launcher_version_url` is its update-check endpoint. Reconfigure and rebuild the affected targets after changing them.
 
-`GO_Master` writes `list.txt` and `list.html` into its current working directory; it does not serve HTTP itself. Run it in the web directory represented by `master_server_list_url`, or publish/copy those files there. A game server registers only when its `GO_Config.server.xml` contains `<public>1</public>`; the default is private.
+`GO_Master` writes `list.txt` and `list.html` into its current working directory; it does not serve HTTP itself. Run it in the web directory represented by `master_server_list_url`, or publish/copy those files there. A game server registers only when its `config.xml` contains `<public>1</public>`; the default is private.
 
 Install a completed build into a Gothic directory with:
 
@@ -56,7 +56,7 @@ Install a completed build into a Gothic directory with:
 xmake install -o "E:\Gothic 1 Online"
 ```
 
-This installs `GO.dll`, `GO_Launcher.exe`, the matching Qt runtime, plugins, and launcher language files into the existing `System` or `system` directory. It installs `GO_Server.exe`, `GO_Config.server.xml`, `ReadMe.txt`, default `server-scripts`/`client-scripts`, and an empty `download` directory into `g1o-server`. A default client configuration is created under `Multiplayer` only when one does not already exist. Existing editable configuration files are preserved. `G1O.Master` is intentionally excluded from the default game installation.
+This installs `GO_Launcher.exe`, the matching Qt runtime, plugins, and launcher language files under `Multiplayer/Launcher`. The client DLL is installed as `Multiplayer/versions/<version>.dll`, matching the version reported by a server. Client resources are copied from `g1o-client/gothic1/resources` into the game directory; an existing client configuration is preserved. The server is installed into `g1o-server`, with its configuration, default scripts, documentation, and download directory grouped under `g1o-server/resources`, matching the GMPC layout. `G1O.Master` is intentionally excluded from the default game installation.
 
 The Gothic API target is deliberately compiled with `__G1`. Do not change it to `__G2` or `__G2A`; the class layouts, globals, and function addresses are not compatible.
 

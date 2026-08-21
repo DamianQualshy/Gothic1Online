@@ -1,0 +1,18 @@
+<!-- Gothic Online client configuration. All available client and launcher options are listed below. -->
+<GO_Config>
+	<!-- G2O-style flat field layout. The launcher updates connection values when a server is selected. -->
+	<playerName>Nickname</playerName>
+	<serverIp>127.0.0.1</serverIp>
+	<serverPort>28970</serverPort>
+	<startWorld>WORLD.ZEN</startWorld>
+	<playerInstance>PC_HERO</playerInstance>
+	<clientScript>client-main.gm</clientScript>
+	<!-- Launcher languages: en, pl, ru. Unsupported in-game text falls back to English. -->
+	<lang>en</lang>
+	<!-- -1 centers the launcher on first start. -->
+	<launcherPosX>-1</launcherPosX>
+	<launcherPosY>-1</launcherPosY>
+	<favorites>
+		<!-- Example: <server ip="127.0.0.1" port="28970" /> -->
+	</favorites>
+</GO_Config>

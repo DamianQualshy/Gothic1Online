@@ -55,15 +55,14 @@ void ConnectionRPC::PleaseConnect(CNetwork* network, BitStream& stream, SystemAd
 
 	int versionNum;
 	RakString playerName;
-	RakString dllHash;
+	RakString ignoredDllHash;
 	stream.Read(versionNum);
-	stream.Read(dllHash);
+	stream.Read(ignoredDllHash);
 	stream.Read(playerName);
 
-	//Tu powinno byc sprawdzenie wersji klienta
-	if( versionNum == versionNumber/*  && strcmp("AB2F031EF87866561F5B4EC2A754DFF5", dllHash.C_String()) == 0  */)
+	if (versionNum == versionNumber)
 	{
-		dllHash.FreeMemory();
+		ignoredDllHash.FreeMemory();
 		//Sprawdzenie czy serwer nie jest pełny
 		if(playerManager.GetNumberOfPlayers() != atoi(core.GetConfig()->GetMaxSlots().C_String()))
 		{
@@ -106,9 +105,6 @@ void ConnectionRPC::PleaseConnect(CNetwork* network, BitStream& stream, SystemAd
 					SCallback::onJoin(player->GetID());
 
 				LOG("[join] %s has joined the server %s",playerName.C_String(),player->GetAddress().ToString());
-#ifdef DEV_MODE
-				LOG("[debug] Player dll hash: %s", dllHash.C_String());
-#endif
 				//Ask player for correct script's hashes
 				BitStream sStream;
 				sStream.Write((MessageID)GO_SCRIPT);
@@ -117,7 +113,7 @@ void ConnectionRPC::PleaseConnect(CNetwork* network, BitStream& stream, SystemAd
 				md5wrapper wrap;
 				std::string checksum = "NULL";
 				char buff[512];
-				sprintf(buff, "client-scripts/%s", core.GetConfig()->GetClientScript().C_String());
+				sprintf(buff, "resources/client-scripts/%s", core.GetConfig()->GetClientScript().C_String());
 				FILE* file = fopen(buff, "r");
 				if( file )
 				{

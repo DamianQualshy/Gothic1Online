@@ -12,6 +12,7 @@ void CLanguage::init()
 {
     QSettings langConf("lang/lang.conf", QSettings::IniFormat);
     QStringList langList = langConf.value("lang").toString().split(QRegExp("\\s"));
+    QStringList availableLanguages;
 
     for (QString lang : langList)
     {
@@ -33,8 +34,8 @@ void CLanguage::init()
                     QString strTranslate = translate;
                     strTranslate.replace(QRegExp("[\t]"), "");
 
-                    // Remove spaces, before text
-                    while (strTranslate.at(0) == ' ')
+                    // Remove spaces before text.
+                    while (!strTranslate.isEmpty() && strTranslate.at(0) == ' ')
                         strTranslate.remove(0, 1);
 
                     m_Translate[lang][key] = strTranslate;
@@ -42,6 +43,7 @@ void CLanguage::init()
             } while (!line.isNull());
 
             LAUNCHER.getUI()->cboxLanguage->addItem(QIcon("lang/icons/" + lang + ".png"), m_Translate[lang]["LANG_NAME"], lang);
+            availableLanguages.append(lang);
 
             fileLang.close();
         }
@@ -50,18 +52,26 @@ void CLanguage::init()
     connect(LAUNCHER.getUI()->cboxLanguage, SIGNAL(currentIndexChanged(int)),
             this, SLOT(onLanguageChanged(int)));
 
-    // Fill empty language
-    if (m_CurrLang.isEmpty() && !langList.empty()) m_CurrLang = langList.at(0);
-
-    // Find index in language list
+    // A missing or unavailable language must select a real entry. Otherwise
+    // translations resolve to EMPTY while the combo box displays another row.
     int index = LAUNCHER.getUI()->cboxLanguage->findData(m_CurrLang);
+    if (index == -1)
+    {
+        index = LAUNCHER.getUI()->cboxLanguage->findData("en");
+        if (index == -1 && !availableLanguages.isEmpty())
+            index = 0;
+    }
+
     if (index != -1)
-       LAUNCHER.getUI()->cboxLanguage->setCurrentIndex(index);
+    {
+        m_CurrLang = LAUNCHER.getUI()->cboxLanguage->itemData(index).toString();
+        LAUNCHER.getUI()->cboxLanguage->setCurrentIndex(index);
+    }
 }
 
 void CLanguage::setCurrentLang(QString lang)
 {
-    m_CurrLang = lang;
+    m_CurrLang = lang.toLower();
 }
 
 QString CLanguage::getTranslate(QString key)

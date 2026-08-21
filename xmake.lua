@@ -1,5 +1,8 @@
 set_project("Gothic1Online")
-set_version("0.5.0")
+
+local g1o_version = "0.5.0"
+set_version(g1o_version)
+add_defines(string.format("G1O_VERSION=\"%s\"", g1o_version))
 
 set_languages("c++20")
 set_allowedplats("windows")

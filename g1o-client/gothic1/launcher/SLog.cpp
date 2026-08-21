@@ -7,11 +7,10 @@
 #include "PCH.h"
 // [HH:mm:ss t]
 SLog::SLog() :
-    m_LogFile(QDate::currentDate().toString("Log/dd_MM_yy.log")),
+    m_LogFile(QString(CLIENT_LOG_PATH) + QDate::currentDate().toString("/launcher_dd_MM_yy.log")),
     isOpen(false)
 {
-    if (!QDir("Log").exists())
-        QDir().mkdir("Log");
+    QDir().mkpath(CLIENT_LOG_PATH);
 
     if (!m_LogFile.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text))
     {

@@ -67,6 +67,8 @@ SM_PING				<b>Ping:</b>
 SM_SERVER_OFFLINE	Server is offline!
 SM_SERVER_FULL		Server is full!
 SM_WRONG_VERSION	Incorrect version.
+SM_INVALID_VERSION	The server reported an invalid client version.
+SM_MISSING_VERSION	Client version %1 is not installed.<br>Place its DLL at <b>%2</b>.
 
 # Downloader
 D_NAME				Downloader

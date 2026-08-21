@@ -20,7 +20,10 @@
 //Gothic Online definicja dewelopera
 //#define DEV_MODE
 #define COOP
-#define versionString "v0.5.0"
+#ifndef G1O_VERSION
+#define G1O_VERSION "0.5.0"
+#endif
+#define versionString "v" G1O_VERSION
 #define PING_SYNC_LIMIT 800
 
 //Gothic Online headers
@@ -49,6 +52,7 @@ extern CLog* pLog;
 #include "CReceiver.h"
 #include "CNetwork.h"
 #include "CConfig.h"
+#include "CLanguage.h"
 #include "CGothicWindow.h"
 #include "CGothicGame.h"
 #include "CRender.h"

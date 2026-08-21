@@ -1,5 +1,3 @@
-#include <QFile>
-
 #include "PCH.h"
 
 CServerManager::CServerManager(QTreeWidget *treeWidget) :
@@ -260,29 +258,16 @@ void CServerManager::updateInfo(QString ipAdress, QString port)
 
 bool CServerManager::updateXmlClient(CServerInfo serverInfo)
 {
-    // Generate new GO_Client.config.xml
-    QFile configFile(CONFIG_GO_PATH);
-    if(!configFile.open(QIODevice::WriteOnly | QIODevice::Text))
+    if (!LAUNCHER.getSettings().saveConnectionSettings(serverInfo.getIpAdress(),
+                                                       serverInfo.getPort(),
+                                                       serverInfo.getWorld(),
+                                                       "PC_HERO",
+                                                       serverInfo.getScript()))
     {
         CMessageBox::warrning(TRANSLATE("C_NAME"), TRANSLATE("C_WRITE_ERROR"));
         return false;
     }
-    else
-    {
-        QTextStream stream(&configFile);
-        stream << "<!-- Gothic Online automatic generated config file -->\n";
-        stream << "<GO_Config>\n";
-        stream << QString("\t<playerName>%1</playerName>\n").arg(LAUNCHER.getUI()->editNickname->text().isEmpty() ? "Nickname" : LAUNCHER.getUI()->editNickname->text());
-        stream << QString("\t<serverIp>%1</serverIp>\n").arg(serverInfo.getIpAdress());
-        stream << QString("\t<serverPort>%1</serverPort>\n").arg(serverInfo.getPort());
-        stream << QString("\t<startWorld>%1</startWorld>\n").arg(serverInfo.getWorld());
-        stream << QString("\t<playerInstance>%1</playerInstance>\n").arg("PC_HERO");
-        stream << QString("\t<clientScript>%1</clientScript>\n").arg(serverInfo.getScript());
-        stream << "</GO_Config>";
-
-        configFile.close();
-        return true;
-    }
+    return true;
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------
@@ -346,16 +331,35 @@ void CServerManager::onServerDoubleClicked(QTreeWidgetItem *item, int column)
     CServerInfo& info = getServerInfo(item->text(1), item->text(2));
 
     if (!info.exits())
+    {
         delete &info;
-    else
-        if (updateXmlClient(info))
-            if (info.getOnlinePlayers() < info.getMaxPlayers())
-                if (item->text(3) == VERSION_NAME)
-                    LAUNCHER.getNetwork().downloadServerFiles(item->text(0), item->text(1), item->text(2).toInt());
-                else
-                    CMessageBox::warrning(item->text(0), TRANSLATE("SM_WRONG_VERSION"));
-            else if (info.getMaxPlayers() == 0)
-                CMessageBox::warrning(item->text(0), TRANSLATE("SM_SERVER_OFFLINE"));
-            else
-                CMessageBox::warrning(item->text(0), TRANSLATE("SM_SERVER_FULL"));
+        return;
+    }
+
+    if (info.getMaxPlayers() == 0)
+    {
+        CMessageBox::warrning(item->text(0), TRANSLATE("SM_SERVER_OFFLINE"));
+        return;
+    }
+    if (info.getOnlinePlayers() >= info.getMaxPlayers())
+    {
+        CMessageBox::warrning(item->text(0), TRANSLATE("SM_SERVER_FULL"));
+        return;
+    }
+
+    if (!CVersion::isValidClientVersion(info.getVersion()))
+    {
+        CMessageBox::warrning(item->text(0), TRANSLATE("SM_INVALID_VERSION"));
+        return;
+    }
+
+    const QString clientDll = CVersion::findClientDll(info.getVersion());
+    if (clientDll.isEmpty())
+    {
+        CMessageBox::warrning(item->text(0), QString(TRANSLATE("SM_MISSING_VERSION")).arg(info.getVersion()).arg(CVersion::expectedClientDllPath(info.getVersion())));
+        return;
+    }
+
+    if (updateXmlClient(info))
+        LAUNCHER.getNetwork().downloadServerFiles(item->text(0), item->text(1), item->text(2).toInt(), info.getVersion());
 }

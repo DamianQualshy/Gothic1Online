@@ -12,6 +12,10 @@ class CVersion : public QObject
 public:
     CVersion();
 
+    static bool isValidClientVersion(const QString &version);
+    static QString expectedClientDllPath(const QString &version);
+    static QString findClientDll(const QString &version);
+
     void checkUpdates();
     void updateVersionInfo(QString version);
 

@@ -15,7 +15,10 @@
 //Defines
 //#define DEV_MODE
 #define BAN_LIST RakString("banlist")
-#define versionString "0.5.0"
+#ifndef G1O_VERSION
+#define G1O_VERSION "0.5.0"
+#endif
+#define versionString G1O_VERSION
 
 #include "Log/Log.h"
 

@@ -5,7 +5,18 @@
 
 HINSTANCE hInst = NULL;
 const static char * WndClassName = "GoSplash";
-const char* GoModuleName = "GO.dll";
+
+namespace
+{
+	HMODULE GetClientModule()
+	{
+		HMODULE module = NULL;
+		GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
+			GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+			reinterpret_cast<LPCSTR>(&GetClientModule), &module);
+		return module;
+	}
+}
 
 CSplashScreen::CSplashScreen()
 {
@@ -26,12 +37,14 @@ LRESULT CALLBACK CSplashScreen::SplashWndProc(HWND hWnd, UINT message, WPARAM wP
 	{
 	case WM_CREATE:
 		
+		HMODULE clientModule;
+		clientModule = GetClientModule();
 		HRSRC RsrcHand; 
-		RsrcHand = FindResourceA(GetModuleHandleA(GoModuleName), "RANGE", "RGN"); 
+		RsrcHand = FindResourceA(clientModule, "RANGE", "RGN");
 		HGLOBAL RsrcPoint;
-		RsrcPoint = LoadResource(GetModuleHandleA(GoModuleName), RsrcHand);
+		RsrcPoint = LoadResource(clientModule, RsrcHand);
 		DWORD RsrcSize;
-		RsrcSize = SizeofResource(GetModuleHandleA(GoModuleName), RsrcHand);
+		RsrcSize = SizeofResource(clientModule, RsrcHand);
 		RsrcPoint = LockResource(RsrcPoint);
 		SetWindowRgn(hWnd, ExtCreateRegion(NULL, RsrcSize, (LPRGNDATA)RsrcPoint), true);
 			  break;
@@ -59,7 +72,7 @@ DWORD __stdcall CSplashScreen::InitializeSplashScreen(void * param)
 	wc.hInstance = hInst;
 	wc.cbClsExtra = NULL;
 	wc.cbWndExtra = NULL;
-	HBITMAP bitmap = LoadBitmapA(GetModuleHandleA(GoModuleName), MAKEINTRESOURCEA(1000));
+	HBITMAP bitmap = LoadBitmapA(GetClientModule(), MAKEINTRESOURCEA(1000));
 	wc.hbrBackground = CreatePatternBrush(bitmap);
 	wc.lpszMenuName = NULL;
 	wc.lpszClassName = WndClassName;

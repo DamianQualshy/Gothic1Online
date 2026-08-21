@@ -3,7 +3,7 @@ local launcher_dir = os.scriptdir()
 target("G1O.Launcher")
     set_kind("binary")
     set_basename("GO_Launcher")
-    set_prefixdir("/", {bindir = "system"})
+    set_prefixdir("/", {bindir = "Multiplayer/Launcher"})
     set_runtimes("MD")
     add_rules("qt.widgetapp")
 
@@ -73,9 +73,21 @@ target("G1O.Launcher")
     end)
 
     on_install(function (target)
-        local install_to_system_dir = import("install_to_system_dir")
-        local system_dir = install_to_system_dir(target)
+        local launcher_install_dir = path.join(target:installdir(), "Multiplayer", "Launcher")
+        local deploydir = path.join(target:targetdir(), "GO_Launcher")
+        os.mkdir(launcher_install_dir)
 
-        os.vcp(path.join(launcher_dir, "lang"), system_dir)
-        print("Installed launcher languages → " .. system_dir)
+        if os.isdir(deploydir) then
+            os.cp(path.join(deploydir, "*"), launcher_install_dir)
+        else
+            os.cp(target:targetfile(), launcher_install_dir)
+            os.cp(path.join(launcher_dir, "lang"), launcher_install_dir)
+        end
+
+        local pdb = path.join(path.directory(target:targetfile()), path.basename(target:targetfile()) .. ".pdb")
+        if os.isfile(pdb) then
+            os.cp(pdb, launcher_install_dir)
+        end
+
+        print("Installed launcher runtime → " .. launcher_install_dir)
     end)

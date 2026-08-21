@@ -74,9 +74,10 @@ void CNetwork::sendRequest(QString ipAdress, int port, int index)
         NETWORK.getFavoriteRPC()->enableRefreshTimer(true);
 }
 
-bool CNetwork::downloadServerFiles(QString hostName, QString ipAdress, int port)
+bool CNetwork::downloadServerFiles(QString hostName, QString ipAdress, int port, QString version)
 {
     m_TempServerName = hostName;
+	m_TempServerVersion = version;
 	const bool connected = NETWORK.connectToServer(ipAdress, port);
 	if (!connected)
 		onDownloaderConnectionFailed();
@@ -236,18 +237,27 @@ void CNetwork::onDownloaderComplete()
     m_Downloader.close();
     m_MsgBoxCheckingFiles.close();
 
+    const QString clientDll = CVersion::findClientDll(m_TempServerVersion);
+    if (clientDll.isEmpty())
+    {
+        LOG("[game] Client DLL for server version %s is no longer available", m_TempServerVersion.toStdString().c_str());
+        CMessageBox::warrning(APP_NAME, QString(TRANSLATE("SM_MISSING_VERSION")).arg(m_TempServerVersion).arg(CVersion::expectedClientDllPath(m_TempServerVersion)));
+        return;
+    }
+
     int gothicProcessID = LAUNCHER.getInjector().RunApplication(INJECT_APP_NAME);
     if (gothicProcessID)
     {
 		LOG("[game] Created suspended %s process (PID %d)", INJECT_APP_NAME, gothicProcessID);
-        if (!LAUNCHER.getInjector().InjectDLL(gothicProcessID, INJECT_DLL_NAME))
+		const std::string dllPath = clientDll.toStdString();
+        if (!LAUNCHER.getInjector().InjectDLL(gothicProcessID, dllPath.c_str()))
 		{
 			LOG("[game] Injection failed; the suspended game process was terminated");
-            CMessageBox::warrning(APP_NAME, QString(TRANSLATE("IR_ERR_01")).arg(INJECT_DLL_NAME));
+            CMessageBox::warrning(APP_NAME, QString(TRANSLATE("IR_ERR_01")).arg(clientDll));
 		}
 		else
 		{
-			LOG("[game] Injected %s and resumed the game process", INJECT_DLL_NAME);
+			LOG("[game] Injected %s and resumed the game process", dllPath.c_str());
 		}
     }
     else

@@ -1,114 +1,85 @@
 #include "stdafx.h"
 
-CConfig::CConfig() :
-	serverPublic(false)
+namespace
 {
-	//DLOG("CConfig::CConfig()\n");
-	if(LoadConfigFromFile("GO_Config.server.xml") == false)
+	void ReadString(TiXmlElement* root, const char* name, RakString& value)
 	{
-		SetDefault();
-		SaveConfigToFile("GO_Config.server.xml");
+		TiXmlElement* element = root ? root->FirstChildElement(name) : NULL;
+		if (element && element->GetText())
+			value = element->GetText();
 	}
+}
 
-};
+CConfig::CConfig()
+{
+	SetDefault();
+	if (!LoadConfigFromFile("config.xml"))
+		SaveConfigToFile("config.xml");
+}
 
 CConfig::~CConfig()
 {
-	//DLOG("CConfig::~CConfig()\n");
-};
+}
 
 bool CConfig::LoadConfigFromFile(RakString fileName)
 {
-	//DLOG("CConfig::LoadConfigFromFile(%s)\n", fileName.C_String());
-
-	TiXmlElement* pElement = NULL;
 	TiXmlDocument document(fileName.C_String());
-	if(document.LoadFile())
+	if (!document.LoadFile())
 	{
-		LOG("[info] Config file found");
-		TiXmlElement* root = document.FirstChildElement( "GO_Config" );
-		char buff[256];
-		pElement = root->FirstChildElement("public");
-		if (pElement)
-		{
-			sprintf(buff, "%s\0", pElement->GetText());
-			this->serverPublic = atoi(buff);
-			memset(buff, 0, sizeof(buff));
-		}
-		pElement = root->FirstChildElement( "serverName" );
-		if( pElement )
-		{
-			sprintf(buff, "%s\0", pElement->GetText());
-			this->serverName = buff;
-			memset(buff, 0, sizeof(buff));
-		}
-		pElement = root->FirstChildElement( "serverPort" );
-		if( pElement )
-		{
-			sprintf(buff, "%s\0", pElement->GetText());
-			this->serverPort = buff;
-			memset(buff, 0, sizeof(buff));
-		}
-		pElement = root->FirstChildElement( "maxSlots" );
-		if( pElement )
-		{
-			sprintf(buff, "%s\0", pElement->GetText());
-			this->maxSlots = buff;
-			memset(buff, 0, sizeof(buff));
-		}
-		pElement = root->FirstChildElement( "adminPassword" );
-		if( pElement )
-		{
-			sprintf(buff, "%s\0", pElement->GetText());
-			this->adminPassword = buff;
-			memset(buff, 0, sizeof(buff));
-		};
-		pElement = root->FirstChildElement( "serverScript" );
-		if( pElement )
-		{
-			sprintf(buff, "%s\0", pElement->GetText());
-			this->serverScript = buff;
-			memset(buff, 0, sizeof(buff));
-		}
-		pElement = root->FirstChildElement( "clientScript" );
-		if( pElement )
-		{
-			sprintf(buff, "%s\0", pElement->GetText());
-			this->clientScript = buff;
-			memset(buff, 0, sizeof(buff));
-		}
-		return true;
+		LOG("[error] Config file doesn't exist");
+		return false;
 	}
-	LOG("[error] Config file doesn't exist\n");
-	return false;
-};
+
+	TiXmlElement* root = document.FirstChildElement("GO_Config");
+	if (!root)
+	{
+		LOG("[error] Config root element GO_Config doesn't exist");
+		return false;
+	}
+
+	LOG("[info] Config file found");
+	TiXmlElement* publicElement = root->FirstChildElement("public");
+	if (publicElement && publicElement->GetText())
+		serverPublic = atoi(publicElement->GetText()) != 0;
+
+	ReadString(root, "serverName", serverName);
+	ReadString(root, "serverPort", serverPort);
+	ReadString(root, "maxSlots", maxSlots);
+	ReadString(root, "adminPassword", adminPassword);
+	ReadString(root, "serverScript", serverScript);
+	ReadString(root, "clientScript", clientScript);
+	return true;
+}
 
 void CConfig::SaveConfigToFile(RakString fileName)
 {
-	//DLOG("CConfig::SaveConfigToFile(%s)\n", fileName.C_String());
 	FILE* config = fopen(fileName.C_String(), "w");
-	fprintf(config, "<!-- Gothic Online automatic generated config file -->\n");
+	if (!config)
+	{
+		LOG("[error] Cannot create config file %s", fileName.C_String());
+		return;
+	}
+
+	fprintf(config, "<!-- Gothic Online server configuration. All available options are listed below. -->\n");
 	fprintf(config, "<GO_Config>\n");
-	fprintf(config, "\t<public>%d</public>\n", this->serverPublic ? 1 : 0);
-	fprintf(config, "	<serverName>%s</serverName>\n", this->serverName.C_String());
-	fprintf(config, "	<serverPort>%s</serverPort>\n", this->serverPort.C_String());
-	fprintf(config, "	<maxSlots>%s</maxSlots>\n", this->maxSlots.C_String());
-	fprintf(config, "	<adminPassword>%s</adminPassword>\n", this->adminPassword.C_String());
-	fprintf(config, "	<serverScript>%s</serverScript>\n", this->serverScript.C_String());
-	fprintf(config, "	<clientScript>%s</clientScript>\n", this->clientScript.C_String());
+	fprintf(config, "\t<public>%d</public>\n", serverPublic ? 1 : 0);
+	fprintf(config, "\t<serverName>%s</serverName>\n", serverName.C_String());
+	fprintf(config, "\t<serverPort>%s</serverPort>\n", serverPort.C_String());
+	fprintf(config, "\t<maxSlots>%s</maxSlots>\n", maxSlots.C_String());
+	fprintf(config, "\t<adminPassword>%s</adminPassword>\n", adminPassword.C_String());
+	fprintf(config, "\t<serverScript>%s</serverScript>\n", serverScript.C_String());
+	fprintf(config, "\t<clientScript>%s</clientScript>\n", clientScript.C_String());
 	fprintf(config, "</GO_Config>\n");
 	fclose(config);
-};
+}
 
 void CConfig::SetDefault()
 {
-	//DLOG("CConfig::SetDefault()\n");
-
-	this -> serverPublic = false;
-	this -> serverName = "Default server name";
-	this -> serverPort = "28970";
-	this -> maxSlots = "32";
-	this -> adminPassword = "password";
-	this -> serverScript = "server-main.gm";
-	this -> clientScript = "client-main.gm";
-};
+	serverPublic = false;
+	serverName = "Gothic Online Server";
+	serverPort = "28970";
+	maxSlots = "32";
+	adminPassword = "change-me";
+	serverScript = "server-main.gm";
+	clientScript = "client-main.gm";
+}

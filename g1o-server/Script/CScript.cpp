@@ -82,7 +82,7 @@ bool CScript::StartScript(const char* fileName)
 		sqrat_register_importlib(vm);
 		sqstd_register_bloblib(vm);
 
-		if (SQ_SUCCEEDED(sqstd_dofile(vm, _SC(RakString("server-scripts/%s", fileName).C_String()), SQFalse, SQTrue)))
+		if (SQ_SUCCEEDED(sqstd_dofile(vm, _SC(RakString("resources/server-scripts/%s", fileName).C_String()), SQFalse, SQTrue)))
 		{
 			sq_pop(vm, 1);
 			SCallback::onInit();

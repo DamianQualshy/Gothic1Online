@@ -24,7 +24,9 @@ void AttachConsole(const char* title)
 CLog::CLog()
 {
 	pLog = this;
-	#define LOG_FILE "..\\GOLog.txt"
+	#define LOG_FILE "..\\Multiplayer\\logs\\client.log"
+	CreateDirectoryA("..\\Multiplayer", NULL);
+	CreateDirectoryA("..\\Multiplayer\\logs", NULL);
 #ifdef DEV_MODE
 	AttachConsole("Gothic Online Debug Window");
 	int width = 0;

@@ -1,0 +1,12 @@
+<!-- Gothic Online server configuration. All available G1O options are listed below. -->
+<GO_Config>
+	<!-- 1 registers the server with the configured master server; 0 keeps it private. -->
+	<public>0</public>
+	<serverName>Gothic Online Server</serverName>
+	<serverPort>28970</serverPort>
+	<maxSlots>32</maxSlots>
+	<!-- Change this before exposing the server publicly. -->
+	<adminPassword>change-me</adminPassword>
+	<serverScript>server-main.gm</serverScript>
+	<clientScript>client-main.gm</clientScript>
+</GO_Config>

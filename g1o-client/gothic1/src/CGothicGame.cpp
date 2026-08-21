@@ -85,8 +85,7 @@ void CGothicGame::InitGame() //Uruchamianie z hooka na pokazanie menu :)
 		//Nawiązywanie połączenia z serwerem
 		if( net->InitNetwork() == true ) //Inicjacja sieci
 		{
-			//chat -> AddLine(RakString("Establishing connection with %s:%s...", config->GetServerIp().C_String(), config->GetServerPort().C_String()), zCOLOR(68, 255, 0, 255));
-			chat -> AddLine(RakString("Nawiązywanie połączenia z %s:%s...", config->GetServerIp().C_String(), config->GetServerPort().C_String()), zCOLOR(255, 196, 0, 255));
+			chat -> AddLine(RakString(ClientLanguage::Get(EClientText::EstablishingConnection, config->GetLanguage()), config->GetServerIp().C_String(), config->GetServerPort().C_String()), zCOLOR(255, 196, 0, 255));
 			//net -> Connect() przeniesione do pierwszej klatki rendera
 		}	
 	}

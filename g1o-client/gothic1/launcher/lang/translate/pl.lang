@@ -67,6 +67,8 @@ SM_PING				<b>Ping:</b>
 SM_SERVER_OFFLINE	Serwer jest niedostępny!
 SM_SERVER_FULL		Serwer jest pełny!
 SM_WRONG_VERSION	Niepoprawna wersja.
+SM_INVALID_VERSION	Serwer zgłosił niepoprawną wersję klienta.
+SM_MISSING_VERSION	Wersja klienta %1 nie jest zainstalowana.<br>Umieść jej DLL w <b>%2</b>.
 
 # Downloader
 D_NAME				Pobieracz

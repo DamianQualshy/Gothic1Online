@@ -21,6 +21,7 @@ void CNetInterface::Render()
 	zCInput* input = zCInput::GetInput();
 	CChat* chat = core.GetChat();
 	CNetwork* net = core.GetNetwork();
+	RakString language = core.GetConfig()->GetLanguage();
 	zSTRING font = screen->GetFontName();
 	zCOLOR color = zCOLOR(255,255,255,255);
 
@@ -53,7 +54,7 @@ void CNetInterface::Render()
 		{
 			screen->SetFont(zSTRING("Font_Old_20_White_Hi.TGA"));
 			screen->SetFontColor(zCOLOR(247,243,115,255));
-			screen->Print(0,0,zSTRING("Właściwości sieci"));
+			screen->Print(0,0,zSTRING(ClientLanguage::Get(EClientText::NetworkProperties, language)));
 			screen->SetFontColor(color);
 			screen->SetFont(font);
 			if( net->IsConnected() == true )
@@ -63,18 +64,18 @@ void CNetInterface::Render()
 				//screen->Print(0,400,zSTRING(RakString("Ping: %dms",core.GetMultiplayer()->pingTime).C_String()));
 				screen->Print(0,400,zSTRING(RakString("Ping: %dms",core.GetNetwork()->GetPeer()->GetLastPing(net->GetServerAddress())).C_String()));
 				screen->Print(0,600,zSTRING(RakString("FPS: %d",vidGetFPSRate()).C_String()));
-				screen->Print(0,800,zSTRING(RakString("Odebrane pakiety: %d",this->receivedPacketCount).C_String()));
-				screen->Print(0,1000,zSTRING(RakString("Pakiety zagubione: %f%",rns.packetlossTotal).C_String()));
-				screen->Print(0,1200,zSTRING(RakString("Pakiety zagubione w ostatniej sekundzie: %f%",rns.packetlossLastSecond).C_String()));
-				screen->Print(0,1400,zSTRING(RakString("Bufor wiadomości: %d",rns.messagesInResendBuffer).C_String()));
-				screen->Print(0,1600,zSTRING(RakString("Bufor bajtów do wysłania: %d",rns.bytesInResendBuffer).C_String()));
-				screen->Print(0,1800,zSTRING(RakString("Utworzeni gracze: %d",playerManager.GetNumberOfPlayers()).C_String()));
-				screen->Print(0,2000,zSTRING(RakString("Utworzone przedmioty: %d", itemManager.GetNumberOfItems()).C_String()));
+				screen->Print(0,800,zSTRING(RakString(ClientLanguage::Get(EClientText::ReceivedPackets, language), this->receivedPacketCount).C_String()));
+				screen->Print(0,1000,zSTRING(RakString(ClientLanguage::Get(EClientText::LostPackets, language), rns.packetlossTotal).C_String()));
+				screen->Print(0,1200,zSTRING(RakString(ClientLanguage::Get(EClientText::LostPacketsLastSecond, language), rns.packetlossLastSecond).C_String()));
+				screen->Print(0,1400,zSTRING(RakString(ClientLanguage::Get(EClientText::MessageResendBuffer, language), rns.messagesInResendBuffer).C_String()));
+				screen->Print(0,1600,zSTRING(RakString(ClientLanguage::Get(EClientText::ByteResendBuffer, language), rns.bytesInResendBuffer).C_String()));
+				screen->Print(0,1800,zSTRING(RakString(ClientLanguage::Get(EClientText::CreatedPlayers, language), playerManager.GetNumberOfPlayers()).C_String()));
+				screen->Print(0,2000,zSTRING(RakString(ClientLanguage::Get(EClientText::CreatedItems, language), itemManager.GetNumberOfItems()).C_String()));
 			}
 			else
 			{
 				screen->SetFontColor(zCOLOR(255,0,0,255));
-				screen->Print((windowMaxPosX/2),(windowMaxPosY/2),zSTRING("Brak połączenia!"));
+				screen->Print((windowMaxPosX/2),(windowMaxPosY/2),zSTRING(ClientLanguage::Get(EClientText::NotConnected, language)));
 				screen->SetFontColor(color);
 			}
 		}

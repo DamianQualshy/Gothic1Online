@@ -36,7 +36,7 @@ void CPlayerList::Render()
 			{
 				view->SetFont(zSTRING("Font_Old_10_White_Hi.TGA"));
 				view->SetFontColor(zCOLOR(247,243,115,255));
-				view->Print(0,0,zSTRING("Lista graczy na serwerze:"));
+				view->Print(0,0,zSTRING(ClientLanguage::Get(EClientText::PlayerList, core.GetConfig()->GetLanguage())));
 				view->SetFontColor(color);
 				view->SetFont(font);
 				int x,y = 0;

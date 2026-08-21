@@ -2,7 +2,7 @@
 
 COptions::COptions(QWidget *parent) :
     CCustomWindow(QString(":/img/go_widget.png"), parent, BUTTON_CLOSE),
-    m_GothicSetting("../System/Gothic.ini", QSettings::IniFormat),
+    m_GothicSetting("../../System/Gothic.ini", QSettings::IniFormat),
     ui(new Ui::COptions)
 {
 #ifdef DEBUG_MODE

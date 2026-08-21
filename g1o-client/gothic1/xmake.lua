@@ -14,13 +14,31 @@ target("G1O.Client")
     add_syslinks("user32", "gdi32", "shell32", "ws2_32", "winmm", "advapi32")
 
     on_install(function (target)
-        local install_to_system_dir = import("install_to_system_dir")
-        install_to_system_dir(target)
-
         local multiplayer_dir = path.join(target:installdir(), "Multiplayer")
-        local config_file = path.join(multiplayer_dir, "GO_Config.client.xml")
+        local versions_dir = path.join(multiplayer_dir, "versions")
         os.mkdir(multiplayer_dir)
-        if not os.isfile(config_file) then
-            os.vcp(path.join(target:scriptdir(), "launcher", "GO_Client.config.xml"), config_file)
+        os.mkdir(versions_dir)
+
+        local resources_dir = path.join(target:scriptdir(), "resources", "Multiplayer")
+        for _, resource_file in ipairs(os.files(path.join(resources_dir, "*"))) do
+            local destination_file = path.join(multiplayer_dir, path.filename(resource_file))
+            if path.filename(resource_file) ~= "G1O_Config.xml" or not os.isfile(destination_file) then
+                os.cp(resource_file, destination_file)
+            end
         end
+        for _, resource_directory in ipairs(os.dirs(path.join(resources_dir, "*"))) do
+            os.cp(resource_directory, multiplayer_dir)
+        end
+        print("Installed client resources → " .. multiplayer_dir)
+
+        local client_version = tostring(target:version())
+        local versioned_dll = path.join(versions_dir, client_version .. ".dll")
+        os.vcp(target:targetfile(), versioned_dll)
+        print("Installed " .. path.filename(target:targetfile()) .. " → " .. versioned_dll)
+
+        local pdb = path.join(path.directory(target:targetfile()), path.basename(target:targetfile()) .. ".pdb")
+        if os.isfile(pdb) then
+            os.vcp(pdb, path.join(versions_dir, client_version .. ".pdb"))
+        end
+
     end)

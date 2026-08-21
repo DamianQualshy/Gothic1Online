@@ -9,7 +9,7 @@ int main(int argc, char *argv[]) try
 {
     QApplication app(argc, argv);
 
-    // All legacy launcher paths are relative to Gothic's System directory.
+    // Launcher paths are relative to Gothic's Multiplayer/Launcher directory.
     // A shortcut may supply a different working directory, so normalize it to
     // the directory that actually contains GO_Launcher.exe.
     QDir::setCurrent(QCoreApplication::applicationDirPath());

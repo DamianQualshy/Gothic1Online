@@ -24,7 +24,7 @@ public:
 
     void sendRequest(const QVector<CServerInfo> &serverList, int index);
     void sendRequest(QString ipAdress, int port, int index);
-    bool downloadServerFiles(QString hostName, QString ipAdress, int port);
+    bool downloadServerFiles(QString hostName, QString ipAdress, int port, QString version);
     void downloadFileFromUrl(QString url, int index = 0);
 
 public slots:
@@ -44,7 +44,7 @@ private:
     CDownloader m_Downloader;
     CUrlDownloader m_UrlDownloader;
     CMessageBox m_MsgBoxConnectionFailed, m_MsgBoxCheckingFiles;
-    QString m_TempServerName;
+    QString m_TempServerName, m_TempServerVersion;
 
     int m_CurrServers, m_MaxServers, m_DownloadIndex;
 

@@ -67,6 +67,8 @@ SM_PING				<b>Пинг:</b>
 SM_SERVER_OFFLINE	Сервер отключен!
 SM_SERVER_FULL		Сервер переполнен!
 SM_WRONG_VERSION	Неправильное версия.
+SM_INVALID_VERSION	Сервер сообщил недопустимую версию клиента.
+SM_MISSING_VERSION	Версия клиента %1 не установлена.<br>Поместите DLL в <b>%2</b>.
 
 # Downloader
 D_NAME				Загрузчик

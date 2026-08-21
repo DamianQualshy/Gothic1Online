@@ -1,5 +1,9 @@
 #include "PCH.h"
 
+#include <QDir>
+#include <QFileInfo>
+#include <QRegExp>
+
 CVersion::CVersion()
     : m_VersionUrl(G1O_LAUNCHER_VERSION_URL),
       m_Showed(false)
@@ -7,6 +11,31 @@ CVersion::CVersion()
 #ifdef DEBUG_MODE
     LOG(__FUNCTION__)
 #endif
+}
+
+bool CVersion::isValidClientVersion(const QString &version)
+{
+    // Server-provided values become file names. Keep the accepted syntax
+    // deliberately narrow so a master-list entry cannot escape versions/.
+    QRegExp pattern("^[0-9]+\\.[0-9]+\\.[0-9]+$");
+    return pattern.exactMatch(version);
+}
+
+QString CVersion::expectedClientDllPath(const QString &version)
+{
+    if (!isValidClientVersion(version))
+        return QString();
+
+    return QDir::cleanPath(QDir(CLIENT_VERSIONS_PATH).filePath(version + ".dll"));
+}
+
+QString CVersion::findClientDll(const QString &version)
+{
+    const QString versionedPath = expectedClientDllPath(version);
+    if (QFileInfo(versionedPath).isFile())
+        return versionedPath;
+
+    return QString();
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------

@@ -115,6 +115,8 @@ bool CScript::StartScript(const char* fileName)
 			isScriptLoaded = true;
 
 		sq_pop(vm, 1);
+		if (isScriptLoaded)
+			SCallback::onInit();
 
 		OnRender();
 
