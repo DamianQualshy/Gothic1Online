@@ -3,19 +3,19 @@ Gothic 1 Online server
 
 Run GO_Server.exe with this directory as its working directory.
 
-Configuration is stored in config.xml. The server is private by
-default. Set <public>1</public> to register it with the master server compiled
-into GO_Server.exe. The startup log reports whether public registration is
-enabled.
+Configuration is stored in config.xml. The server is private by default. Set
+public="true" on the <config> element to register it with the master server
+compiled into GO_Server.exe. Ordered <script> declarations and <import> files
+select the scripts loaded for the client, server, and shared sides.
 
 Required runtime directories are grouped under resources:
 
-  resources/server-scripts  Squirrel scripts executed by the server
-  resources/client-scripts  Squirrel scripts downloaded and executed by clients
-  resources/download        Additional files downloaded into the client's Data folder
+	resources/squirrel-scripts  Shared, server, and client Squirrel examples
+	resources/lua-scripts       Equivalent shared, server, and client Lua examples
+	resources/download          Additional files downloaded into the client's Data folder
 
-The default installation supplies functional server-main.gm and client-main.gm
-examples. See resources/README.txt for the included callbacks and commands.
+The default config enables Squirrel and keeps the Lua import commented for quick
+switching. See resources/README.txt for the included events and commands.
 
 Master list files
 -----------------

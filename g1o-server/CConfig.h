@@ -1,16 +1,35 @@
 #ifndef CCONFIG_H
 #define CCONFIG_H
 
+#include <string>
+#include <vector>
+
+enum class ScriptSide
+{
+	Client,
+	Server,
+	Shared
+};
+
+struct ScriptEntry
+{
+	std::string path;
+	ScriptSide side = ScriptSide::Server;
+};
+
 class CConfig
 {
 private:
+	bool valid;
 	bool serverPublic;
 	RakString serverName;
 	RakString serverPort;
 	RakString maxSlots;
 	RakString adminPassword;
-	RakString serverScript;
-	RakString clientScript;
+	std::vector<ScriptEntry> scripts;
+	std::vector<std::string> serverScripts;
+	std::vector<std::string> clientScripts;
+
 public:
 	CConfig();
 	~CConfig();
@@ -19,13 +38,15 @@ public:
 	void SaveConfigToFile(RakString fileName);
 	void SetDefault();
 
-	inline bool GetServerPublic()		{ return this->serverPublic; };
-	inline RakString GetServerName()	{ return this->serverName; };
-	inline RakString GetServerPort()	{ return this->serverPort; };
-	inline RakString GetMaxSlots()		{ return this->maxSlots; };
-	inline RakString GetAdminPassword()	{ return this->adminPassword; };
-	inline RakString GetServerScript()	{ return this->serverScript; };
-	inline RakString GetClientScript()	{ return this->clientScript; };
+	bool IsValid() const { return valid; }
+	bool GetServerPublic() const { return serverPublic; }
+	RakString GetServerName() const { return serverName; }
+	RakString GetServerPort() const { return serverPort; }
+	RakString GetMaxSlots() const { return maxSlots; }
+	RakString GetAdminPassword() const { return adminPassword; }
+	const std::vector<ScriptEntry>& GetScripts() const { return scripts; }
+	const std::vector<std::string>& GetServerScripts() const { return serverScripts; }
+	const std::vector<std::string>& GetClientScripts() const { return clientScripts; }
 };
 
-#endif //CCONFIG_H
+#endif // CCONFIG_H

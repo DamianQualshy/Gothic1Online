@@ -11,9 +11,9 @@
 #define CLIENT_LOG_PATH             "../logs"
 
 #define UPLOAD_FILE_PATH            "download"
-#define UPLOAD_SCRIPT_PATH          "client-scripts"
+#define UPLOAD_SCRIPT_PATH          "client-resources"
 #define DOWNLOAD_FILE_PATH          "../../Data"
-#define DOWNLOAD_SCRIPT_PATH        "../Script"
+#define DOWNLOAD_SCRIPT_PATH        "../Resources"
 
 #define INJECT_APP_NAME             "../../System/GothicMod.exe"
 

@@ -9,7 +9,6 @@ private:
 	RakString serverPort;
 	RakString startWorld;
 	RakString playerInstance;
-	RakString clientScript;
 	RakString language;
 public:
 	CConfig();
@@ -24,7 +23,6 @@ public:
 	inline RakString GetServerPort(){ return this->serverPort;};
 	inline RakString GetStartWorld(){ return this->startWorld;};
 	inline RakString GetPlayerInstance(){ return this->playerInstance;};
-	inline RakString GetClientScript(){ return this->clientScript;};
 	inline RakString GetLanguage(){ return this->language; };
 
 };

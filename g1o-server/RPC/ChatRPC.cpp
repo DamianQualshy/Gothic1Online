@@ -45,11 +45,11 @@ void ChatRPC::PlayerMessage(CNetwork* network, BitStream& stream)
 					std::string text = playerMessage.C_String();
 					int pos = text.find(' ');
 				
-					SCallback::onCommand(player->GetID(),text.substr(1, pos - 1).c_str(), pos == std::string::npos ? "" : text.substr(pos + 1).c_str());
+					SEvent::PlayerCommand(player->GetID(),text.substr(1, pos - 1).c_str(), pos == std::string::npos ? "" : text.substr(pos + 1).c_str());
 				}
 				else
 				{
-					if (SCallback::onMessage(player->GetID(), playerMessage.C_String()) == 0)
+					if (SEvent::PlayerMessage(player->GetID(), playerMessage.C_String()) == 0)
 					{
 						BitStream chatStream;
 						chatStream.Write((MessageID)GO_CHAT);
@@ -63,7 +63,7 @@ void ChatRPC::PlayerMessage(CNetwork* network, BitStream& stream)
 			}
 			else
 			{
-				if( SCallback::onMessage(player->GetID(), playerMessage.C_String()) == 0 )
+				if( SEvent::PlayerMessage(player->GetID(), playerMessage.C_String()) == 0 )
 				{
 					BitStream chatStream;
 					chatStream.Write((MessageID)GO_CHAT);

@@ -34,17 +34,40 @@ CServer::~CServer()
 
 void CServer::Start()
 {
+	if (!pConfig->IsValid())
+	{
+		LOG("[error] Server startup stopped because config.xml is invalid");
+		return;
+	}
+
 	//DLOG("CServer::Start()\n");
 	//Informacje o konfiguracji servera
 	LOG("[config] Server name: %s", GetConfig()->GetServerName().C_String());
 	LOG("[config] Server port: %s", GetConfig()->GetServerPort().C_String());
 	LOG("[config] Max slots: %s", GetConfig()->GetMaxSlots().C_String());
 	LOG("[config] Public server: %s", GetConfig()->GetServerPublic() ? "yes" : "no");
-	LOG("[config] Client script: %s", GetConfig()->GetClientScript().C_String());
-	LOG("[config] Server script: %s", GetConfig()->GetServerScript().C_String());
+	for (const std::string& script : GetConfig()->GetServerScripts())
+		LOG("[config] Server script: %s", script.c_str());
+	for (const std::string& script : GetConfig()->GetClientScripts())
+		LOG("[config] Client script: %s", script.c_str());
 	LOG("[info] Loading scripts...");
-	if( scr.StartScript(pConfig->GetServerScript().C_String()) )
-		LOG("[Squirrel] All scripts should be loaded!");
+	if (scr.StartScripts(pConfig->GetServerScripts()))
+		LOG("[script] Server scripts loaded");
+	else
+		return;
+
+	try
+	{
+		const auto resource = g1o::resource::PackClientScripts(
+			".", "resources/client-resources", pConfig->GetClientScripts(), versionString);
+		LOG("[resource] Packed client scripts: %llu bytes, SHA-256 %s",
+			static_cast<unsigned long long>(resource.archive_size), resource.archive_sha256.c_str());
+	}
+	catch (const std::exception& error)
+	{
+		LOG("[resource] Cannot package client scripts: %s", error.what());
+		return;
+	}
 	LOG("[info] Starting network...");
 
 	//Inicjacja sieci

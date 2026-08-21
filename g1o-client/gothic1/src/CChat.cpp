@@ -152,7 +152,7 @@ void CChat::KeyEvent(int key)
 				std::string text = this->currentText.C_String();
 				int pos = text.find(' ');
 				
-				if (SCallback::onCommand(text.substr(1, pos - 1).c_str(), pos == std::string::npos ? "" : text.substr(pos + 1).c_str()) == 0)
+				if (CEvent::Command(text.substr(1, pos - 1).c_str(), pos == std::string::npos ? "" : text.substr(pos + 1).c_str()) == 0)
 				{
 					goto sendMessage;
 				}

@@ -25,6 +25,9 @@
 //Gothic Online headers
 #include "../Shared/GO_SharedIncludes.h"
 #include "../Shared/hashlib/hashlibpp.h"
+#include "../Shared/Scripting/NativeApi.h"
+#include "../Shared/Scripting/ScriptEngine.h"
+#include "../Shared/Resource/ClientResource.h"
 
 using namespace std;
 //Managery
@@ -57,7 +60,6 @@ using namespace std;
 #include "RPC/ScriptRPC.h"
 //Skrypty
 #include "Script/SVariable.h"
-#include "Script/STimer.h"
-#include "Script/SCallback.h"
+#include "Script/SEvent.h"
 #include "Script/SFunction.h"
 #include "Script/CScript.h"

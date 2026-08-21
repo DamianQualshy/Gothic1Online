@@ -1,40 +1,34 @@
-#ifndef CSCRIPT_H
-#define CSCRIPT_H
+#pragma once
 
-#define MAX_SCRIPT_SIZE 65535
+#include <Scripting/ScriptEngine.h>
+
 #define scr CScript::GetInstance()
 
 class CScript
 {
 private:
-	HSQUIRRELVM vm;
-	SScript* scriptVars;
-	SKey* scriptKeys;
+	std::unique_ptr<g1o::script::ScriptEngine> engine;
+	CScriptState* scriptVars;
+	CKey* scriptKeys;
 	bool isScriptLoaded;
 
 	CScript();
-	CScript( const CScript & ) {};
+	CScript(const CScript&) = delete;
+	CScript& operator=(const CScript&) = delete;
 	~CScript();
 
 public:
-	static CScript & GetInstance()
+	static CScript& GetInstance()
 	{
 		static CScript script;
 		return script;
 	}
 
-	inline HSQUIRRELVM& GetVM()			  { return this->vm; };
-	inline SScript* GetScriptVars() const { return this->scriptVars; };
-	inline SKey* GetScriptKeys()	const { return this->scriptKeys; };
-	inline bool IsScriptLoaded()	const { return this->isScriptLoaded; };
+	g1o::script::ScriptEngine& GetEngine() { return *engine; }
+	CScriptState* GetScriptVars() const { return scriptVars; }
+	CKey* GetScriptKeys() const { return scriptKeys; }
+	bool IsScriptLoaded() const { return isScriptLoaded; }
 
-	static void PrintFunction(HSQUIRRELVM vm, const SQChar *s, ...);
-	static void PrintErrors(HSQUIRRELVM vm, const SQChar *s, ...);
-	static SQInteger RuntimeErrors(HSQUIRRELVM vm);
-	static void CompileErrors(HSQUIRRELVM vm, const SQChar* description, const SQChar* file, SQInteger line, SQInteger column);
-
-	bool StartScript(const char* fileName);
+	bool StartScripts();
 	void OnRender();
 };
-
-#endif //CSCRIPT_H

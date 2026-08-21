@@ -30,7 +30,7 @@ void ItemRPC::CreateItem(Packet* packet, BitStream& stream)
 
 	CItem* item = itemManager.CreateItem(instanceName,amount,x,y,z,world);
 	if( item )
-		SCallback::onDrop(playerManager.GetPlayer(packet->systemAddress)->GetID(), item->GetID(), instanceName.C_String(), amount, world.C_String());
+		SEvent::PlayerDropItem(playerManager.GetPlayer(packet->systemAddress)->GetID(), item->GetID(), instanceName.C_String(), amount, world.C_String());
 };
 
 void ItemRPC::DestroyItem(Packet* packet, BitStream& stream)
@@ -39,6 +39,6 @@ void ItemRPC::DestroyItem(Packet* packet, BitStream& stream)
 	stream.Read(itemID);
 	CItem* item = itemManager.GetItem(itemID);
 	if( item )
-		SCallback::onTake(playerManager.GetPlayer(packet->systemAddress)->GetID(), item->GetID(), item->GetInstance().C_String(), item->GetAmount(), item->GetWorldName().C_String());
+		SEvent::PlayerTakeItem(playerManager.GetPlayer(packet->systemAddress)->GetID(), item->GetID(), item->GetInstance().C_String(), item->GetAmount(), item->GetWorldName().C_String());
 	itemManager.DestroyItem(itemID);
 };

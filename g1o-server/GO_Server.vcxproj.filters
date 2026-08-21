@@ -149,7 +149,7 @@
     <ClCompile Include="Script\CScript.cpp">
       <Filter>Core\Script</Filter>
     </ClCompile>
-    <ClCompile Include="Script\SCallback.cpp">
+    <ClCompile Include="Script\SEvent.cpp">
       <Filter>Core\Script</Filter>
     </ClCompile>
     <ClCompile Include="Script\SFunction.cpp">
@@ -709,7 +709,7 @@
     <ClInclude Include="Script\CScript.h">
       <Filter>Core\Script</Filter>
     </ClInclude>
-    <ClInclude Include="Script\SCallback.h">
+    <ClInclude Include="Script\SEvent.h">
       <Filter>Core\Script</Filter>
     </ClInclude>
     <ClInclude Include="Script\SFunction.h">

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-CPlayerManager::CPlayerManager()
+CPlayerManager::CPlayerManager() : pLocalPlayer(nullptr)
 {
 	DLOG("CPlayerManager::CPlayerManager()");
 
@@ -23,9 +23,9 @@ CLocalPlayer* CPlayerManager::CreateLocalPlayer(int playerID, RakString playerNa
 		this->pLocalPlayer = player;
 		this->pLocalPlayer->world = core.GetConfig()->GetStartWorld();
 
-		// Crash fix, onInit after create local player
+		// Client scripts initialize only after the local Gothic 1 player exists.
 		if (scr.IsScriptLoaded())
-			SCallback::onInit();
+			CEvent::Init();
 
 		return player;
 	}

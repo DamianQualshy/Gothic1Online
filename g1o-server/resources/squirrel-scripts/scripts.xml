@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server>
+	<!-- Declarations are evaluated in order and paths are relative to this file. -->
+	<script src="shared/constants.nut" type="shared" />
+	<script src="shared/helpers.nut" type="shared" />
+
+	<script src="server/main.nut" type="server" />
+	<script src="server/player-events.nut" type="server" />
+	<script src="server/commands.nut" type="server" />
+
+	<script src="client/main.nut" type="client" />
+	<script src="client/player-events.nut" type="client" />
+	<script src="client/commands.nut" type="client" />
+</server>

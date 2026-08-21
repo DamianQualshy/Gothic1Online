@@ -69,7 +69,7 @@ void CMaster::Pulse()
 				stream.Write(playerManager.GetNumberOfPlayers());
 				stream.Write(maxSlots);
 				stream.Write(core.GetDescription());
-				stream.Write(cfg->GetClientScript());
+				stream.Write(RakString("client-scripts.manifest.json"));
 				stream.Write(RakString(versionString));
 				stream.Write(core.GetWorld());
 

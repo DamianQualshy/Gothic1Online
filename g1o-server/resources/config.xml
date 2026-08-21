@@ -1,12 +1,14 @@
-<!-- Gothic Online server configuration. All available G1O options are listed below. -->
-<GO_Config>
-	<!-- 1 registers the server with the configured master server; 0 keeps it private. -->
-	<public>0</public>
-	<serverName>Gothic Online Server</serverName>
-	<serverPort>28970</serverPort>
-	<maxSlots>32</maxSlots>
-	<!-- Change this before exposing the server publicly. -->
-	<adminPassword>change-me</adminPassword>
-	<serverScript>server-main.gm</serverScript>
-	<clientScript>client-main.gm</clientScript>
-</GO_Config>
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Gothic Online server configuration. Script declarations are loaded in document order. -->
+<server>
+	<config
+		public="false"
+		host_name="Gothic Online Server"
+		port="28970"
+		max_slots="32"
+		rcon_pass="change-me" />
+
+	<!-- Enable exactly one language resource. Loading both is rejected as a mixed runtime. -->
+	<import src="resources/squirrel-scripts/scripts.xml" />
+	<!-- <import src="resources/lua-scripts/scripts.xml" /> -->
+</server>

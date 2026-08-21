@@ -6,7 +6,6 @@
 	<serverPort>28970</serverPort>
 	<startWorld>WORLD.ZEN</startWorld>
 	<playerInstance>PC_HERO</playerInstance>
-	<clientScript>client-main.gm</clientScript>
 	<!-- Launcher languages: en, pl, ru. Unsupported in-game text falls back to English. -->
 	<lang>en</lang>
 	<!-- -1 centers the launcher on first start. -->

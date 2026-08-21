@@ -331,7 +331,7 @@ void CLocalPlayer::SendHand()
 					this->leftHand = leftHandIt->GetInstanceName().ToChar();
 					//core.GetChat()->AddLine(RakString("L+ %s", this->leftHand.C_String()), zCOLOR(255, 0, 0));
 					DLOG("Left hand: %s",this->leftHand.C_String());
-					SCallback::onUseItem(leftHand.C_String(), leftHandIt->GetAmount(), 0);
+					CEvent::UseItem(leftHand.C_String(), leftHandIt->GetAmount(), 0);
 
 					BitStream stream;
 					stream.Write((MessageID)GO_PLAYER);
@@ -349,7 +349,7 @@ void CLocalPlayer::SendHand()
 					this->leftHand = "NULL";
 					//core.GetChat()->AddLine(RakString("L- %s", this->leftHand.C_String()), zCOLOR(255, 0, 0));
 					DLOG("Left hand: %s",this->leftHand.C_String());
-					SCallback::onUseItem("NULL", 0, 0);
+					CEvent::UseItem("NULL", 0, 0);
 
 					BitStream stream;
 					stream.Write((MessageID)GO_PLAYER);
@@ -367,7 +367,7 @@ void CLocalPlayer::SendHand()
 					this->rightHand = rightHandIt->GetInstanceName().ToChar();
 					//core.GetChat()->AddLine(RakString("R+ %s", this->rightHand.C_String()), zCOLOR(255, 0, 0));
 					DLOG("Right hand:%s", this->rightHand.C_String());
-					SCallback::onUseItem(rightHand.C_String(), rightHandIt->GetAmount(), 1);
+					CEvent::UseItem(rightHand.C_String(), rightHandIt->GetAmount(), 1);
 
 					BitStream stream;
 					stream.Write((MessageID)GO_PLAYER);
@@ -385,7 +385,7 @@ void CLocalPlayer::SendHand()
 					this->rightHand = "NULL";
 					//core.GetChat()->AddLine(RakString("R- %s", this->rightHand.C_String()), zCOLOR(255, 0, 0));
 					DLOG("Right hand:%s", this->rightHand.C_String());
-					SCallback::onUseItem("NULL", 0, 1);
+					CEvent::UseItem("NULL", 0, 1);
 
 					BitStream stream;
 					stream.Write((MessageID)GO_PLAYER);
@@ -487,7 +487,7 @@ void CLocalPlayer::SendHitFocus(oCNpc *target)
 						{
 							if (!target->IsUnconscious() && minushp > 0)
 							{
-								SCallback::onHit();
+								CEvent::PlayerHit();
 
 								BitStream stream;
 								stream.Write((MessageID)GO_PLAYER);
@@ -565,7 +565,7 @@ void CLocalPlayer::SendStandUp()
 				if( hero->IsUnconscious() == 0 )
 				{
 					this->unconscious = false;
-					SCallback::onStandUp();
+					CEvent::PlayerStandUp();
 
 					//Wysłanie że wstaje
 					BitStream stream;
@@ -865,7 +865,7 @@ void CLocalPlayer::Respawn()
 				lastDeathTimer = GetTimeMS() + 5000;
 				isDead = true;
 				
-				SCallback::onDie();
+				CEvent::PlayerDead();
 
 				if (hero->IsHuman())
 				{
@@ -918,7 +918,7 @@ void CLocalPlayer::Respawn()
 					game->SetShowPlayerStatus(1);
 				}
 
-				SCallback::onRespawn();
+				CEvent::PlayerRespawn();
 			}
 		}
 		else
@@ -932,7 +932,7 @@ void CLocalPlayer::Unconscious()
 	if (oCNpc::GetHero()->IsUnconscious() && !this->unconscious && scr.GetScriptVars()->isUnconsciousEnabled)
 	{
 		this->unconscious = true;
-		SCallback::onUnconscious();
+		CEvent::PlayerUnconscious();
 	}
 }
 
@@ -972,7 +972,7 @@ void CLocalPlayer::HandleFocus()
 			{
 				hasFocus = focus;
 
-				SCallback::onLostFocus(focusID, focusName.ToChar());
+				CEvent::PlayerLostFocus(focusID, focusName.ToChar());
 				SendFocus(this->id, focusID, false);
 
 				zVEC3 pos = focus->GetPosition();
@@ -980,7 +980,7 @@ void CLocalPlayer::HandleFocus()
 
 				focusID = player ? player->GetID() : -1;
 
-				SCallback::onTakeFocus(focusID, focus->GetName(0).ToChar(), pos[0], pos[1], pos[2]);
+				CEvent::PlayerTakeFocus(focusID, focus->GetName(0).ToChar(), pos[0], pos[1], pos[2]);
 				SendFocus(this->id, focusID, true);
 			}
 			else if (!hasFocus)
@@ -992,7 +992,7 @@ void CLocalPlayer::HandleFocus()
 				
 				focusID = player ? player->GetID() : -1;
 
-				SCallback::onTakeFocus(focusID, focus->GetName(0).ToChar(), pos[0], pos[1], pos[2]);
+				CEvent::PlayerTakeFocus(focusID, focus->GetName(0).ToChar(), pos[0], pos[1], pos[2]);
 				SendFocus(this->id, focusID, true);
 			}
 
@@ -1001,7 +1001,7 @@ void CLocalPlayer::HandleFocus()
 		else if (hasFocus)
 		{
 			hasFocus = NULL;
-			SCallback::onLostFocus(focusID, focusName.ToChar());
+			CEvent::PlayerLostFocus(focusID, focusName.ToChar());
 		}
 
 		focusTimer = GetTimeMS() + 50;

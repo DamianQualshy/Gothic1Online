@@ -1,5 +1,7 @@
 #include "..\\stdafx.h"
 
+#include <Scripting/ScriptWire.h>
+
 void ScriptRPC::HandleScriptRPC(CNetwork* network, Packet* packet)
 {
 	BitStream stream(packet->data,packet->length,false);
@@ -9,27 +11,18 @@ void ScriptRPC::HandleScriptRPC(CNetwork* network, Packet* packet)
 	stream.Read(eScriptRPC);
 	switch(eScriptRPC)
 	{
-	case CLIENT_SCRIPT: ScriptLoad(network,stream); break;
 	case SCRIPT_PACKET: ScriptPacket(network,stream); break;
 	case SCRIPT_UNCONSCIOUS: ScriptUnconscious(network,stream); break;
 	case SCRIPT_VISUAL: ScriptVisual(network, stream); break;
-	case SCRIPT_CALL: ScriptCall(network, stream); break;
-	case SCRIPT_CHECK: ScriptCheck(network, stream); break;
+	case SCRIPT_EVENT: ScriptEvent(network, stream); break;
 	}
-};
-
-void ScriptRPC::ScriptLoad(CNetwork* network, BitStream& stream)
-{
-	RakString scriptName;
-	stream.Read(scriptName);
-	scr.StartScript(scriptName.C_String());
 };
 
 void ScriptRPC::ScriptPacket(CNetwork* network, BitStream& stream)
 {
 	RakString data;
 	stream.Read(data);
-	SCallback::onPacket(data.C_String());
+	CEvent::Packet(data.C_String());
 };
 
 void ScriptRPC::ScriptUnconscious(CNetwork* network, BitStream& stream)
@@ -60,57 +53,27 @@ void ScriptRPC::ScriptVisual(CNetwork* network, BitStream& stream)
 	}
 }
 
-void ScriptRPC::ScriptCall(CNetwork* network, BitStream& stream)
+void ScriptRPC::ScriptEvent(CNetwork* network, BitStream& stream)
 {
-	RakString functionCall, format;
-
-	stream.Read(functionCall);
-	stream.Read(format);
-
-	int p1; float p2; RakString p3;
-
-	HSQUIRRELVM vm = scr.GetVM();
-	SQ_FUNCTION_BEGIN(vm, functionCall.C_String());
-
-	unsigned paramSize = format.GetLength() - 1;
-	for (int i = 1; i <= paramSize; ++i)
+	RakString event_name;
+	g1o::script::ScriptArguments arguments;
+	std::string error;
+	if (!stream.Read(event_name))
+		return;
+	if (!g1o::script::EventManager::IsValidName(event_name.C_String()))
 	{
-		switch ((format.C_String())[i])
-		{
-		case 'd':
-			stream.Read(p1);
-			sq_pushinteger(vm, p1);
-			break;
-		case 'f':
-			stream.Read(p2);
-			sq_pushfloat(vm, p2);
-			break;
-		case 's':
-			stream.Read(p3);
-			sq_pushstring(vm, p3.C_String(), -1);
-			break;
-		}
+		LOG("[script] Rejected invalid remote event name");
+		return;
 	}
-
-	SQ_FUNCTION_CALL(vm, paramSize);
-	SQ_FUNCTION_END(vm);
-}
-
-void ScriptRPC::ScriptCheck(CNetwork* network, BitStream& stream)
-{
-	RakString scriptName;
-	RakString checksum;
-	stream.Read(scriptName);
-	stream.Read(checksum);
-	md5wrapper wrap;
-	char buff[512];
-	sprintf(buff, "Multiplayer/Script/%s", scriptName.C_String());
-	std::string sum = wrap.getHashFromFile(std::string(buff));
-
-	if( strcmp(checksum.C_String(), sum.c_str()) != 0 )
+	if (!g1o::script::wire::ReadArguments(stream, arguments, error))
 	{
-		network->Disconnect();
-		CGameManager::GetGameManager()->ExitGame();
-		ExitProcess(0);
+		if (!error.empty()) LOG("[script] Rejected remote event packet: %s", error.c_str());
+		return;
 	}
+	if (!scr.GetEngine().Events().CanTriggerRemotely(event_name.C_String()))
+	{
+		LOG("[script] Server tried to trigger protected event '%s'", event_name.C_String());
+		return;
+	}
+	scr.GetEngine().Dispatch(event_name.C_String(), arguments);
 }

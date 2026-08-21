@@ -1,6 +1,6 @@
 # Gothic 1 Online
 
-This repository contains the Gothic 1 client DLL, external Qt launcher, game server, master server, and their shared legacy networking and Squirrel dependencies.
+This repository contains the Gothic 1 client DLL, external Qt launcher, game server, master server, and their shared networking and scripting infrastructure.
 
 ## Layout
 
@@ -9,7 +9,8 @@ This repository contains the Gothic 1 client DLL, external Qt launcher, game ser
 - `g1o-client/gothic1/lib/gothic-api` — maintained Union Gothic API, configured for Gothic 1 Classic
 - `g1o-server` — multiplayer game server
 - `g1o-master` — master server
-- `Shared` — RakNet, Squirrel, TinyXML, hashing, threading, and common protocol code
+- `Shared` — RakNet, language-neutral scripting, resource packaging, TinyXML, hashing, threading, and common protocol code
+- `dependencies` — pinned Squirrel and Sqrat submodules
 
 The old hand-written ZenGin class layouts have been removed. G1O-specific helpers and hooks live in `g1o-client/gothic1/src/game`, while declarations that extend ZenGin classes use `ZenGin/Gothic_UserAPI`.
 
@@ -48,7 +49,7 @@ xmake f -p windows -a x86 -m release \
 
 These are build-time settings, not values from the client or server XML files. `master_server_address` is the RakNet host used by `GO_Server`; `master_server_port` is both its destination port and the port listened on by `GO_Master`. `master_server_list_url` is the separate HTTP(S) `list.txt` endpoint read by the launcher, and `launcher_version_url` is its update-check endpoint. Reconfigure and rebuild the affected targets after changing them.
 
-`GO_Master` writes `list.txt` and `list.html` into its current working directory; it does not serve HTTP itself. Run it in the web directory represented by `master_server_list_url`, or publish/copy those files there. A game server registers only when its `config.xml` contains `<public>1</public>`; the default is private.
+`GO_Master` writes `list.txt` and `list.html` into its current working directory; it does not serve HTTP itself. Run it in the web directory represented by `master_server_list_url`, or publish/copy those files there. A game server registers only when its `config.xml` has `public="true"` on its `<config>` element; the default is private.
 
 Install a completed build into a Gothic directory with:
 
@@ -56,8 +57,8 @@ Install a completed build into a Gothic directory with:
 xmake install -o "E:\Gothic 1 Online"
 ```
 
-This installs `GO_Launcher.exe`, the matching Qt runtime, plugins, and launcher language files under `Multiplayer/Launcher`. The client DLL is installed as `Multiplayer/versions/<version>.dll`, matching the version reported by a server. Client resources are copied from `g1o-client/gothic1/resources` into the game directory; an existing client configuration is preserved. The server is installed into `g1o-server`, with its configuration, default scripts, documentation, and download directory grouped under `g1o-server/resources`, matching the GMPC layout. `G1O.Master` is intentionally excluded from the default game installation.
+This installs `GO_Launcher.exe`, the matching Qt runtime, plugins, and launcher language files under `Multiplayer/Launcher`. The client DLL is installed as `Multiplayer/versions/<version>.dll`, matching the version reported by a server. Client resources are copied from `g1o-client/gothic1/resources` into the game directory; an existing client configuration is preserved. The server is installed into `g1o-server`, with `config.xml` beside the executable and scripts, imported script lists, documentation, and downloads under `g1o-server/resources`, matching the GMPC layout. `G1O.Master` is intentionally excluded from the default game installation.
 
 The Gothic API target is deliberately compiled with `__G1`. Do not change it to `__G2` or `__G2A`; the class layouts, globals, and function addresses are not compatible.
 
-Squirrel scripting and the external launcher remain part of the architecture.
+The scripting layer supports Squirrel and Lua through runtime adapters over one shared value, event, timer, and native-function API. Server `config.xml` uses ordered `<script src="..." type="client|server|shared" />` declarations and recursive `<import src="..." />` files. The default resources provide parallel `squirrel-scripts` and `lua-scripts` imports, with Squirrel enabled and Lua commented for quick testing. Each imported resource and each server/client runtime must use one language; mixed Squirrel/Lua resources or runtime lists are rejected during configuration loading. Client scripts are distributed as packaged stripped Lua or Squirrel bytecode rather than source text. The game bindings remain explicitly Gothic 1 (`__G1`); the GMPC/G2O references are used only for scripting and resource-system behavior.

@@ -1,0 +1,44 @@
+#include "..\\stdafx.h"
+
+CKey::CKey()
+{
+	DLOG("CKey::CKey()");
+
+	timeLastKey = 0;
+	disabledKeys.Clear();
+};
+
+CKey::~CKey()
+{
+	DLOG("CKey::~CKey()");
+};
+
+void CKey::KeyEvent(int key)
+{
+	if (zCInput::GetInput()->KeyPressed(KEY_LSHIFT) && zCInput::GetInput()->KeyPressed(KEY_LALT))
+		core.GetKeyBoard()->SwitchLayout();
+
+	// Blockade keys, when chat is active
+	if (!core.GetChat()->IsInputActive() && GetTimeMS() > this->timeLastKey)
+	{
+		CEvent::KeyDown(key);
+		this->timeLastKey = GetTimeMS() + 70;
+	}
+}
+
+bool CKey::IsKeyEnabled(int key)
+{
+	if( disabledKeys.FindIndex(key) > -1 )
+		return false;
+	return true;
+}
+
+void CKey::SetKeyEnabled(int key, bool toggle)
+{
+	if( toggle == true )
+		if( disabledKeys.FindIndex(key) > -1 )
+			disabledKeys.Remove(key);
+	if( toggle == false )
+		if( disabledKeys.FindIndex(key) == -1 )
+			disabledKeys.PushBack(key);
+}

@@ -1,9 +1,9 @@
-#ifndef SVARAIABLE_H
-#define SVARAIABLE_H
+#ifndef SVARIABLE_H
+#define SVARIABLE_H
 
-namespace SVaraiable
+namespace SVariable
 {
-	void bindGOVaraiable(HSQUIRRELVM &VM);
+	void RegisterConstants(g1o::script::NativeRegistry& registry);
 };
 
-#endif //SVARAIABLE_H
+#endif //SVARIABLE_H

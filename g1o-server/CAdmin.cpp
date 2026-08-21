@@ -83,7 +83,7 @@ void CAdmin::HandleAdminCommand(CPlayer* player, RakString command)
 				}
 				else
 				{
-					SCallback::onAdminCommand(player->GetID(), cmd.C_String());
+					SEvent::AdminCommand(player->GetID(), cmd.C_String());
 				}
 			}
 			command.FreeMemory();

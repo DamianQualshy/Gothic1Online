@@ -56,7 +56,6 @@ bool CConfig::LoadConfigFromFile(RakString fileName)
 	ReadString(root, "serverPort", serverPort);
 	ReadString(root, "startWorld", startWorld);
 	ReadString(root, "playerInstance", playerInstance);
-	ReadString(root, "clientScript", clientScript);
 
 	return true;
 }
@@ -75,7 +74,6 @@ void CConfig::SaveConfigToFile(RakString fileName)
 	fprintf(config, "\t<serverPort>%s</serverPort>\n", serverPort.C_String());
 	fprintf(config, "\t<startWorld>%s</startWorld>\n", startWorld.C_String());
 	fprintf(config, "\t<playerInstance>%s</playerInstance>\n", playerInstance.C_String());
-	fprintf(config, "\t<clientScript>%s</clientScript>\n", clientScript.C_String());
 	fprintf(config, "\t<lang>%s</lang>\n", language.C_String());
 	fprintf(config, "\t<launcherPosX>-1</launcherPosX>\n");
 	fprintf(config, "\t<launcherPosY>-1</launcherPosY>\n");
@@ -93,6 +91,5 @@ void CConfig::SetDefault()
 	serverPort = "28970";
 	startWorld = "WORLD.ZEN";
 	playerInstance = "PC_HERO";
-	clientScript = "client-main.gm";
 	language = "en";
 }

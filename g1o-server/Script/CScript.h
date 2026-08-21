@@ -1,35 +1,27 @@
-#ifndef CSCRIPT_H
-#define CSCRIPT_H
+#pragma once
 
-#define MAX_SCRIPT_SIZE 65535
+#include <Scripting/ScriptEngine.h>
+
 #define scr CScript::GetInstance()
 
 class CScript
 {
 private:
-	HSQUIRRELVM vm;
+	std::unique_ptr<g1o::script::ScriptEngine> engine;
 
 	CScript();
-	CScript( const CScript & ) {};
+	CScript(const CScript&) = delete;
+	CScript& operator=(const CScript&) = delete;
 	~CScript();
 
 public:
-	static CScript & GetInstance()
+	static CScript& GetInstance()
 	{
 		static CScript script;
 		return script;
 	}
 
-	
-	inline HSQUIRRELVM& GetVM()			  { return this->vm; };
-
-	static void PrintFunction(HSQUIRRELVM vm, const SQChar *s, ...);
-	static void PrintErrors(HSQUIRRELVM vm, const SQChar *s, ...);
-	static SQInteger RuntimeErrors(HSQUIRRELVM vm);
-	static void CompileErrors(HSQUIRRELVM vm, const SQChar* description, const SQChar* file, SQInteger line, SQInteger column);
-
-	bool StartScript(const char* fileName);
+	g1o::script::ScriptEngine& GetEngine() { return *engine; }
+	bool StartScripts(const std::vector<std::string>& paths);
 	void OnTick();
 };
-
-#endif //CSCRIPT_H

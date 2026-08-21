@@ -22,7 +22,7 @@ void ConnectionRPC::LostConnection(CNetwork* network, Packet* packet)
 	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
 	if( player )
 	{
-		SCallback::onDisconnect(player->GetID(), "LOST_CONNECTION");
+		SEvent::PlayerDisconnect(player->GetID(), "LOST_CONNECTION");
 		player->spawned = false;
 		LOG("[connection] %s lost connection with the server %s",player->name.C_String(),player->GetAddress().ToString());
 		player->Disconnect();
@@ -37,7 +37,7 @@ void ConnectionRPC::Disconnection(CNetwork* network, Packet* packet)
 	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
 	if( player )
 	{
-		SCallback::onDisconnect(player->GetID(), "DISCONNECTED");
+		SEvent::PlayerDisconnect(player->GetID(), "DISCONNECTED");
 		player->spawned = false;
 		LOG("[connection] %s disconnected from server %s",player->name.C_String(),player->GetAddress().ToString());
 
@@ -102,26 +102,9 @@ void ConnectionRPC::PleaseConnect(CNetwork* network, BitStream& stream, SystemAd
 					playerManager.BroadcastPlayerList();
 		
 					player->spawned = true;
-					SCallback::onJoin(player->GetID());
+					SEvent::PlayerConnect(player->GetID());
 
 				LOG("[join] %s has joined the server %s",playerName.C_String(),player->GetAddress().ToString());
-				//Ask player for correct script's hashes
-				BitStream sStream;
-				sStream.Write((MessageID)GO_SCRIPT);
-				sStream.Write((MessageID)SCRIPT_CHECK);
-				sStream.Write(core.GetConfig()->GetClientScript());
-				md5wrapper wrap;
-				std::string checksum = "NULL";
-				char buff[512];
-				sprintf(buff, "resources/client-scripts/%s", core.GetConfig()->GetClientScript().C_String());
-				FILE* file = fopen(buff, "r");
-				if( file )
-				{
-					fclose(file);
-					checksum = wrap.getHashFromFile(std::string(buff));
-				}
-				sStream.Write(RakString(checksum.c_str()));
-				//network->GetPeer()->Send(&sStream, LOW_PRIORITY, RELIABLE, 0, clientAddress, false); //DISABLED ONLY FOR TESTS!!
 				}
 			}
 			else

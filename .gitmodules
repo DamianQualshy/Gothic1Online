@@ -1,0 +1,6 @@
+[submodule "dependencies/squirrel"]
+	path = dependencies/squirrel
+	url = https://gitlab.com/GothicMultiplayerTeam/dependencies/squirrel.git
+[submodule "dependencies/sqrat"]
+	path = dependencies/sqrat
+	url = https://gitlab.com/GothicMultiplayerTeam/dependencies/sqrat.git

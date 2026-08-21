@@ -1,7 +1,7 @@
 #ifndef GOMESSAGES_H
 #define GOMESSAGES_H
 
-#define versionNumber 226
+#define versionNumber 227
 
 enum EMultiplayerMessages
 {
@@ -74,14 +74,13 @@ enum EItemRPC
 
 enum EScriptRPC
 {
-	CLIENT_SCRIPT,
+	SCRIPT_RESOURCE_RESERVED, // Retains the legacy wire ID; resources now load from their manifest.
 	SCRIPT_PACKET,
 	SCRIPT_UNCONSCIOUS,
 	SCRIPT_VISUAL,
 	SCRIPT_OVERLAY,
-	SCRIPT_CALL,
 	SCRIPT_FOCUS,
-	SCRIPT_CHECK
+	SCRIPT_EVENT
 };
 
 #endif //GOMESSAGES_H

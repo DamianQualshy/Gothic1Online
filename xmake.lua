@@ -15,6 +15,8 @@ add_moduledirs("xmake/modules")
 
 add_rules("mode.debug", "mode.release", "mode.releasedbg")
 
+add_requires("lua 5.4.7", "sol2 3.3.*", "nlohmann_json 3.12.*", "minizip 1.2.13")
+
 option("master_server_address")
     set_showmenu(true)
     set_description("Host or IP used by game servers to register with the master server")

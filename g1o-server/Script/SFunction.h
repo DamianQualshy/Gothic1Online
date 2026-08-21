@@ -3,48 +3,31 @@
 
 namespace SFunction
 {
-	void bindGOFunctions(HSQUIRRELVM vm);
-
-	SQInteger getTickCount(HSQUIRRELVM vm);
-	SQInteger getPlayerName(HSQUIRRELVM vm);
-	SQInteger getPlayerPing(HSQUIRRELVM vm);
-	SQInteger setPlayerVirtualWorld(HSQUIRRELVM vm);
-	SQInteger getPlayerVirtualWorld(HSQUIRRELVM vm);
-	SQInteger isConnected(HSQUIRRELVM vm);
-	SQInteger sendMessageToAll(HSQUIRRELVM vm);
-	SQInteger sendMessage(HSQUIRRELVM vm);
-	SQInteger sendPacket(HSQUIRRELVM vm);
-	SQInteger getPosition(HSQUIRRELVM vm);
-	SQInteger getDistance3D(HSQUIRRELVM vm);
-	SQInteger getDistance2D(HSQUIRRELVM vm);
-	SQInteger isAdmin(HSQUIRRELVM vm);
-	SQInteger getMaxSlots(HSQUIRRELVM vm);
-	SQInteger getPlayersCount(HSQUIRRELVM vm);
-	SQInteger sscanf(HSQUIRRELVM vm);
-	SQInteger rgbToHex(HSQUIRRELVM vm);
-	SQInteger hexToRGB(HSQUIRRELVM vm);
-	SQInteger md5(HSQUIRRELVM vm);
-	SQInteger sha1(HSQUIRRELVM vm);
-	SQInteger sha256(HSQUIRRELVM vm);
-	SQInteger sha384(HSQUIRRELVM vm);
-	SQInteger sha512(HSQUIRRELVM vm);
-	SQInteger setTimer(HSQUIRRELVM vm);
-	SQInteger killTimer(HSQUIRRELVM vm);
-	SQInteger setTimerInterval(HSQUIRRELVM vm);
-	SQInteger setTimerRepeat(HSQUIRRELVM vm);
-	SQInteger setTimerData(HSQUIRRELVM vm);
-	SQInteger getServerDescription(HSQUIRRELVM vm);
-	SQInteger setServerDescription(HSQUIRRELVM vm);
-	SQInteger getServerWorld(HSQUIRRELVM vm);
-	SQInteger setServerWorld(HSQUIRRELVM vm);
-	SQInteger kick(HSQUIRRELVM vm);
-	SQInteger ban(HSQUIRRELVM vm);
-	SQInteger enableUnconscious(HSQUIRRELVM vm);
-	SQInteger createItem(HSQUIRRELVM vm);
-	SQInteger destroyItem(HSQUIRRELVM vm);
-	SQInteger callClientFunc(HSQUIRRELVM vm);
-	SQInteger setPlayerInvisible(HSQUIRRELVM vm);
-	SQInteger isPlayerInvisible(HSQUIRRELVM vm);
+	void Register(g1o::script::NativeRegistry& registry);
+	int getPlayerName(g1o::script::CallContext& context);
+	int getPlayerPing(g1o::script::CallContext& context);
+	int setPlayerVirtualWorld(g1o::script::CallContext& context);
+	int getPlayerVirtualWorld(g1o::script::CallContext& context);
+	int isPlayerConnected(g1o::script::CallContext& context);
+	int sendMessageToAll(g1o::script::CallContext& context);
+	int sendMessageToPlayer(g1o::script::CallContext& context);
+	int sendPacketToPlayer(g1o::script::CallContext& context);
+	int getPlayerPosition(g1o::script::CallContext& context);
+	int isPlayerAdmin(g1o::script::CallContext& context);
+	int getMaxSlots(g1o::script::CallContext& context);
+	int getPlayersCount(g1o::script::CallContext& context);
+	int getServerDescription(g1o::script::CallContext& context);
+	int setServerDescription(g1o::script::CallContext& context);
+	int getServerWorld(g1o::script::CallContext& context);
+	int setServerWorld(g1o::script::CallContext& context);
+	int kick(g1o::script::CallContext& context);
+	int ban(g1o::script::CallContext& context);
+	int setUnconsciousEnabled(g1o::script::CallContext& context);
+	int createGroundItem(g1o::script::CallContext& context);
+	int destroyGroundItem(g1o::script::CallContext& context);
+	int triggerClientEvent(g1o::script::CallContext& context);
+	int setPlayerInvisible(g1o::script::CallContext& context);
+	int isPlayerInvisible(g1o::script::CallContext& context);
 };
 
 #endif //SFUNCTION_H

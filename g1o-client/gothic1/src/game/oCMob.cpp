@@ -78,7 +78,7 @@ void oCMobInter::Hook_OnTrigger(zCVob *target, zCVob *sender)
 	{
 		if (oCNpc::GetHero() == (oCNpc*)sender)
 		{
-			int result = SCallback::onMobTrigger(this);
+			int result = CEvent::MobTrigger(this);
 
 			switch (::GetVobType(this))
 			{
@@ -109,7 +109,7 @@ void oCMobInter::Hook_OnUntrigger(zCVob *target, zCVob *sender)
 	{
 		if (oCNpc::GetHero() == (oCNpc*)sender)
 		{
-			int result = SCallback::onMobUntrigger(this);
+			int result = CEvent::MobUntrigger(this);
 
 			switch (::GetVobType(this))
 			{

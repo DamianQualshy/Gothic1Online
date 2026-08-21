@@ -18,7 +18,6 @@ CSettings::CSettings() :
     m_ServerPort(QString::number(DEFAULT_PORT)),
     m_StartWorld("WORLD.ZEN"),
     m_PlayerInstance("PC_HERO"),
-    m_ClientScript("client-main.gm"),
     m_Loaded(false)
 {
 #ifdef DEBUG_MODE
@@ -55,8 +54,7 @@ void CSettings::saveLauncherSettings()
 bool CSettings::saveConnectionSettings(const QString &ipAddress,
                                        const QString &port,
                                        const QString &world,
-                                       const QString &playerInstance,
-                                       const QString &clientScript)
+                                       const QString &playerInstance)
 {
     m_Nickname = LAUNCHER.getUI()->editNickname->text().isEmpty() ? SettingUnknow::NAME : LAUNCHER.getUI()->editNickname->text();
     m_Language = LAUNCHER.getLanguage().getCurrentLang().isEmpty() ? "en" : LAUNCHER.getLanguage().getCurrentLang();
@@ -64,7 +62,6 @@ bool CSettings::saveConnectionSettings(const QString &ipAddress,
     m_ServerPort = port;
     m_StartWorld = world;
     m_PlayerInstance = playerInstance;
-    m_ClientScript = clientScript;
     return saveConfig();
 }
 
@@ -149,8 +146,6 @@ bool CSettings::loadConfig()
                     m_StartWorld = xml.readElementText();
                 else if (name == "playerInstance")
                     m_PlayerInstance = xml.readElementText();
-                else if (name == "clientScript")
-                    m_ClientScript = xml.readElementText();
             }
             else if (xml.isEndElement() && xml.name().toString() == section)
                 section.clear();
@@ -193,7 +188,6 @@ bool CSettings::saveConfig() const
     xml.writeTextElement("serverPort", m_ServerPort);
     xml.writeTextElement("startWorld", m_StartWorld);
     xml.writeTextElement("playerInstance", m_PlayerInstance);
-    xml.writeTextElement("clientScript", m_ClientScript);
     xml.writeTextElement("lang", m_Language);
     xml.writeTextElement("launcherPosX", QString::number(m_WindowX));
     xml.writeTextElement("launcherPosY", QString::number(m_WindowY));

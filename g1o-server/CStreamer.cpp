@@ -34,7 +34,7 @@ void CStreamer::StreamPlayers(bool timeout)
 							CPlayer *streamed = j->second;
 
 							if (streamed->spawned && !streamed->isInvisible &&
-								streamed->GetVirutalWorld() == player->virtualWorld &&
+								streamed->GetVirtualWorld() == player->virtualWorld &&
 								streamed->world == player->world)
 							{
 								float distance = goMath::GetDistance3D(streamed->x, streamed->y, streamed->z, player->x, player->y, player->z);

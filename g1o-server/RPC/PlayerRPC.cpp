@@ -301,12 +301,12 @@ void PlayerRPC::SetHealth(Packet* packet, BitStream& stream)
 		stream.Read(health);
 		if (health == 0 && !player->isDead)
 		{
-			SCallback::onDie(player->GetID(), -1);
+			SEvent::PlayerDeath(player->GetID(), -1);
 			player->isDead = true;
 		}
 		if (player->health == 0 && health > 0)
 		{
-			SCallback::onRespawn(player->GetID());
+			SEvent::PlayerRespawn(player->GetID());
 			player->isDead = false;
 			player->isUnconscious = false;
 		}
@@ -376,7 +376,7 @@ void PlayerRPC::AttackHit(Packet* packet, BitStream& stream)
 			   (focusPlayer->animationId == 392 || focusPlayer->animationId == 447 || focusPlayer->animationId == 791) &&
 				range <= 100)
 			{
-				SCallback::onHit(player->GetID(), focusID);
+				SEvent::PlayerHit(player->GetID(), focusID);
 
 				BitStream s;
 				s.Write((MessageID)GO_PLAYER);
@@ -409,7 +409,7 @@ void PlayerRPC::AttackDead(Packet* packet, BitStream& stream)
 		killerPlayer && killerPlayer->bConnected && killerPlayer->spawned && !killerPlayer->isDead)
 	{
 		focusPlayer->isDead = true;
-		SCallback::onDie(focusPlayer->GetID(), killerPlayer->GetID());
+		SEvent::PlayerDeath(focusPlayer->GetID(), killerPlayer->GetID());
 
 		BitStream s;
 		s.Write((MessageID)GO_PLAYER);
@@ -441,7 +441,7 @@ void PlayerRPC::AttackUnconscious(Packet* packet, BitStream& stream)
 		killerPlayer && killerPlayer->bConnected && killerPlayer->spawned && !killerPlayer->isUnconscious)
 	{
 		focusPlayer->isUnconscious = true;
-		SCallback::onUnconscious(focusPlayer->GetID(), playerManager.GetPlayer(packet->systemAddress)->GetID());
+		SEvent::PlayerUnconscious(focusPlayer->GetID(), playerManager.GetPlayer(packet->systemAddress)->GetID());
 
 		BitStream s;
 		s.Write((MessageID)GO_PLAYER);
@@ -471,7 +471,7 @@ void PlayerRPC::StandUp(Packet* packet, BitStream& stream)
 	if (player && player->bConnected == true && player->spawned == true && !player->isDead)
 	{
 		player->isUnconscious = false;
-		SCallback::onStandUp(player->GetID());
+		SEvent::PlayerStandUp(player->GetID());
 
 		bool unconscious;
 		stream.Read(unconscious);

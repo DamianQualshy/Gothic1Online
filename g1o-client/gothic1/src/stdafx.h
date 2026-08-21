@@ -30,6 +30,9 @@
 #include "zengin\\ZenginIncludes.h" //ZenGin (silnik gothica)
 #include <GO_SharedIncludes.h> //RakNet, TinyXML, goMath
 #include <hashlib/hashlibpp.h>
+#include <Scripting/NativeApi.h>
+#include <Scripting/ScriptEngine.h>
+#include <Resource/ClientResource.h>
 #include "MemLib\\MemLib.h" //MemLib
 #include "Log\\CLog.h" //Logi
 
@@ -78,13 +81,12 @@ extern CLog* pLog;
 #include "Interface\\COptionsMenu.h"
 #include "Interface\\CPlayerList.h"
 //Skrypty
-#include "Script\\SAnticheat.h"
-#include "Script\\SDraw.h"
-#include "Script\\STexture.h"
-#include "Script\\SVariable.h"
-#include "Script\\STimer.h"
-#include "Script\\SCallback.h"
-#include "Script\\SFunction.h"
-#include "Script\\SScript.h"
-#include "Script\\SKey.h"
+#include "Script\\CAnticheat.h"
+#include "Script\\CDraw.h"
+#include "Script\\CTexture.h"
+#include "Script\\CVariable.h"
+#include "Script\\CEvent.h"
+#include "Script\\CFunction.h"
+#include "Script\\CScriptState.h"
+#include "Script\\CKey.h"
 #include "Script\\CScript.h"

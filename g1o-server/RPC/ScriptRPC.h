@@ -7,8 +7,8 @@ namespace ScriptRPC
 
 	void ScriptPacket(CNetwork* network, BitStream& stream, Packet* packet);
 	void ScriptVisual(CNetwork* network, BitStream& stream, Packet* packet);
-	void ScriptCall(CNetwork* network, BitStream& stream, Packet* packet);
 	void ScriptFocus(CNetwork* network, BitStream& stream, Packet* packet);
+	void ScriptEvent(CNetwork* network, BitStream& stream, Packet* packet);
 };
 
 #endif //SCRIPTRPC_H

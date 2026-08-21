@@ -31,7 +31,7 @@ public:
 	inline SystemAddress GetAddress(){return this->addr;};
 	inline const char* GetIP() {return inet_ntoa(this->addr.address.addr4.sin_addr);};
 	inline int GetID() { return this->playerId;};
-	inline int GetVirutalWorld() { return this->virtualWorld; };
+	inline int GetVirtualWorld() { return this->virtualWorld; };
 	void SetVirtualWorld(unsigned world_id) { this->virtualWorld = world_id; };
 };
 

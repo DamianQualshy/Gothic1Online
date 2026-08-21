@@ -30,7 +30,7 @@ public:
     inline uint 	getOnlinePlayers() const { return m_OnlinePlayers; }
     inline uint 	getMaxPlayers() const    { return m_MaxPlayers; }
     inline uint 	getPing() const          { return m_Ping; }
-    inline bool     exits() const            { return m_Exist; }
+    inline bool     exists() const           { return m_Exist; }
     inline bool     isShowed() const         { return m_IsShowed; }
 
 private:

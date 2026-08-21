@@ -3,7 +3,14 @@ target("G1O.Shared")
     set_default(false)
 
     add_includedirs(".", {public = true})
-    add_includedirs("RakNet", "Squirrel/include", "Squirrel/squirrel", "Squirrel/sqstdlib", {public = true})
+    add_includedirs(
+        "RakNet",
+        "../dependencies/squirrel/include",
+        "../dependencies/squirrel/squirrel",
+        "../dependencies/squirrel/sqstdlib",
+        "../dependencies/sqrat/include",
+        {public = true})
+    add_packages("lua", "sol2", "nlohmann_json", "minizip", {public = true})
 
     add_files("RakNet/*.cpp")
     remove_files(
@@ -19,9 +26,10 @@ target("G1O.Shared")
         "RakNet/PS4Includes.cpp")
 
     add_files(
-        "Squirrel/squirrel/*.cpp",
-        "Squirrel/sqstdlib/*.cpp",
-        "Squirrel/binmodule/sqimport.cpp",
+        "../dependencies/squirrel/squirrel/*.cpp",
+        "../dependencies/squirrel/sqstdlib/*.cpp",
+        "Scripting/*.cpp",
+        "Resource/*.cpp",
         "TinyThread/tinythread.cpp",
         "tinyxml/*.cpp",
         "hashlib/*.cpp",

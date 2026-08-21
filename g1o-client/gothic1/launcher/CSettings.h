@@ -17,8 +17,7 @@ public:
     bool saveConnectionSettings(const QString &ipAddress,
                                 const QString &port,
                                 const QString &world,
-                                const QString &playerInstance,
-                                const QString &clientScript);
+                                const QString &playerInstance);
 
     const QVector<FavoriteServer>& favoriteServers() const;
     void setFavoriteServers(const QVector<FavoriteServer> &servers);
@@ -38,8 +37,6 @@ private:
     QString m_ServerPort;
     QString m_StartWorld;
     QString m_PlayerInstance;
-    QString m_ClientScript;
-
     QVector<FavoriteServer> m_FavoriteServers;
     bool m_Loaded;
 };

@@ -1,0 +1,25 @@
+:root {
+  --md-primary-fg-color: #00b66a;
+  --md-accent-fg-color: #00b66a;
+}
+
+.md-header {
+  background-color: #0a1d28;
+}
+
+.md-nav__item {
+  margin: 0.25rem 0 !important;
+}
+
+a:hover {
+  color: #00b66a !important;
+}
+
+.md-nav__link:hover,
+.md-nav__link--active {
+  color: #00a1b6 !important;
+}
+
+.md-typeset h1 code {
+  color: var(--md-accent-fg-color);
+}

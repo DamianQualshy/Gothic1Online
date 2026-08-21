@@ -46,7 +46,7 @@ void CServerManager::addServer(CServerInfo serverInfo, bool show)
 {
     CServerInfo& info = getServerInfo(serverInfo.getIpAdress(), serverInfo.getPort());
 
-    if (!info.exits())
+    if (!info.exists())
     {
         delete &info;
 
@@ -97,15 +97,15 @@ void CServerManager::editServer(QString ipAdress, QString port, QString newIpAdr
         }
 }
 
-void CServerManager::insertServer(QString ipAdress, QString port, QString hostName, QString descripion, QString script, QString world, QString version,
+void CServerManager::insertServer(QString ipAdress, QString port, QString hostName, QString description, QString script, QString world, QString version,
                                   int onlinePlayers, int maxPlayers, int ping)
 {
     CServerInfo &info = getServerInfo(ipAdress, port);
 
-    if (info.exits())
+    if (info.exists())
     {
         info.m_HostName = hostName;
-        info.m_Description = descripion;
+        info.m_Description = description;
         info.m_Script = script;
         info.m_World = world;
         info.m_Version = version;
@@ -135,7 +135,7 @@ void CServerManager::insertServer(QString ipAdress, QString port)
 {
     CServerInfo &info = getServerInfo(ipAdress, port);
 
-    if (info.exits())
+    if (info.exists())
     {
         QTreeWidgetItem *itemServer = new QTreeWidgetItem;
         itemServer->setText(0, info.getHostName());
@@ -241,7 +241,7 @@ void CServerManager::updateInfo(QString ipAdress, QString port)
 {
     CServerInfo &info = getServerInfo(ipAdress, port);
 
-    if (info.exits())
+    if (info.exists())
     {
         LAUNCHER.getUI()->viewHostname->setText(TRANSLATE("SM_HOSTNAME") + info.getHostName());
         LAUNCHER.getUI()->viewIP->setText(TRANSLATE("SM_IP") + info.getIpAdress());
@@ -261,8 +261,7 @@ bool CServerManager::updateXmlClient(CServerInfo serverInfo)
     if (!LAUNCHER.getSettings().saveConnectionSettings(serverInfo.getIpAdress(),
                                                        serverInfo.getPort(),
                                                        serverInfo.getWorld(),
-                                                       "PC_HERO",
-                                                       serverInfo.getScript()))
+                                                       "PC_HERO"))
     {
         CMessageBox::warrning(TRANSLATE("C_NAME"), TRANSLATE("C_WRITE_ERROR"));
         return false;
@@ -330,7 +329,7 @@ void CServerManager::onServerDoubleClicked(QTreeWidgetItem *item, int column)
 
     CServerInfo& info = getServerInfo(item->text(1), item->text(2));
 
-    if (!info.exits())
+    if (!info.exists())
     {
         delete &info;
         return;

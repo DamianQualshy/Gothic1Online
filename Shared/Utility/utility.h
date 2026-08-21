@@ -16,9 +16,9 @@
 namespace utility
 {
 	bool sscanf(const std::string &params, const std::string &command, std::vector<std::string> &elements);
-	std::string RGBtoHex(int r, int g, int b);
-	void HextoRGB(const char *colorHex, int *r, int *g, int *b);
-	void splitString(const std::string &text, const std::string &delim, std::vector<std::string> &splited);
+	std::string RGBToHex(int r, int g, int b);
+	void HexToRGB(const char *colorHex, int *r, int *g, int *b);
+	void SplitString(const std::string &text, const std::string &delimiter, std::vector<std::string> &parts);
 };
 
 #ifdef __LINUX__

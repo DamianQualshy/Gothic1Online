@@ -1,89 +1,103 @@
 #include "../stdafx.h"
 
+#include <Scripting/ScriptWire.h>
 
-void SFunction::bindGOFunctions(HSQUIRRELVM vm)
+void SFunction::Register(g1o::script::NativeRegistry& registry)
 {
-	SQ_REGISTER_GLOBAL_FUNC(vm, "getTickCount", SFunction::getTickCount);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "getPlayerName", SFunction::getPlayerName);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "getPlayerPing", SFunction::getPlayerPing);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "setPlayerVirtualWorld", SFunction::setPlayerVirtualWorld);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "getPlayerVirtualWorld", SFunction::getPlayerVirtualWorld);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "isConnected", SFunction::isConnected);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "sendMessageToAll", SFunction::sendMessageToAll);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "sendMessage", SFunction::sendMessage);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "sendPacket", SFunction::sendPacket);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "getPosition", SFunction::getPosition);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "getDistance3D", SFunction::getDistance3D);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "getDistance2D", SFunction::getDistance2D);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "isAdmin", SFunction::isAdmin);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "getMaxSlots", SFunction::getMaxSlots);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "getPlayersCount", SFunction::getPlayersCount);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "sscanf", SFunction::sscanf);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "rgbToHex", SFunction::rgbToHex);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "hexToRGB", SFunction::hexToRGB);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "md5", SFunction::md5);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "sha1", SFunction::sha1);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "sha256", SFunction::sha256);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "sha384", SFunction::sha384);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "sha512", SFunction::sha512);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "setTimer", SFunction::setTimer);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "killTimer", SFunction::killTimer);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "setTimerInterval", SFunction::setTimerInterval);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "setTimerRepeat", SFunction::setTimerRepeat);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "setTimerData", SFunction::setTimerData);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "getServerDescription", SFunction::getServerDescription);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "setServerDescription", SFunction::setServerDescription);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "getServerWorld", SFunction::getServerWorld);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "setServerWorld", SFunction::setServerWorld);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "ban", SFunction::ban);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "kick", SFunction::kick);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "enableUnconscious", SFunction::enableUnconscious);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "createItem", SFunction::createItem);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "destroyItem", SFunction::destroyItem);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "callClientFunc", SFunction::callClientFunc);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "setPlayerInvisible", SFunction::setPlayerInvisible);
-	SQ_REGISTER_GLOBAL_FUNC(vm, "isPlayerInvisible", SFunction::isPlayerInvisible);
+	registry.Add("getPlayerName", SFunction::getPlayerName);
+	registry.Add("getPlayerPing", SFunction::getPlayerPing);
+	registry.Add("setPlayerVirtualWorld", SFunction::setPlayerVirtualWorld);
+	registry.Add("getPlayerVirtualWorld", SFunction::getPlayerVirtualWorld);
+	registry.Add("isPlayerConnected", SFunction::isPlayerConnected);
+	registry.Add("sendMessageToAll", SFunction::sendMessageToAll);
+	registry.Add("sendMessageToPlayer", SFunction::sendMessageToPlayer);
+	registry.Add("sendPacketToPlayer", SFunction::sendPacketToPlayer);
+	registry.Add("getPlayerPosition", SFunction::getPlayerPosition);
+	registry.Add("isPlayerAdmin", SFunction::isPlayerAdmin);
+	registry.Add("getMaxSlots", SFunction::getMaxSlots);
+	registry.Add("getPlayersCount", SFunction::getPlayersCount);
+	registry.Add("getServerDescription", SFunction::getServerDescription);
+	registry.Add("setServerDescription", SFunction::setServerDescription);
+	registry.Add("getServerWorld", SFunction::getServerWorld);
+	registry.Add("setServerWorld", SFunction::setServerWorld);
+	registry.Add("ban", SFunction::ban);
+	registry.Add("kick", SFunction::kick);
+	registry.Add("setUnconsciousEnabled", SFunction::setUnconsciousEnabled);
+	registry.Add("createGroundItem", SFunction::createGroundItem);
+	registry.Add("destroyGroundItem", SFunction::destroyGroundItem);
+	registry.Add("triggerClientEvent", SFunction::triggerClientEvent);
+	registry.Add("setPlayerInvisible", SFunction::setPlayerInvisible);
+	registry.Add("isPlayerInvisible", SFunction::isPlayerInvisible);
 };
-
-SQInteger SFunction::getTickCount(HSQUIRRELVM vm)
+/* g1odoc (func)
+ *
+ * This function returns player name.
+ *
+ * @name getPlayerName
+ * @side server
+ * @category Player
+ * @version 0.4.0
+ * @param (int) playerID Player ID.
+ * @return (string) Player name, or `NULL` when the player does not exist.
+ *
+ */
+int SFunction::getPlayerName(g1o::script::CallContext& context)
 {
-	sq_pushinteger(vm, (int)::GetTickCount());
-	return 1;
-};
-
-SQInteger SFunction::getPlayerName(HSQUIRRELVM vm)
-{
-	SQ_CHECK_PARAM_COUNT(vm, 1);
-	SQ_CHECK_PARAM_INT(vm, playerID, 0);
+	SCRIPT_CHECK_PARAM_COUNT(context, 1);
+	SCRIPT_CHECK_PARAM_INT(context, playerID, 0);
 
 	CPlayer* player = playerManager.GetPlayer(playerID);
 	if (player)
-		sq_pushstring(vm, player->name.C_String(), -1);
+		context.Push(player->name.C_String());
 	else
-		sq_pushstring(vm, "NULL", -1);
+		context.Push("NULL");
 
 	return 1;
 };
 
-SQInteger SFunction::getPlayerPing(HSQUIRRELVM vm)
+/* g1odoc (func)
+ *
+ * This function returns player ping.
+ *
+ * @name getPlayerPing
+ * @side server
+ * @category Player
+ * @version 0.4.0
+ * @param (int) playerID Player ID.
+ * @return (int) Player ping.
+ *
+ */
+int SFunction::getPlayerPing(g1o::script::CallContext& context)
 {
-	SQ_CHECK_PARAM_COUNT(vm, 1);
-	SQ_CHECK_PARAM_INT(vm, playerID, 0);
+	SCRIPT_CHECK_PARAM_COUNT(context, 1);
+	SCRIPT_CHECK_PARAM_INT(context, playerID, 0);
 
 	CPlayer* player = playerManager.GetPlayer(playerID);
 	if (player)
-		sq_pushinteger(vm, core.GetNetwork()->GetPeer()->GetLastPing(player->GetAddress()));
+		context.Push(core.GetNetwork()->GetPeer()->GetLastPing(player->GetAddress()));
 	else
-		sq_pushinteger(vm, -1);
+		context.Push(-1);
 
 	return 1;
 };
 
-SQInteger SFunction::setPlayerVirtualWorld(HSQUIRRELVM vm)
+/* g1odoc (func)
+ *
+ * This function sets player virtual world.
+ *
+ * @name setPlayerVirtualWorld
+ * @side server
+ * @category Player
+ * @version 0.4.0
+ * @param (int) playerID Player ID.
+ * @param (int) virtualWorld Virtual world.
+ *
+ */
+int SFunction::setPlayerVirtualWorld(g1o::script::CallContext& context)
 {
-	SQ_CHECK_PARAM_COUNT(vm, 2);
-	SQ_CHECK_PARAM_INT(vm, playerID, 0);
-	SQ_CHECK_PARAM_INT(vm, virtualWorld, 1);
+	SCRIPT_CHECK_PARAM_COUNT(context, 2);
+	SCRIPT_CHECK_PARAM_INT(context, playerID, 0);
+	SCRIPT_CHECK_PARAM_INT(context, virtualWorld, 1);
 
 	CPlayer* player = playerManager.GetPlayer(playerID);
 	if (player)
@@ -118,41 +132,79 @@ SQInteger SFunction::setPlayerVirtualWorld(HSQUIRRELVM vm)
 	return 0;
 };
 
-SQInteger SFunction::getPlayerVirtualWorld(HSQUIRRELVM vm)
+/* g1odoc (func)
+ *
+ * This function returns player virtual world.
+ *
+ * @name getPlayerVirtualWorld
+ * @side server
+ * @category Player
+ * @version 0.4.0
+ * @param (int) playerID Player ID.
+ * @return (int) Virtual-world ID, or -1 if the player does not exist.
+ *
+ */
+int SFunction::getPlayerVirtualWorld(g1o::script::CallContext& context)
 {
-	SQ_CHECK_PARAM_COUNT(vm, 1);
-	SQ_CHECK_PARAM_INT(vm, playerID, 0);
+	SCRIPT_CHECK_PARAM_COUNT(context, 1);
+	SCRIPT_CHECK_PARAM_INT(context, playerID, 0);
 
 	CPlayer* player = playerManager.GetPlayer(playerID);
 	if (player)
-		sq_pushinteger(vm, player->GetVirutalWorld());
+		context.Push(player->GetVirtualWorld());
 	else
-		sq_pushinteger(vm, -1);
+		context.Push(-1);
 
 	return 1;
 };
 
-SQInteger SFunction::isConnected(HSQUIRRELVM vm)
+/* g1odoc (func)
+ *
+ * This function checks whether connected.
+ *
+ * @name isPlayerConnected
+ * @side server
+ * @category Game
+ * @version 0.4.0
+ * @param (int) playerID Player ID.
+ * @return (bool) True when the condition is met, otherwise false.
+ *
+ */
+int SFunction::isPlayerConnected(g1o::script::CallContext& context)
 {
-	SQ_CHECK_PARAM_COUNT(vm, 1);
-	SQ_CHECK_PARAM_INT(vm, playerID, 0);
+	SCRIPT_CHECK_PARAM_COUNT(context, 1);
+	SCRIPT_CHECK_PARAM_INT(context, playerID, 0);
 
 	CPlayer* player = playerManager.GetPlayer(playerID);
 	if (player)
-		sq_pushbool(vm, true);
+		context.Push(static_cast<bool>(true));
 	else
-		sq_pushbool(vm, false);
+		context.Push(static_cast<bool>(false));
 
 	return 1;
 };
 
-SQInteger SFunction::sendMessageToAll(HSQUIRRELVM vm)
+/* g1odoc (func)
+ *
+ * This function sends message to all.
+ *
+ * @name sendMessageToAll
+ * @side server
+ * @category Chat
+ * @version 0.4.0
+ * @param (int) r Red color component.
+ * @param (int) g Green color component.
+ * @param (int) b Blue color component.
+ * @param (string) message Message text.
+ *
+ */
+int SFunction::sendMessageToAll(g1o::script::CallContext& context)
 {
-	SQ_CHECK_PARAM_COUNT(vm, 4);
-	SQ_CHECK_PARAM_INT(vm, r, 0);
-	SQ_CHECK_PARAM_INT(vm, g, 1);
-	SQ_CHECK_PARAM_INT(vm, b, 2);
-	SQ_CHECK_PARAM_STRING(vm, message, 3);
+	SCRIPT_CHECK_PARAM_COUNT(context, 4);
+	SCRIPT_CHECK_PARAM_INT(context, r, 0);
+	SCRIPT_CHECK_PARAM_INT(context, g, 1);
+	SCRIPT_CHECK_PARAM_INT(context, b, 2);
+	SCRIPT_CHECK_PARAM_STRING(context, message, 3);
 
 	BitStream s;
 	s.Write((MessageID)GO_CHAT);
@@ -167,14 +219,29 @@ SQInteger SFunction::sendMessageToAll(HSQUIRRELVM vm)
 	return 0;
 };
 
-SQInteger SFunction::sendMessage(HSQUIRRELVM vm)
+/* g1odoc (func)
+ *
+ * This function sends message.
+ *
+ * @name sendMessageToPlayer
+ * @side server
+ * @category Chat
+ * @version 0.4.0
+ * @param (int) playerID Player ID.
+ * @param (int) r Red color component.
+ * @param (int) g Green color component.
+ * @param (int) b Blue color component.
+ * @param (string) message Message text.
+ *
+ */
+int SFunction::sendMessageToPlayer(g1o::script::CallContext& context)
 {
-	SQ_CHECK_PARAM_COUNT(vm, 5);
-	SQ_CHECK_PARAM_INT(vm, playerID, 0);
-	SQ_CHECK_PARAM_INT(vm, r, 1);
-	SQ_CHECK_PARAM_INT(vm, g, 2);
-	SQ_CHECK_PARAM_INT(vm, b, 3);
-	SQ_CHECK_PARAM_STRING(vm, message, 4);
+	SCRIPT_CHECK_PARAM_COUNT(context, 5);
+	SCRIPT_CHECK_PARAM_INT(context, playerID, 0);
+	SCRIPT_CHECK_PARAM_INT(context, r, 1);
+	SCRIPT_CHECK_PARAM_INT(context, g, 2);
+	SCRIPT_CHECK_PARAM_INT(context, b, 3);
+	SCRIPT_CHECK_PARAM_STRING(context, message, 4);
 
 	CPlayer* player = playerManager.GetPlayer(playerID);
 	if (player)
@@ -192,12 +259,25 @@ SQInteger SFunction::sendMessage(HSQUIRRELVM vm)
 	return 0;
 };
 
-SQInteger SFunction::sendPacket(HSQUIRRELVM vm)
+/* g1odoc (func)
+ *
+ * This function sends packet.
+ *
+ * @name sendPacketToPlayer
+ * @side server
+ * @category Network
+ * @version 0.4.0
+ * @param (int) playerID Player ID.
+ * @param (int) priority Priority.
+ * @param (string) data Packet data.
+ *
+ */
+int SFunction::sendPacketToPlayer(g1o::script::CallContext& context)
 {
-	SQ_CHECK_PARAM_COUNT(vm, 3);
-	SQ_CHECK_PARAM_INT(vm, playerID, 0);
-	SQ_CHECK_PARAM_INT(vm, priority, 1);
-	SQ_CHECK_PARAM_STRING(vm, data, 2);
+	SCRIPT_CHECK_PARAM_COUNT(context, 3);
+	SCRIPT_CHECK_PARAM_INT(context, playerID, 0);
+	SCRIPT_CHECK_PARAM_INT(context, priority, 1);
+	SCRIPT_CHECK_PARAM_STRING(context, data, 2);
 
 	CPlayer* player = playerManager.GetPlayer(playerID);
 	if (player)
@@ -226,306 +306,164 @@ SQInteger SFunction::sendPacket(HSQUIRRELVM vm)
 	return 0;
 };
 
-SQInteger SFunction::getPosition(HSQUIRRELVM vm)
+/* g1odoc (func)
+ *
+ * This function returns position.
+ *
+ * @name getPlayerPosition
+ * @side server
+ * @category Player
+ * @version 0.4.0
+ * @param (int) playerID Player ID.
+ * @return (table|bool) Position.
+ *
+ */
+int SFunction::getPlayerPosition(g1o::script::CallContext& context)
 {
-	SQ_CHECK_PARAM_COUNT(vm, 1);
-	SQ_CHECK_PARAM_INT(vm, playerID, 0);
+	SCRIPT_CHECK_PARAM_COUNT(context, 1);
+	SCRIPT_CHECK_PARAM_INT(context, playerID, 0);
 	CPlayer* player = playerManager.GetPlayer(playerID);
 	if (player)
 	{
-		sq_newtable(vm);
-		SQ_TABLE_SET_FLOAT(vm, "x", player->x);
-		SQ_TABLE_SET_FLOAT(vm, "y", player->y);
-		SQ_TABLE_SET_FLOAT(vm, "z", player->z);
+		context.NewTable();
+		SCRIPT_TABLE_SET_FLOAT(context, "x", player->x);
+		SCRIPT_TABLE_SET_FLOAT(context, "y", player->y);
+		SCRIPT_TABLE_SET_FLOAT(context, "z", player->z);
 	}
 	else
-		sq_pushbool(vm, false);
+		context.Push(static_cast<bool>(false));
 
 	return 1;
 };
-
-SQInteger SFunction::getDistance3D(HSQUIRRELVM vm)
+/* g1odoc (func)
+ *
+ * This function checks whether admin.
+ *
+ * @name isPlayerAdmin
+ * @side server
+ * @category Game
+ * @version 0.4.0
+ * @param (int) playerID Player ID.
+ * @return (bool) True when the condition is met, otherwise false.
+ *
+ */
+int SFunction::isPlayerAdmin(g1o::script::CallContext& context)
 {
-	SQ_CHECK_PARAM_COUNT(vm, 6);
-	SQ_CHECK_PARAM_FLOAT(vm, x, 0);
-	SQ_CHECK_PARAM_FLOAT(vm, y, 1);
-	SQ_CHECK_PARAM_FLOAT(vm, z, 2);
-	SQ_CHECK_PARAM_FLOAT(vm, x2, 3);
-	SQ_CHECK_PARAM_FLOAT(vm, y2, 4);
-	SQ_CHECK_PARAM_FLOAT(vm, z2, 5);
-
-	sq_pushfloat(vm, goMath::GetDistance3D(x, y, z, x2, y2, z2));
-
-	return 1;
-};
-
-SQInteger SFunction::getDistance2D(HSQUIRRELVM vm)
-{
-	SQ_CHECK_PARAM_COUNT(vm, 4);
-	SQ_CHECK_PARAM_FLOAT(vm, a, 0);
-	SQ_CHECK_PARAM_FLOAT(vm, b, 1);
-	SQ_CHECK_PARAM_FLOAT(vm, c, 2);
-	SQ_CHECK_PARAM_FLOAT(vm, d, 3);
-
-	sq_pushfloat(vm, goMath::GetDistance2D(a, b, c, d));
-
-	return 1;
-};
-
-SQInteger SFunction::isAdmin(HSQUIRRELVM vm)
-{
-	SQ_CHECK_PARAM_COUNT(vm, 1);
-	SQ_CHECK_PARAM_INT(vm, playerID, 0);
+	SCRIPT_CHECK_PARAM_COUNT(context, 1);
+	SCRIPT_CHECK_PARAM_INT(context, playerID, 0);
 
 	CPlayer* player = playerManager.GetPlayer(playerID);
 	if (player)
-		sq_pushbool(vm, player->isAdmin);
+		context.Push(static_cast<bool>(player->isAdmin));
 	else
-		sq_pushbool(vm, false);
+		context.Push(static_cast<bool>(false));
 
 	return 1;
 };
 
-SQInteger SFunction::getMaxSlots(HSQUIRRELVM vm)
+/* g1odoc (func)
+ *
+ * This function returns max slots.
+ *
+ * @name getMaxSlots
+ * @side server
+ * @category Game
+ * @version 0.4.0
+ * @return (int) Configured player-slot limit.
+ *
+ */
+int SFunction::getMaxSlots(g1o::script::CallContext& context)
 {
-	sq_pushinteger(vm, atoi(core.GetConfig()->GetMaxSlots().C_String()));
+	context.Push(atoi(core.GetConfig()->GetMaxSlots().C_String()));
 	return 1;
 };
 
-SQInteger SFunction::getPlayersCount(HSQUIRRELVM vm)
+/* g1odoc (func)
+ *
+ * This function returns players count.
+ *
+ * @name getPlayersCount
+ * @side server
+ * @category Game
+ * @version 0.4.0
+ * @return (int) Players count.
+ *
+ */
+int SFunction::getPlayersCount(g1o::script::CallContext& context)
 {
-	sq_pushinteger(vm, playerManager.GetNumberOfPlayers());
+	context.Push(playerManager.GetNumberOfPlayers());
+	return 1;
+};
+/* g1odoc (func)
+ *
+ * This function returns server description.
+ *
+ * @name getServerDescription
+ * @side server
+ * @category Game
+ * @version 0.4.0
+ * @return (string) Server description.
+ *
+ */
+int SFunction::getServerDescription(g1o::script::CallContext& context)
+{
+	context.Push(core.GetDescription().C_String());
 	return 1;
 };
 
-SQInteger SFunction::sscanf(HSQUIRRELVM vm)
+/* g1odoc (func)
+ *
+ * This function sets server description.
+ *
+ * @name setServerDescription
+ * @side server
+ * @category Game
+ * @version 0.4.0
+ * @param (string) desc Desc.
+ *
+ */
+int SFunction::setServerDescription(g1o::script::CallContext& context)
 {
-	SQ_CHECK_PARAM_COUNT(vm, 2);
-	SQ_CHECK_PARAM_STRING(vm, params, 0);
-	SQ_CHECK_PARAM_STRING(vm, command, 1);
-
-	std::vector<std::string> elements;
-	if (utility::sscanf(params, command, elements))
-	{
-		int stackTop = sq_gettop(vm);
-		sq_newarray(vm, 0);
-
-		int p1;
-		float p2;
-
-		for (int i = 0; i < strlen(params); ++i)
-		{
-			switch (params[i])
-			{
-			case 'd':
-				if (std::sscanf(elements[i].c_str(), "%d", &p1))
-				{
-					SQ_ARRAY_INT(vm, p1);
-				}
-				else
-				{
-					sq_settop(vm, stackTop);
-					sq_pushbool(vm, false);
-
-					return 1;
-				}
-				break;
-
-			case 'f':
-				if (std::sscanf(elements[i].c_str(), "%f", &p2))
-				{
-					SQ_ARRAY_FLOAT(vm, p2);
-				}
-				else
-				{
-					sq_settop(vm, stackTop);
-					sq_pushbool(vm, false);
-
-					return 1;
-				}
-				break;
-
-			case 's':
-				SQ_ARRAY_STRING(vm, elements[i].c_str());
-				break;
-			}
-		}
-	}
-	else
-		sq_pushbool(vm, false);
-
-	return 1;
-}
-
-SQInteger SFunction::rgbToHex(HSQUIRRELVM vm)
-{
-	SQ_CHECK_PARAM_COUNT(vm, 3);
-	SQ_CHECK_PARAM_INT(vm, r, 0);
-	SQ_CHECK_PARAM_INT(vm, g, 1);
-	SQ_CHECK_PARAM_INT(vm, b, 2);
-
-	std::string colorHex = utility::RGBtoHex(r, g, b);
-	sq_pushstring(vm, colorHex.c_str(), colorHex.length());
-
-	return 1;
-};
-
-SQInteger SFunction::hexToRGB(HSQUIRRELVM vm)
-{
-	SQ_CHECK_PARAM_COUNT(vm, 1);
-	SQ_CHECK_PARAM_STRING(vm, hexColor, 0);
-
-	int r, g, b;
-	utility::HextoRGB(hexColor, &r, &g, &b);
-
-	sq_newtable(vm);
-	SQ_TABLE_SET_INT(vm, "r", r);
-	SQ_TABLE_SET_INT(vm, "g", g);
-	SQ_TABLE_SET_INT(vm, "b", b);
-
-	return 1;
-};
-
-SQInteger SFunction::md5(HSQUIRRELVM vm)
-{
-	SQ_CHECK_PARAM_COUNT(vm, 1);
-	SQ_CHECK_PARAM_STRING(vm, text, 0);
-
-	md5wrapper md5;
-	sq_pushstring(vm, md5.getHashFromString(text).c_str(), -1);
-
-	return 1;
-};
-
-SQInteger SFunction::sha1(HSQUIRRELVM vm)
-{
-	SQ_CHECK_PARAM_COUNT(vm, 1);
-	SQ_CHECK_PARAM_STRING(vm, text, 0);
-
-	sha1wrapper sha1;
-	sq_pushstring(vm, sha1.getHashFromString(text).c_str(), -1);
-
-	return 1;
-};
-
-SQInteger SFunction::sha256(HSQUIRRELVM vm)
-{
-	SQ_CHECK_PARAM_COUNT(vm, 1);
-	SQ_CHECK_PARAM_STRING(vm, text, 0);
-
-	sha256wrapper sha256;
-	sq_pushstring(vm, sha256.getHashFromString(text).c_str(), -1);
-
-	return 1;
-};
-
-SQInteger SFunction::sha384(HSQUIRRELVM vm)
-{
-	SQ_CHECK_PARAM_COUNT(vm, 1);
-	SQ_CHECK_PARAM_STRING(vm, text, 0);
-
-	sha384wrapper sha384;
-	sq_pushstring(vm, sha384.getHashFromString(text).c_str(), -1);
-
-	return 1;
-};
-
-SQInteger SFunction::sha512(HSQUIRRELVM vm)
-{
-	SQ_CHECK_PARAM_COUNT(vm, 1);
-	SQ_CHECK_PARAM_STRING(vm, text, 0);
-
-	sha512wrapper sha512;
-	sq_pushstring(vm, sha512.getHashFromString(text).c_str(), -1);
-
-	return 1;
-};
-
-SQInteger SFunction::setTimer(HSQUIRRELVM vm)
-{
-	SQ_CHECK_PARAM_COUNT(vm, 3);
-	SQ_CHECK_PARAM_FUNC(vm, function, 0);
-	SQ_CHECK_PARAM_INT(vm, time, 1);
-	SQ_CHECK_PARAM_BOOL(vm, repeat, 2);
-	SQ_PARAM_ANY(vm, data, 3);
-	
-	if (stack_size <= 4)
-		data._type = OT_NULL;
-
-	sq_pushinteger(vm, timer.Add(function, time, repeat, data));
-
-	return 1;
-};
-
-SQInteger SFunction::killTimer(HSQUIRRELVM vm)
-{
-	SQ_CHECK_PARAM_COUNT(vm, 1);
-	SQ_CHECK_PARAM_INT(vm, timerId, 0);
-
-	timer.Remove(timerId);
-
-	return 0;
-};
-
-SQInteger SFunction::setTimerInterval(HSQUIRRELVM vm)
-{
-	SQ_CHECK_PARAM_COUNT(vm, 2);
-	SQ_CHECK_PARAM_INT(vm, timerId, 0);
-	SQ_CHECK_PARAM_INT(vm, interval, 1);
-
-	timer.SetInterval(timerId, interval);
-
-	return 0;
-};
-
-SQInteger SFunction::setTimerRepeat(HSQUIRRELVM vm)
-{
-	SQ_CHECK_PARAM_COUNT(vm, 2);
-	SQ_CHECK_PARAM_INT(vm, timerId, 0);
-	SQ_CHECK_PARAM_INT(vm, repeat, 1);
-
-	timer.SetRepeat(timerId, repeat);
-
-	return 0;
-};
-
-SQInteger SFunction::setTimerData(HSQUIRRELVM vm)
-{
-	SQ_CHECK_PARAM_COUNT(vm, 2);
-	SQ_CHECK_PARAM_INT(vm, timerId, 0);
-	SQ_CHECK_PARAM_TABLE(vm, data, 1);
-
-	timer.SetData(timerId, data);
-
-	return 0;
-};
-
-SQInteger SFunction::getServerDescription(HSQUIRRELVM vm)
-{
-	sq_pushstring(vm, core.GetDescription().C_String(), -1);
-	return 1;
-};
-
-SQInteger SFunction::setServerDescription(HSQUIRRELVM vm)
-{
-	SQ_CHECK_PARAM_COUNT(vm, 1);
-	SQ_CHECK_PARAM_STRING(vm, desc, 0);
+	SCRIPT_CHECK_PARAM_COUNT(context, 1);
+	SCRIPT_CHECK_PARAM_STRING(context, desc, 0);
 
 	core.SetDescription(desc);
 
 	return 0;
 };
 
-SQInteger SFunction::getServerWorld(HSQUIRRELVM vm)
+/* g1odoc (func)
+ *
+ * This function returns server world.
+ *
+ * @name getServerWorld
+ * @side server
+ * @category Game
+ * @version 0.4.0
+ * @return (string) Server world.
+ *
+ */
+int SFunction::getServerWorld(g1o::script::CallContext& context)
 {
-	sq_pushstring(vm, core.GetWorld().C_String(), -1);
+	context.Push(core.GetWorld().C_String());
 	return 1;
 };
 
-SQInteger SFunction::setServerWorld(HSQUIRRELVM vm)
+/* g1odoc (func)
+ *
+ * This function sets server world.
+ *
+ * @name setServerWorld
+ * @side server
+ * @category Game
+ * @version 0.4.0
+ * @param (string) world World name.
+ *
+ */
+int SFunction::setServerWorld(g1o::script::CallContext& context)
 {
-	SQ_CHECK_PARAM_COUNT(vm, 1);
-	SQ_CHECK_PARAM_STRING(vm, world, 0);
+	SCRIPT_CHECK_PARAM_COUNT(context, 1);
+	SCRIPT_CHECK_PARAM_STRING(context, world, 0);
 
 	//RakString newWorld = utility::replaceString(world, "/", "\\").c_str();
 	core.SetWorld(world);
@@ -533,10 +471,21 @@ SQInteger SFunction::setServerWorld(HSQUIRRELVM vm)
 	return 0;
 };
 
-SQInteger SFunction::ban(HSQUIRRELVM vm)
+/* g1odoc (func)
+ *
+ * This function bans a player from the server.
+ *
+ * @name ban
+ * @side server
+ * @category Player
+ * @version 0.4.0
+ * @param (int) playerID Player ID.
+ *
+ */
+int SFunction::ban(g1o::script::CallContext& context)
 {
-	SQ_CHECK_PARAM_COUNT(vm, 1);
-	SQ_CHECK_PARAM_INT(vm, playerID, 0);
+	SCRIPT_CHECK_PARAM_COUNT(context, 1);
+	SCRIPT_CHECK_PARAM_INT(context, playerID, 0);
 
 	CPlayer* player = playerManager.GetPlayer(playerID);
 	if (player)
@@ -547,10 +496,21 @@ SQInteger SFunction::ban(HSQUIRRELVM vm)
 	return 0;
 };
 
-SQInteger SFunction::kick(HSQUIRRELVM vm)
+/* g1odoc (func)
+ *
+ * This function disconnects a player from the server.
+ *
+ * @name kick
+ * @side server
+ * @category Player
+ * @version 0.4.0
+ * @param (int) playerID Player ID.
+ *
+ */
+int SFunction::kick(g1o::script::CallContext& context)
 {
-	SQ_CHECK_PARAM_COUNT(vm, 1);
-	SQ_CHECK_PARAM_INT(vm, playerID, 0);
+	SCRIPT_CHECK_PARAM_COUNT(context, 1);
+	SCRIPT_CHECK_PARAM_INT(context, playerID, 0);
 
 	CPlayer* player = playerManager.GetPlayer(playerID);
 	if (player)
@@ -559,116 +519,155 @@ SQInteger SFunction::kick(HSQUIRRELVM vm)
 	return 0;
 };
 
-SQInteger SFunction::enableUnconscious(HSQUIRRELVM vm)
+/* g1odoc (func)
+ *
+ * This function enables or disables unconscious.
+ *
+ * @name setUnconsciousEnabled
+ * @side server
+ * @category Game
+ * @version 0.4.0
+ * @param (bool) enable True to enable the feature, false to disable it.
+ *
+ */
+int SFunction::setUnconsciousEnabled(g1o::script::CallContext& context)
 {
-	SQ_CHECK_PARAM_COUNT(vm, 1);
-	SQ_CHECK_PARAM_BOOL(vm, enable, 0);
+	SCRIPT_CHECK_PARAM_COUNT(context, 1);
+	SCRIPT_CHECK_PARAM_BOOL(context, enable, 0);
 
 	core.SetUnconscious(enable);
 
 	return 0;
 };
 
-SQInteger SFunction::createItem(HSQUIRRELVM vm)
+/* g1odoc (func)
+ *
+ * This function creates item.
+ *
+ * @name createGroundItem
+ * @side server
+ * @category Inventory
+ * @version 0.4.0
+ * @param (string) itemInstance Item instance.
+ * @param (int) amount Item amount.
+ * @param (float) x X coordinate.
+ * @param (float) y Y coordinate.
+ * @param (float) z Z coordinate.
+ * @param (string) world World name.
+ * @return (int) Identifier of the created object.
+ *
+ */
+int SFunction::createGroundItem(g1o::script::CallContext& context)
 {
-	SQ_CHECK_PARAM_COUNT(vm, 6);
-	SQ_CHECK_PARAM_STRING(vm, itemInstance, 0);
-	SQ_CHECK_PARAM_INT(vm, amount, 1);
-	SQ_CHECK_PARAM_FLOAT(vm, x, 2);
-	SQ_CHECK_PARAM_FLOAT(vm, y, 3);
-	SQ_CHECK_PARAM_FLOAT(vm, z, 4);
-	SQ_CHECK_PARAM_STRING(vm, world, 5);
+	SCRIPT_CHECK_PARAM_COUNT(context, 6);
+	SCRIPT_CHECK_PARAM_STRING(context, itemInstance, 0);
+	SCRIPT_CHECK_PARAM_INT(context, amount, 1);
+	SCRIPT_CHECK_PARAM_FLOAT(context, x, 2);
+	SCRIPT_CHECK_PARAM_FLOAT(context, y, 3);
+	SCRIPT_CHECK_PARAM_FLOAT(context, z, 4);
+	SCRIPT_CHECK_PARAM_STRING(context, world, 5);
 
 	CItem* item = itemManager.CreateItem(itemInstance, amount, x, y, z, world);
 	if (item)
-		sq_pushinteger(vm, item->GetID());
+		context.Push(item->GetID());
 	else
-		sq_pushinteger(vm, -1);
+		context.Push(-1);
 
 	return 1;
 };
 
-SQInteger SFunction::destroyItem(HSQUIRRELVM vm)
+/* g1odoc (func)
+ *
+ * This function destroys item.
+ *
+ * @name destroyGroundItem
+ * @side server
+ * @category Inventory
+ * @version 0.4.0
+ * @param (int) itemID Item ID.
+ *
+ */
+int SFunction::destroyGroundItem(g1o::script::CallContext& context)
 {
-	SQ_CHECK_PARAM_COUNT(vm, 1);
-	SQ_CHECK_PARAM_INT(vm, itemID, 0);
+	SCRIPT_CHECK_PARAM_COUNT(context, 1);
+	SCRIPT_CHECK_PARAM_INT(context, itemID, 0);
 
 	itemManager.DestroyItem(itemID);
 
 	return 0;
 };
 
-SQInteger SFunction::callClientFunc(HSQUIRRELVM vm)
+/* g1odoc (func)
+ *
+ * This function triggers a remotely enabled custom event on a client.
+ *
+ * @name triggerClientEvent
+ * @side server
+ * @category Network
+ * @version 0.4.0
+ * @param (int) playerID Target player ID, or -1 for every connected player.
+ * @param (string) eventName Custom client event name, from 1 to 128 bytes.
+ * @param (...) arguments Values passed to the event handlers.
+ * @return (bool) True if the event packet was sent.
+ *
+ */
+int SFunction::triggerClientEvent(g1o::script::CallContext& context)
 {
-	SQ_CHECK_PARAM_COUNT(vm, 2);
-	SQ_CHECK_PARAM_INT(vm, playerID, 0);
-	SQ_CHECK_PARAM_STRING(vm, function, 1);
-
-	CPlayer* player = playerManager.GetPlayer(playerID);
-	if (player)
+	SCRIPT_CHECK_PARAM_COUNT(context, 2);
+	SCRIPT_CHECK_PARAM_INT(context, playerID, 0);
+	SCRIPT_CHECK_PARAM_STRING(context, eventName, 1);
+	if (!g1o::script::EventManager::IsValidName(eventName))
 	{
-		RakString format = "0"; // Coś trzeba przesłać
+		context.Error("triggerClientEvent expects an event name between 1 and 128 bytes");
+		return -1;
+	}
 
-		for (SQInteger i = 4; i <= stack_size; i++)
-		{
-			switch (sq_gettype(vm, i))
-			{
-			case OT_INTEGER:
-				format += "d";
-				break;
-			case OT_FLOAT:
-				format += "f";
-				break;
-			case OT_STRING:
-				format += "s";
-				break;
-			default:
-				sq_pushbool(vm, false);
-				return 1;
-			}
-		}
+	BitStream stream;
+	stream.Write(static_cast<MessageID>(GO_SCRIPT));
+	stream.Write(static_cast<MessageID>(SCRIPT_EVENT));
+	stream.Write(eventName);
+	std::string error;
+	if (!g1o::script::wire::WriteArguments(stream, context.ArgumentsFrom(2), error))
+	{
+		context.Error(error);
+		return -1;
+	}
 
-		BitStream s;
-		s.Write((MessageID)GO_SCRIPT);
-		s.Write((MessageID)SCRIPT_CALL);
-		s.Write(function);
-		s.Write(format);
-
-		int p1; float p2; const char *p3;
-
-		for (SQInteger i = 4; i <= stack_size; i++)
-		{
-			switch (sq_gettype(vm, i))
-			{
-			case OT_INTEGER:
-				sq_getinteger(vm, i, &p1);
-				s.Write(p1);
-				break;
-			case OT_FLOAT:
-				sq_getfloat(vm, i, &p2);
-				s.Write(p2);
-				break;
-			case OT_STRING:
-				sq_getstring(vm, i, &p3);
-				s.Write(p3);
-				break;
-			}
-		}
-
-		core.GetNetwork()->GetPeer()->Send(&s, LOW_PRIORITY, RELIABLE_ORDERED, 0, player->GetAddress(), false);
-		sq_pushbool(vm, true);
+	if (playerID == -1)
+	{
+		core.GetNetwork()->SendToAll(stream, LOW_PRIORITY, RELIABLE_ORDERED);
+		context.Push(true);
 		return 1;
 	}
 
-	sq_pushbool(vm, false);
+	CPlayer* player = playerManager.GetPlayer(playerID);
+	if (!player)
+	{
+		context.Push(false);
+		return 1;
+	}
+	core.GetNetwork()->GetPeer()->Send(&stream, LOW_PRIORITY, RELIABLE_ORDERED, 0, player->GetAddress(), false);
+	context.Push(true);
 	return 1;
 }
 
-SQInteger SFunction::setPlayerInvisible(HSQUIRRELVM vm)
+/* g1odoc (func)
+ *
+ * This function sets player invisible.
+ *
+ * @name setPlayerInvisible
+ * @side server
+ * @category Player
+ * @version 0.4.0
+ * @param (int) playerID Player ID.
+ * @param (bool) invisible Invisible.
+ *
+ */
+int SFunction::setPlayerInvisible(g1o::script::CallContext& context)
 {
-	SQ_CHECK_PARAM_COUNT(vm, 2);
-	SQ_CHECK_PARAM_INT(vm, playerID, 0);
-	SQ_CHECK_PARAM_BOOL(vm, invisible, 1);
+	SCRIPT_CHECK_PARAM_COUNT(context, 2);
+	SCRIPT_CHECK_PARAM_INT(context, playerID, 0);
+	SCRIPT_CHECK_PARAM_BOOL(context, invisible, 1);
 
 	CPlayer* player = playerManager.GetPlayer(playerID);
 	if (player)
@@ -692,16 +691,28 @@ SQInteger SFunction::setPlayerInvisible(HSQUIRRELVM vm)
 	return 0;
 }
 
-SQInteger SFunction::isPlayerInvisible(HSQUIRRELVM vm)
+/* g1odoc (func)
+ *
+ * This function checks whether player invisible.
+ *
+ * @name isPlayerInvisible
+ * @side server
+ * @category Player
+ * @version 0.4.0
+ * @param (int) playerID Player ID.
+ * @return (bool) True when the condition is met, otherwise false.
+ *
+ */
+int SFunction::isPlayerInvisible(g1o::script::CallContext& context)
 {
-	SQ_CHECK_PARAM_COUNT(vm, 1);
-	SQ_CHECK_PARAM_INT(vm, playerID, 0);
+	SCRIPT_CHECK_PARAM_COUNT(context, 1);
+	SCRIPT_CHECK_PARAM_INT(context, playerID, 0);
 
 	CPlayer* player = playerManager.GetPlayer(playerID);
 	if (player)
-		sq_pushbool(vm, player->isInvisible);
+		context.Push(static_cast<bool>(player->isInvisible));
 	else
-		sq_pushbool(vm, false);
+		context.Push(static_cast<bool>(false));
 
 	return 1;
 }

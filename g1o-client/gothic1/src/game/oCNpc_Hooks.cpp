@@ -51,7 +51,7 @@ void oCNpc::Hook_OpenInventory()
 	if (scr.GetScriptVars()->isEqEnabled && !scr.GetScriptVars()->isFrozen)
 	{
 		OpenInventory();
-		if (IsInvOpen()) SCallback::onOpenInventory();
+		if (IsInvOpen()) CEvent::OpenInventory();
 	}
 		
 	pMemLib->ImportHook(0x006BB0A0, sizeof(void(oCNpc::*)(void)), &oCNpc::Hook_OpenInventory);
@@ -64,7 +64,7 @@ void oCNpc::Hook_CloseInventory()
 	if (IsInvOpen())
 	{
 		CloseInventory();
-		SCallback::onCloseInventory();
+		CEvent::CloseInventory();
 	}
 
 	pMemLib->ImportHook(0x006BB2F0, sizeof(void(oCNpc::*)(void)), &oCNpc::Hook_CloseInventory);

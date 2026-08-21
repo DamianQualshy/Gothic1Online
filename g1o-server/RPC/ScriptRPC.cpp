@@ -1,5 +1,7 @@
 #include "../stdafx.h"
 
+#include <Scripting/ScriptWire.h>
+
 void ScriptRPC::HandleScriptRPC(CNetwork* network, Packet* packet)
 {
 	//LOG("ScriptRPC::HandleScriptRPC()");
@@ -15,10 +17,10 @@ void ScriptRPC::HandleScriptRPC(CNetwork* network, Packet* packet)
 		ScriptPacket(network, stream, packet); break;
 	case SCRIPT_VISUAL:
 		ScriptVisual(network, stream, packet); break;
-	case SCRIPT_CALL:
-		ScriptCall(network, stream, packet); break;
 	case SCRIPT_FOCUS:
 		ScriptFocus(network, stream, packet); break;
+	case SCRIPT_EVENT:
+		ScriptEvent(network, stream, packet); break;
 	}
 };
 
@@ -30,7 +32,7 @@ void ScriptRPC::ScriptPacket(CNetwork* network, BitStream& stream, Packet* packe
 	{
 		RakString data;
 		stream.Read(data);
-		SCallback::onPacket(player->GetID(), data.C_String());
+		SEvent::PlayerPacket(player->GetID(), data.C_String());
 	}
 };
 
@@ -57,42 +59,6 @@ void ScriptRPC::ScriptVisual(CNetwork* network, BitStream& stream, Packet* packe
 	}
 };
 
-void ScriptRPC::ScriptCall(CNetwork* network, BitStream& stream, Packet* packet)
-{
-	RakString functionCall, format;
-
-	stream.Read(functionCall);
-	stream.Read(format);
-
-	int p1; float p2; RakString p3;
-
-	HSQUIRRELVM vm = scr.GetVM();
-	SQ_FUNCTION_BEGIN(vm, functionCall.C_String());
-
-	unsigned paramSize = format.GetLength() - 1;
-	for (int i = 1; i <= paramSize; ++i)
-	{
-		switch ((format.C_String())[i])
-		{
-		case 'd':
-			stream.Read(p1);
-			sq_pushinteger(vm, p1);
-			break;
-		case 'f':
-			stream.Read(p2);
-			sq_pushfloat(vm, p2);
-			break;
-		case 's':
-			stream.Read(p3);
-			sq_pushstring(vm, p3.C_String(), -1);
-			break;
-		}
-	}
-
-	SQ_FUNCTION_CALL(vm, paramSize);
-	SQ_FUNCTION_END(vm);
-}
-
 void ScriptRPC::ScriptFocus(CNetwork* network, BitStream& stream, Packet* packet)
 {
 	bool focusType;
@@ -102,5 +68,32 @@ void ScriptRPC::ScriptFocus(CNetwork* network, BitStream& stream, Packet* packet
 	stream.Read(playerID);
 	stream.Read(focusID);
 
-	focusType ? SCallback::onTakeFocus(playerID, focusID) : SCallback::onLostFocus(playerID, focusID);
+	focusType ? SEvent::PlayerTakeFocus(playerID, focusID) : SEvent::PlayerLostFocus(playerID, focusID);
+}
+
+void ScriptRPC::ScriptEvent(CNetwork* network, BitStream& stream, Packet* packet)
+{
+	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
+	RakString event_name;
+	g1o::script::ScriptArguments arguments;
+	std::string error;
+	if (!player || !stream.Read(event_name))
+		return;
+	if (!g1o::script::EventManager::IsValidName(event_name.C_String()))
+	{
+		LOG("[script] Rejected invalid remote event name from player %d", player->GetID());
+		return;
+	}
+	if (!g1o::script::wire::ReadArguments(stream, arguments, error))
+	{
+		if (!error.empty()) LOG("[script] Rejected remote event packet: %s", error.c_str());
+		return;
+	}
+	if (!scr.GetEngine().Events().CanTriggerRemotely(event_name.C_String()))
+	{
+		LOG("[script] Player %d tried to trigger protected event '%s'", player->GetID(), event_name.C_String());
+		return;
+	}
+	arguments.insert(arguments.begin(), g1o::script::ScriptValue(player->GetID()));
+	scr.GetEngine().Dispatch(event_name.C_String(), arguments);
 }

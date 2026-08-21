@@ -34,7 +34,7 @@ public:
     void 		 addServer(CServerInfo serverInfo, bool show = true);
     void 		 removeServer(QString ipAdress, QString port);
     void		 editServer(QString ipAdress, QString port, QString newIpAdress, QString newPort);
-    void         insertServer(QString ipAdress, QString port, QString hostName, QString descripion, QString script, QString world, QString version,
+    void         insertServer(QString ipAdress, QString port, QString hostName, QString description, QString script, QString world, QString version,
                               int onlinePlayers, int maxPlayers, int ping);
     void         insertServer(QString ipAdress, QString port);
     void         refreshList(bool reset = false);
