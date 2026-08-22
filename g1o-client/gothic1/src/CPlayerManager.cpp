@@ -23,10 +23,6 @@ CLocalPlayer* CPlayerManager::CreateLocalPlayer(int playerID, RakString playerNa
 		this->pLocalPlayer = player;
 		this->pLocalPlayer->world = core.GetConfig()->GetStartWorld();
 
-		// Client scripts initialize only after the local Gothic 1 player exists.
-		if (scr.IsScriptLoaded())
-			CEvent::Init();
-
 		return player;
 	}
 	return NULL;

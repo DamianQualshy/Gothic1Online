@@ -73,20 +73,20 @@ std::optional<RuntimeLanguage> ScriptEngine::LanguageFromPath(const std::string&
 	return std::nullopt;
 }
 
-bool ScriptEngine::CreateRuntime(RuntimeLanguage language, RuntimePolicy policy)
+bool ScriptEngine::CreateRuntime(RuntimeLanguage language)
 {
 	runtime_ = language == RuntimeLanguage::Lua
-		? CreateLuaRuntime(*this, policy)
-		: CreateSquirrelRuntime(*this, policy);
+		? CreateLuaRuntime(*this)
+		: CreateSquirrelRuntime(*this);
 	return runtime_ != nullptr;
 }
 
-bool ScriptEngine::StartFile(const std::string& path, RuntimePolicy policy)
+bool ScriptEngine::StartFile(const std::string& path)
 {
-	return StartFiles({path}, policy);
+	return StartFiles({path});
 }
 
-bool ScriptEngine::StartFiles(const std::vector<std::string>& paths, RuntimePolicy policy)
+bool ScriptEngine::StartFiles(const std::vector<std::string>& paths)
 {
 	Stop();
 	for (const std::string& name : registered_events_)
@@ -115,7 +115,7 @@ bool ScriptEngine::StartFiles(const std::vector<std::string>& paths, RuntimePoli
 		}
 		if (!runtimeLanguage) runtimeLanguage = language;
 	}
-	if (!CreateRuntime(*runtimeLanguage, policy))
+	if (!CreateRuntime(*runtimeLanguage))
 	{
 		Stop();
 		return false;
@@ -123,50 +123,6 @@ bool ScriptEngine::StartFiles(const std::vector<std::string>& paths, RuntimePoli
 	for (const std::string& path : paths)
 	{
 		if (!runtime_->LoadFile(path))
-		{
-			Stop();
-			return false;
-		}
-	}
-	return true;
-}
-
-bool ScriptEngine::StartBuffer(
-	const std::string& name, const std::vector<std::uint8_t>& bytes, RuntimeLanguage language, RuntimePolicy policy)
-{
-	return StartBuffers({ScriptBuffer{name, bytes, language}}, policy);
-}
-
-bool ScriptEngine::StartBuffers(const std::vector<ScriptBuffer>& scripts, RuntimePolicy policy)
-{
-	Stop();
-	for (const std::string& event : registered_events_)
-		events_.AddEvent(event);
-	if (scripts.empty())
-	{
-		Log("No scripts were configured");
-		Stop();
-		return false;
-	}
-	std::optional<RuntimeLanguage> runtimeLanguage;
-	for (const ScriptBuffer& script : scripts)
-	{
-		if (runtimeLanguage && *runtimeLanguage != script.language)
-		{
-			Log("A script runtime cannot mix Squirrel and Lua files");
-			Stop();
-			return false;
-		}
-		if (!runtimeLanguage) runtimeLanguage = script.language;
-	}
-	if (!CreateRuntime(*runtimeLanguage, policy))
-	{
-		Stop();
-		return false;
-	}
-	for (const ScriptBuffer& script : scripts)
-	{
-		if (!runtime_->LoadBuffer(script.name, script.bytes))
 		{
 			Stop();
 			return false;
@@ -202,11 +158,10 @@ void ScriptEngine::PulseTimers()
  * This function registers a custom event.
  *
  * @name addEvent
- * @side shared
+ * @side server
  * @category Event
  * @version 0.5.0
  * @param (string) eventName Event name, from 1 to 128 bytes.
- * @param (bool) allowRemoteTrigger Whether the event accepts network triggers.
  * @return (bool) True if the event was registered.
  *
  */
@@ -216,7 +171,7 @@ void ScriptEngine::PulseTimers()
  * This function removes a custom event and all of its handlers.
  *
  * @name removeEvent
- * @side shared
+ * @side server
  * @category Event
  * @version 0.5.0
  * @param (string) eventName Event name.
@@ -228,7 +183,7 @@ void ScriptEngine::PulseTimers()
  * This function returns the registered event names.
  *
  * @name getEvents
- * @side shared
+ * @side server
  * @category Event
  * @version 0.5.0
  * @return (array) Registered event names.
@@ -240,7 +195,7 @@ void ScriptEngine::PulseTimers()
  * This function enables or disables an event globally.
  *
  * @name toggleEvent
- * @side shared
+ * @side server
  * @category Event
  * @version 0.5.0
  * @param (string) eventName Event name.
@@ -253,7 +208,7 @@ void ScriptEngine::PulseTimers()
  * This function checks whether an event is enabled.
  *
  * @name isEventEnabled
- * @side shared
+ * @side server
  * @category Event
  * @version 0.5.0
  * @param (string) eventName Event name.
@@ -266,7 +221,7 @@ void ScriptEngine::PulseTimers()
  * This function binds a function to an event.
  *
  * @name addEventHandler
- * @side shared
+ * @side server
  * @category Event
  * @version 0.5.0
  * @param (string) eventName Event name.
@@ -281,7 +236,7 @@ void ScriptEngine::PulseTimers()
  * This function unbinds a function from an event.
  *
  * @name removeEventHandler
- * @side shared
+ * @side server
  * @category Event
  * @version 0.5.0
  * @param (string) eventName Event name.
@@ -295,7 +250,7 @@ void ScriptEngine::PulseTimers()
  * This function dispatches a custom event to all of its handlers.
  *
  * @name callEvent
- * @side shared
+ * @side server
  * @category Event
  * @version 0.5.0
  * @param (string) eventName Event name.
@@ -309,7 +264,7 @@ void ScriptEngine::PulseTimers()
  * This function cancels the event currently being dispatched.
  *
  * @name cancelEvent
- * @side shared
+ * @side server
  * @category Event
  * @version 0.5.0
  *
@@ -320,7 +275,7 @@ void ScriptEngine::PulseTimers()
  * This function replaces the integer value of the event currently being dispatched.
  *
  * @name eventValue
- * @side shared
+ * @side server
  * @category Event
  * @version 0.5.0
  * @param (int) value New event value.
@@ -332,7 +287,7 @@ void ScriptEngine::PulseTimers()
  * This function checks whether the event currently being dispatched was cancelled.
  *
  * @name isEventCancelled
- * @side shared
+ * @side server
  * @category Event
  * @version 0.5.0
  * @return (bool) True if the current event was cancelled.
@@ -344,7 +299,7 @@ void ScriptEngine::PulseTimers()
  * This function creates a script timer.
  *
  * @name setTimer
- * @side shared
+ * @side server
  * @category Timer
  * @version 0.4.0
  * @param (fun) handler Function to invoke.
@@ -360,7 +315,7 @@ void ScriptEngine::PulseTimers()
  * This function stops and removes a script timer.
  *
  * @name killTimer
- * @side shared
+ * @side server
  * @category Timer
  * @version 0.4.0
  * @param (int) timerId Timer ID.
@@ -373,7 +328,7 @@ void ScriptEngine::PulseTimers()
  * This function changes a script timer's interval.
  *
  * @name setTimerInterval
- * @side shared
+ * @side server
  * @category Timer
  * @version 0.4.0
  * @param (int) timerId Timer ID.
@@ -387,7 +342,7 @@ void ScriptEngine::PulseTimers()
  * This function changes whether a script timer repeats.
  *
  * @name setTimerRepeat
- * @side shared
+ * @side server
  * @category Timer
  * @version 0.4.0
  * @param (int) timerId Timer ID.
@@ -401,7 +356,7 @@ void ScriptEngine::PulseTimers()
  * This function replaces the value passed to a script timer's handler.
  *
  * @name setTimerData
- * @side shared
+ * @side server
  * @category Timer
  * @version 0.4.0
  * @param (int) timerId Timer ID.
@@ -417,11 +372,8 @@ std::optional<ScriptArguments> ScriptEngine::InvokeHostFunction(
 	if (name == "addEvent")
 	{
 		if (!ReadString(arguments, 0, event)) { error = "addEvent expects an event name"; return std::nullopt; }
-		bool allow_remote_trigger = false;
-		if (arguments.size() >= 2 && !ReadBool(arguments, 1, allow_remote_trigger)) {
-			error = "addEvent expects an event name and optional boolean"; return std::nullopt;
-		}
-		return ScriptArguments{ScriptValue(events_.AddEvent(event, allow_remote_trigger))};
+		if (arguments.size() != 1) { error = "addEvent expects one event name"; return std::nullopt; }
+		return ScriptArguments{ScriptValue(events_.AddEvent(event))};
 	}
 	if (name == "removeEvent")
 	{

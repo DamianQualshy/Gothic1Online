@@ -10,7 +10,8 @@ void LauncherRPC::HandleLauncherRPC(CNetwork* network, Packet* packet)
 	s.Write(playerManager.GetNumberOfPlayers());
 	s.Write(cfg->GetMaxSlots());
 	s.Write(core.GetDescription());
-	s.Write(RakString("client-scripts.manifest.json"));
+	// Retain the legacy launcher field for wire compatibility. Scripts are server-only.
+	s.Write(RakString("NO_SCRIPT"));
 	s.Write(RakString(versionString));
 	s.Write(core.GetWorld());
 	network->GetPeer()->Send(&s,MEDIUM_PRIORITY,RELIABLE,0,packet->systemAddress,false);

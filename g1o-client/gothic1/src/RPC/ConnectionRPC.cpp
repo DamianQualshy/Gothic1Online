@@ -84,11 +84,6 @@ void ConnectionRPC::AcceptConnection(CNetwork* network, BitStream& stream)
 
 	core.GetChat()->AddLine(RakString(ClientLanguage::Get(EClientText::ConnectedJoining, core.GetConfig()->GetLanguage()), m->hostName.C_String()), zCOLOR(0, 255, 0, 255));
 
-	if (scr.StartScripts())
-		DLOG("Client script resource has been loaded");
-	else
-		DLOG("Cannot load client script resource!");
-
 	network->bConnected = true;
 };
 

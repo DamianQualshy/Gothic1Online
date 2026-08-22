@@ -26,7 +26,6 @@ CScriptDownload::~CScriptDownload()
 void CScriptDownload::StartUp()
 {
 	deltaTransfer->SetApplicationDirectory("resources");
-	deltaTransfer->AddUploadsFromSubdirectory("client-resources");
 	deltaTransfer->AddUploadsFromSubdirectory("download");
 	LOG("[Downloader] Number of files to download: %d", deltaTransfer->GetNumberOfFilesForUpload());
 

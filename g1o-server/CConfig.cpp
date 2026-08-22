@@ -12,11 +12,8 @@ namespace
 
 	struct ParsedScripts
 	{
-		std::vector<ScriptEntry> entries;
-		std::vector<std::string> server;
-		std::vector<std::string> client;
-		std::unordered_set<std::string> serverKeys;
-		std::unordered_set<std::string> clientKeys;
+		std::vector<std::string> scripts;
+		std::unordered_set<std::string> scriptKeys;
 		std::unordered_set<std::string> activeImports;
 	};
 
@@ -68,25 +65,14 @@ namespace
 		if (extension != ".nut" && extension != ".lua")
 			throw std::runtime_error("unsupported script extension: " + path.string());
 
-		const char* typeValue = element->Attribute("type");
-		if (!typeValue) throw std::runtime_error("script is missing its type attribute: " + path.string());
-		const std::string type = Lower(typeValue);
-		ScriptSide side;
-		if (type == "client") side = ScriptSide::Client;
-		else if (type == "server") side = ScriptSide::Server;
-		else if (type == "shared") side = ScriptSide::Shared;
-		else throw std::runtime_error("unsupported script type '" + type + "': " + path.string());
+		if (element->Attribute("type"))
+			throw std::runtime_error("script type is no longer supported; every script runs on the server: " + path.string());
 
 		const std::string relative = RelativeName(root, path);
 		const std::string key = Lower(relative);
-		auto add = [&](std::vector<std::string>& target, std::unordered_set<std::string>& keys, const char* targetName) {
-			if (!keys.insert(key).second)
-				throw std::runtime_error("duplicate " + std::string(targetName) + " script: " + relative);
-			target.push_back(relative);
-		};
-		if (side == ScriptSide::Server || side == ScriptSide::Shared) add(parsed.server, parsed.serverKeys, "server");
-		if (side == ScriptSide::Client || side == ScriptSide::Shared) add(parsed.client, parsed.clientKeys, "client");
-		parsed.entries.push_back({relative, side});
+		if (!parsed.scriptKeys.insert(key).second)
+			throw std::runtime_error("duplicate script: " + relative);
+		parsed.scripts.push_back(relative);
 		return extension;
 	}
 
@@ -138,23 +124,13 @@ namespace
 		return Lower(fs::path(path).extension().string());
 	}
 
-	void RequireSingleLanguage(const std::vector<std::string>& paths, const char* side)
+	void RequireSingleLanguage(const std::vector<std::string>& paths)
 	{
-		if (paths.empty()) throw std::runtime_error("no " + std::string(side) + " or shared scripts are configured");
+		if (paths.empty()) throw std::runtime_error("no scripts are configured");
 		const std::string language = ScriptLanguage(paths.front());
 		for (const std::string& path : paths)
 			if (ScriptLanguage(path) != language)
-				throw std::runtime_error(std::string(side) + " script resource mixes Squirrel and Lua files");
-	}
-
-	const char* SideName(ScriptSide side)
-	{
-		switch (side)
-		{
-		case ScriptSide::Client: return "client";
-		case ScriptSide::Shared: return "shared";
-		default: return "server";
-		}
+				throw std::runtime_error("script resource mixes Squirrel and Lua files");
 	}
 }
 
@@ -206,20 +182,16 @@ bool CConfig::LoadConfigFromFile(RakString fileName)
 
 		ParsedScripts parsed;
 		ReadScriptDocument(configPath, configPath.parent_path(), parsed, false);
-		RequireSingleLanguage(parsed.server, "server");
-		RequireSingleLanguage(parsed.client, "client");
+		RequireSingleLanguage(parsed.scripts);
 
 		serverPublic = parsedPublic;
 		serverName = parsedName;
 		serverPort = parsedPort;
 		maxSlots = parsedSlots;
 		adminPassword = parsedPassword;
-		scripts = std::move(parsed.entries);
-		serverScripts = std::move(parsed.server);
-		clientScripts = std::move(parsed.client);
+		scripts = std::move(parsed.scripts);
 		valid = true;
-		LOG("[info] Config file found: %u server script(s), %u client script(s)",
-			static_cast<unsigned>(serverScripts.size()), static_cast<unsigned>(clientScripts.size()));
+		LOG("[info] Config file found: %u server script(s)", static_cast<unsigned>(scripts.size()));
 		return true;
 	}
 	catch (const std::exception& error)
@@ -243,11 +215,10 @@ void CConfig::SaveConfigToFile(RakString fileName)
 	config->SetAttribute("max_slots", maxSlots.C_String());
 	config->SetAttribute("rcon_pass", adminPassword.C_String());
 	root->LinkEndChild(config);
-	for (const ScriptEntry& script : scripts)
+	for (const std::string& script : scripts)
 	{
 		auto* element = new TiXmlElement("script");
-		element->SetAttribute("src", script.path.c_str());
-		element->SetAttribute("type", SideName(script.side));
+		element->SetAttribute("src", script.c_str());
 		root->LinkEndChild(element);
 	}
 	if (!document.SaveFile(fileName.C_String()))
@@ -262,15 +233,10 @@ void CConfig::SetDefault()
 	maxSlots = "32";
 	adminPassword = "change-me";
 	scripts = {
-		{"resources/squirrel-scripts/shared/constants.nut", ScriptSide::Shared},
-		{"resources/squirrel-scripts/shared/helpers.nut", ScriptSide::Shared},
-		{"resources/squirrel-scripts/server/main.nut", ScriptSide::Server},
-		{"resources/squirrel-scripts/server/player-events.nut", ScriptSide::Server},
-		{"resources/squirrel-scripts/server/commands.nut", ScriptSide::Server},
-		{"resources/squirrel-scripts/client/main.nut", ScriptSide::Client},
-		{"resources/squirrel-scripts/client/player-events.nut", ScriptSide::Client},
-		{"resources/squirrel-scripts/client/commands.nut", ScriptSide::Client}
+		"resources/squirrel-scripts/constants.nut",
+		"resources/squirrel-scripts/helpers.nut",
+		"resources/squirrel-scripts/main.nut",
+		"resources/squirrel-scripts/player-events.nut",
+		"resources/squirrel-scripts/commands.nut"
 	};
-	serverScripts = {scripts[0].path, scripts[1].path, scripts[2].path, scripts[3].path, scripts[4].path};
-	clientScripts = {scripts[0].path, scripts[1].path, scripts[5].path, scripts[6].path, scripts[7].path};
 }

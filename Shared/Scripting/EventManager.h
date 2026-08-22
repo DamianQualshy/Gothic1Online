@@ -22,11 +22,10 @@ public:
 		std::optional<int> value;
 	};
 
-	bool AddEvent(const std::string& name, bool allow_remote_trigger = false);
+	bool AddEvent(const std::string& name);
 	static bool IsValidName(const std::string& name);
 	bool RemoveEvent(const std::string& name);
 	bool HasEvent(const std::string& name) const;
-	bool CanTriggerRemotely(const std::string& name) const;
 	std::vector<std::string> GetEvents() const;
 	bool ToggleEvent(const std::string& name, bool enabled);
 	std::optional<bool> IsEventEnabled(const std::string& name) const;
@@ -51,7 +50,6 @@ private:
 
 	struct Event {
 		bool enabled = true;
-		bool allow_remote_trigger = false;
 		std::vector<Handler> handlers;
 	};
 

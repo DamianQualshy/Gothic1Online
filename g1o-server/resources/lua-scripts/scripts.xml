@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <server>
-  <!-- Declarations are evaluated in order and paths are relative to this file. -->
-  <script src="shared/constants.lua" type="shared" />
-  <script src="shared/helpers.lua" type="shared" />
-
-  <script src="server/main.lua" type="server" />
-  <script src="server/player-events.lua" type="server" />
-  <script src="server/commands.lua" type="server" />
-
-  <script src="client/main.lua" type="client" />
-  <script src="client/player-events.lua" type="client" />
-  <script src="client/commands.lua" type="client" />
+  <!-- Declarations run on the server in this exact order. -->
+  <script src="constants.lua" />
+  <script src="helpers.lua" />
+  <script src="main.lua" />
+  <script src="player-events.lua" />
+  <script src="commands.lua" />
 </server>

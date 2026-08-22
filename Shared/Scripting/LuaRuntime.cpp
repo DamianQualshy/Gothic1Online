@@ -145,18 +145,15 @@ ScriptValue ReadValue(lua_State* lua, int index, ScriptEngine& engine, int depth
 
 class LuaRuntime final : public IScriptRuntime {
 public:
-	LuaRuntime(ScriptEngine& engine, RuntimePolicy policy) : engine_(engine)
+	LuaRuntime(ScriptEngine& engine) : engine_(engine)
 	{
 		lua_.open_libraries(sol::lib::base, sol::lib::string, sol::lib::math, sol::lib::table, sol::lib::coroutine);
 		lua_["dofile"] = sol::nil;
 		lua_["loadfile"] = sol::nil;
 		lua_["load"] = sol::nil;
-		if (policy == RuntimePolicy::TrustedServer)
-		{
-			lua_.open_libraries(sol::lib::os);
-			sol::table os = lua_["os"];
-			for (const char* unsafe : {"execute", "exit", "getenv", "remove", "rename", "setlocale", "tmpname"}) os[unsafe] = sol::nil;
-		}
+		lua_.open_libraries(sol::lib::os);
+		sol::table os = lua_["os"];
+		for (const char* unsafe : {"execute", "exit", "getenv", "remove", "rename", "setlocale", "tmpname"}) os[unsafe] = sol::nil;
 		BindFunctions();
 	}
 
@@ -165,13 +162,6 @@ public:
 	bool LoadFile(const std::string& path) override
 	{
 		sol::load_result loaded = lua_.load_file(path);
-		return RunLoaded(std::move(loaded));
-	}
-
-	bool LoadBuffer(const std::string& name, const std::vector<std::uint8_t>& bytes) override
-	{
-		sol::load_result loaded = lua_.load_buffer(
-			reinterpret_cast<const char*>(bytes.data()), bytes.size(), name);
 		return RunLoaded(std::move(loaded));
 	}
 
@@ -256,9 +246,9 @@ private:
 
 } // namespace
 
-std::unique_ptr<IScriptRuntime> CreateLuaRuntime(ScriptEngine& engine, RuntimePolicy policy)
+std::unique_ptr<IScriptRuntime> CreateLuaRuntime(ScriptEngine& engine)
 {
-	return std::make_unique<LuaRuntime>(engine, policy);
+	return std::make_unique<LuaRuntime>(engine);
 }
 
 } // namespace g1o::script

@@ -4,12 +4,10 @@
 
 namespace g1o::script {
 
-bool EventManager::AddEvent(const std::string& name, bool allow_remote_trigger)
+bool EventManager::AddEvent(const std::string& name)
 {
 	if (!IsValidName(name)) return false;
-	Event event;
-	event.allow_remote_trigger = allow_remote_trigger;
-	return events_.emplace(name, std::move(event)).second;
+	return events_.emplace(name, Event{}).second;
 }
 
 bool EventManager::IsValidName(const std::string& name)
@@ -25,12 +23,6 @@ bool EventManager::RemoveEvent(const std::string& name)
 bool EventManager::HasEvent(const std::string& name) const
 {
 	return events_.find(name) != events_.end();
-}
-
-bool EventManager::CanTriggerRemotely(const std::string& name) const
-{
-	const auto event = events_.find(name);
-	return event != events_.end() && event->second.allow_remote_trigger;
 }
 
 std::vector<std::string> EventManager::GetEvents() const

@@ -140,19 +140,6 @@ int SEvent::PlayerDisconnect(int playerID, const char* reason) { return Emit("on
 int SEvent::PlayerCommand(int playerID, const char* command, const char* params) { return Emit("onPlayerCommand", {playerID, command, params}); }
 /* g1odoc (event)
  *
- * This event is triggered when a script packet is received.
- *
- * @name onPlayerPacket
- * @side server
- * @category Network
- * @version 0.5.0
- * @param (int) playerID Player ID.
- * @param (string) data Packet data.
- *
- */
-int SEvent::PlayerPacket(int playerID, const char* data) { return Emit("onPlayerPacket", {playerID, data}); }
-/* g1odoc (event)
- *
  * This event is triggered when an administrator command is submitted.
  *
  * @name onAdminCommand
@@ -242,3 +229,147 @@ int SEvent::PlayerTakeFocus(int playerID, int focusID) { return Emit("onPlayerTa
  *
  */
 int SEvent::PlayerLostFocus(int playerID, int focusID) { return Emit("onPlayerLostFocus", {playerID, focusID}); }
+
+/* g1odoc (event)
+ *
+ * This event is triggered on the server when a connected client presses a key.
+ *
+ * @name onKeyDown
+ * @side server
+ * @category Input
+ * @version 0.5.0
+ * @param (int) playerID Authenticated player ID.
+ * @param (int) key Gothic DirectInput scan code.
+ * @param (string) letter Translated key character.
+ *
+ */
+int SEvent::KeyDown(int playerID, int key, const char* letter) { return Emit("onKeyDown", {playerID, key, letter}); }
+
+/* g1odoc (event)
+ *
+ * This event is triggered on the server when a connected client presses a mouse button.
+ *
+ * @name onMouseDown
+ * @side server
+ * @category Mouse
+ * @version 0.5.0
+ * @param (int) playerID Authenticated player ID.
+ * @param (int) button Mouse button: `0` for left or `1` for right.
+ *
+ */
+int SEvent::MouseDown(int playerID, int button) { return Emit("onMouseDown", {playerID, button}); }
+
+/* g1odoc (event)
+ *
+ * This event is triggered on the server when a connected client releases a mouse button.
+ *
+ * @name onMouseUp
+ * @side server
+ * @category Mouse
+ * @version 0.5.0
+ * @param (int) playerID Authenticated player ID.
+ * @param (int) button Mouse button: `0` for left or `1` for right.
+ *
+ */
+int SEvent::MouseUp(int playerID, int button) { return Emit("onMouseUp", {playerID, button}); }
+
+/* g1odoc (event)
+ *
+ * This event is triggered on the server when a connected client scrolls the mouse wheel.
+ *
+ * @name onMouseWheel
+ * @side server
+ * @category Mouse
+ * @version 0.5.0
+ * @param (int) playerID Authenticated player ID.
+ * @param (int) delta Mouse-wheel delta.
+ *
+ */
+int SEvent::MouseWheel(int playerID, int delta) { return Emit("onMouseWheel", {playerID, delta}); }
+
+/* g1odoc (event)
+ *
+ * This event is triggered on the server when a connected client opens the inventory.
+ *
+ * @name onOpenInventory
+ * @side server
+ * @category Inventory
+ * @version 0.5.0
+ * @param (int) playerID Authenticated player ID.
+ *
+ */
+int SEvent::OpenInventory(int playerID) { return Emit("onOpenInventory", {playerID}); }
+
+/* g1odoc (event)
+ *
+ * This event is triggered on the server when a connected client closes the inventory.
+ *
+ * @name onCloseInventory
+ * @side server
+ * @category Inventory
+ * @version 0.5.0
+ * @param (int) playerID Authenticated player ID.
+ *
+ */
+int SEvent::CloseInventory(int playerID) { return Emit("onCloseInventory", {playerID}); }
+
+/* g1odoc (event)
+ *
+ * This event is triggered on the server when a connected client starts interacting with a mob.
+ *
+ * @name onMobTrigger
+ * @side server
+ * @category World
+ * @version 0.5.0
+ * @param (int) playerID Authenticated player ID.
+ * @param (string) name Mob name.
+ * @param (float) x X coordinate.
+ * @param (float) y Y coordinate.
+ * @param (float) z Z coordinate.
+ * @param (int) type Mob type.
+ *
+ */
+int SEvent::MobTrigger(int playerID, const char* name, float x, float y, float z, int type)
+{
+	return Emit("onMobTrigger", {playerID, name, x, y, z, type});
+}
+
+/* g1odoc (event)
+ *
+ * This event is triggered on the server when a connected client stops interacting with a mob.
+ *
+ * @name onMobUntrigger
+ * @side server
+ * @category World
+ * @version 0.5.0
+ * @param (int) playerID Authenticated player ID.
+ * @param (string) name Mob name.
+ * @param (float) x X coordinate.
+ * @param (float) y Y coordinate.
+ * @param (float) z Z coordinate.
+ * @param (int) type Mob type.
+ *
+ */
+int SEvent::MobUntrigger(int playerID, const char* name, float x, float y, float z, int type)
+{
+	return Emit("onMobUntrigger", {playerID, name, x, y, z, type});
+}
+
+/* g1odoc (event)
+ *
+ * This event is triggered on the server when a connected client changes the item held in a hand.
+ *
+ * @name onUseItem
+ * @side server
+ * @category Player
+ * @version 0.5.0
+ * @param (int) playerID Authenticated player ID.
+ * @param (string) instance Item instance name or an empty string.
+ * @param (int) amount Item amount.
+ * @param (int) hand Hand identifier.
+ *
+ */
+int SEvent::UseItem(int playerID, const char* instance, int amount, int hand)
+{
+	return Emit("onUseItem", {playerID, instance, amount, hand});
+}

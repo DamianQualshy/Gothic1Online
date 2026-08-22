@@ -1,6 +1,6 @@
 # Scripting reference
 
-Function and event pages below this directory are generated from `g1odoc` blocks in the source code. They describe the common API used by both Squirrel and Lua; a page's side label states where it is available.
+Function and event pages below this directory are generated from `g1odoc` blocks in the source code. Every documented API runs in the authoritative server VM and is available to both Squirrel and Lua unless its page says otherwise.
 
 Regenerate after changing a scripting function or event:
 

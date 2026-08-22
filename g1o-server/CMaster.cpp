@@ -69,7 +69,8 @@ void CMaster::Pulse()
 				stream.Write(playerManager.GetNumberOfPlayers());
 				stream.Write(maxSlots);
 				stream.Write(core.GetDescription());
-				stream.Write(RakString("client-scripts.manifest.json"));
+				// Retain the legacy master-list field for wire compatibility.
+				stream.Write(RakString("NO_SCRIPT"));
 				stream.Write(RakString(versionString));
 				stream.Write(core.GetWorld());
 

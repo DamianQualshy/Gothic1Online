@@ -31,7 +31,7 @@ GENERATED_DIRECTORIES = {
     "shared-events",
 }
 VALID_KINDS = {"func", "event"}
-VALID_SIDES = {"client", "server", "shared"}
+VALID_SIDES = {"server"}
 
 BLOCK_RE = re.compile(
     r"/\*\s*g1odoc\s*\((?P<kind>[^)]+)\)\s*(?P<body>.*?)\*/",

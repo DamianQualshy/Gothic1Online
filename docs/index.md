@@ -1,15 +1,32 @@
-# Gothic 1 Online
+# Home
 
-Gothic 1 Online is a multiplayer modification for Gothic 1. This documentation covers server setup, client-resource delivery, and the scripting API shared by Squirrel and Lua.
+## Introduction
 
-The native game integration is built for the Gothic 1 API (`__G1`). References to GMPC and G2O describe scripting and resource-system behavior only; Gothic 2 engine layouts and addresses are not used.
+Gothic 1 Online (**G1O**) is an open-source multiplayer modification for Gothic 1. The repository contains the injected game client, launcher, game server, master server, and the shared network and scripting infrastructure.
 
-## Scripting at a glance
+Game modes are authoritative server programs. G1O supports Squirrel and Lua, but one configured script list must use one language. Clients do not download or execute game-mode scripts.
 
-- Server scripts are trusted and may use either Squirrel (`.nut`) or Lua (`.lua`).
-- Client scripts use the same API surface but execute under a restricted runtime.
-- Functions, values, events, and timers are language-neutral.
-- A single runtime or imported resource cannot mix Squirrel and Lua files.
-- Client source is compiled into `.cnut` or stripped `.luac` bytecode before download.
+---
 
-Start with [server configuration](server-manual/configuration.md), then read the [scripting overview](scripting/index.md). The generated [scripting reference](scripting-reference/index.md) is derived directly from `g1odoc` blocks in the source tree.
+The native client targets Gothic 1 Classic. GMPC, GMPA, and G2O are behavioral references for multiplayer architecture; their Gothic 2 layouts and addresses are not used by G1O.
+
+## Start Here
+
+- [Server configuration](server-manual/configuration.md) describes `config.xml`, imports, validation, and startup order.
+- [Server scripting](server-manual/scripting.md) explains runtimes, constants, events, and client-reported input.
+- [Client configuration](client-manual/configuration.md) documents `G1O_Config.xml`.
+- [Scripting reference](scripting-reference/index.md) lists the generated server API.
+
+## Useful Links
+
+##### Language documentation
+
+- [Squirrel 3 documentation](http://www.squirrel-lang.org/doc/squirrel3.html)
+- [Lua 5.4 reference manual](https://www.lua.org/manual/5.4/)
+
+## IDE
+
+##### Visual Studio Code
+
+- [Visual Studio Code](https://code.visualstudio.com/)
+- [Lua Language Server](https://marketplace.visualstudio.com/items?itemName=sumneko.lua)

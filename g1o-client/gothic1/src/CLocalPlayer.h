@@ -56,7 +56,7 @@ public:
 	void SendOverlay(bool add, RakString overlay);
 	void SendTimedOverlay(TimeMS time, RakString overlay);
 	void SendArrow();
-	void SendFocus(int playerID, int focusID, bool taken);
+	void SendFocus(int focusID, bool taken);
 	void BroadcastWorld();
 	void Respawn();
 	void Unconscious();

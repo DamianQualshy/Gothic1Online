@@ -1,6 +1,6 @@
-# Server configuration
+# Server Configuration
 
-The server reads `config.xml` from its working directory. The root element is `<server>`, with one `<config>` element for server settings and ordered `<script>` or `<import>` declarations for scripting.
+The server reads `config.xml` from its working directory. A missing file is created from compiled defaults. An existing malformed file is reported and prevents startup instead of being overwritten.
 
 ```xml
 <server>
@@ -15,38 +15,43 @@ The server reads `config.xml` from its working directory. The root element is `<
 </server>
 ```
 
-## Server settings
+## Server Settings
 
-| Attribute | Default | Meaning |
+| Attribute | Default | Runtime behavior |
 | --- | --- | --- |
-| `public` | `false` | Whether the server registers with the configured master server. Accepts `true`, `false`, `1`, or `0`. |
-| `host_name` | `Gothic Online Server` | Name shown to players and in server listings. |
-| `port` | `28970` | RakNet game port and base for the resource downloader. |
-| `max_slots` | `32` | Maximum player count. |
+| `public` | `false` | Enables registration with the configured master server. Accepts `true`, `false`, `1`, or `0`. |
+| `host_name` | `Gothic Online Server` | Name sent to clients, the launcher, and master-server listings. |
+| `port` | `28970` | RakNet game port and TCP download port. |
+| `max_slots` | `32` | Maximum number of accepted players. |
 | `rcon_pass` | `change-me` | Administrator password. Change it before public hosting. |
 
-## Script declarations
+## Script Startup
 
-Each script declaration has a relative source path and one side:
+Every script runs on the server. A declaration contains only a relative source path:
 
 ```xml
-<script src="resources/squirrel-scripts/server/main.nut" type="server" />
-<script src="resources/squirrel-scripts/shared/constants.nut" type="shared" />
-<script src="resources/squirrel-scripts/client/main.nut" type="client" />
+<script src="resources/squirrel-scripts/constants.nut" />
+<script src="resources/squirrel-scripts/main.nut" />
 ```
 
-Declarations are processed in document order. `server` scripts execute only on the server, `client` scripts are compiled into the client package, and `shared` scripts participate in both ordered lists.
+Declarations execute in document order. A legacy `type="client"`, `type="shared"`, or `type="server"` attribute is rejected; it is not ignored. This makes stale split configurations fail clearly.
 
-Only `.nut` and `.lua` source files are accepted. Every final server list and client list must contain one language. The runtime rejects a mixed list before executing its first file. The default config therefore shows both complete resources but comments the Lua import; uncommenting Lua requires commenting Squirrel.
+Only `.nut` and `.lua` source files are accepted. The complete expanded list must use one language, and a load error stops startup. To switch the default server to Lua, comment the Squirrel import and enable the Lua import.
 
 ## Imports
 
-Imports are expanded inline, preserving order:
+Imports are expanded inline at their declaration position:
 
 ```xml
 <import src="resources/squirrel-scripts/scripts.xml" />
 ```
 
-Paths inside an imported document are relative to that document, matching G2O's behavior. Imports may be nested, but each imported resource must be single-language. A server may still use Squirrel while its client uses Lua by placing those declarations in separate imports or directly in the top-level `config.xml`.
+Paths inside an imported document are relative to that document. Imports may be nested, but cycles are rejected. The resulting sequence remains exact, so a constants file can reliably precede helpers and gameplay entry points.
 
-Startup fails on missing or invalid XML, import cycles, missing scripts, duplicate effective scripts, absolute paths, traversal outside the server directory, unsupported sides or extensions, and mixed-language resources/runtime lists. An invalid existing configuration is not replaced with defaults.
+Startup also fails on missing files, duplicate effective scripts, absolute paths, paths that leave the server directory, unsupported extensions, or a mixed Squirrel/Lua list.
+
+## Downloads
+
+Files under `resources/download` are synchronized into the client's Gothic `Data` directory. Scripts are excluded from this transport: the launcher no longer requests a script package, and the client has no script runtime.
+
+See [Server Scripting](scripting.md) for the execution model and event boundary.

@@ -46,28 +46,13 @@ void CServer::Start()
 	LOG("[config] Server port: %s", GetConfig()->GetServerPort().C_String());
 	LOG("[config] Max slots: %s", GetConfig()->GetMaxSlots().C_String());
 	LOG("[config] Public server: %s", GetConfig()->GetServerPublic() ? "yes" : "no");
-	for (const std::string& script : GetConfig()->GetServerScripts())
-		LOG("[config] Server script: %s", script.c_str());
-	for (const std::string& script : GetConfig()->GetClientScripts())
-		LOG("[config] Client script: %s", script.c_str());
+	for (const std::string& script : GetConfig()->GetScripts())
+		LOG("[config] Script: %s", script.c_str());
 	LOG("[info] Loading scripts...");
-	if (scr.StartScripts(pConfig->GetServerScripts()))
-		LOG("[script] Server scripts loaded");
+	if (scr.StartScripts(pConfig->GetScripts()))
+		LOG("[script] Scripts loaded on the server");
 	else
 		return;
-
-	try
-	{
-		const auto resource = g1o::resource::PackClientScripts(
-			".", "resources/client-resources", pConfig->GetClientScripts(), versionString);
-		LOG("[resource] Packed client scripts: %llu bytes, SHA-256 %s",
-			static_cast<unsigned long long>(resource.archive_size), resource.archive_sha256.c_str());
-	}
-	catch (const std::exception& error)
-	{
-		LOG("[resource] Cannot package client scripts: %s", error.what());
-		return;
-	}
 	LOG("[info] Starting network...");
 
 	//Inicjacja sieci

@@ -20,15 +20,15 @@ theme:
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: green
-      accent: amber
+      primary: deep purple
+      accent: orange
       toggle:
         icon: material/eye-outline
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: green
-      accent: amber
+      primary: deep purple
+      accent: orange
       toggle:
         icon: material/eye
         name: Switch to light mode

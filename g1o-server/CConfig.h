@@ -4,19 +4,6 @@
 #include <string>
 #include <vector>
 
-enum class ScriptSide
-{
-	Client,
-	Server,
-	Shared
-};
-
-struct ScriptEntry
-{
-	std::string path;
-	ScriptSide side = ScriptSide::Server;
-};
-
 class CConfig
 {
 private:
@@ -26,9 +13,7 @@ private:
 	RakString serverPort;
 	RakString maxSlots;
 	RakString adminPassword;
-	std::vector<ScriptEntry> scripts;
-	std::vector<std::string> serverScripts;
-	std::vector<std::string> clientScripts;
+	std::vector<std::string> scripts;
 
 public:
 	CConfig();
@@ -44,9 +29,7 @@ public:
 	RakString GetServerPort() const { return serverPort; }
 	RakString GetMaxSlots() const { return maxSlots; }
 	RakString GetAdminPassword() const { return adminPassword; }
-	const std::vector<ScriptEntry>& GetScripts() const { return scripts; }
-	const std::vector<std::string>& GetServerScripts() const { return serverScripts; }
-	const std::vector<std::string>& GetClientScripts() const { return clientScripts; }
+	const std::vector<std::string>& GetScripts() const { return scripts; }
 };
 
 #endif // CCONFIG_H

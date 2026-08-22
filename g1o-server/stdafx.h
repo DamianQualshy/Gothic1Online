@@ -27,7 +27,6 @@
 #include "../Shared/hashlib/hashlibpp.h"
 #include "../Shared/Scripting/NativeApi.h"
 #include "../Shared/Scripting/ScriptEngine.h"
-#include "../Shared/Resource/ClientResource.h"
 
 using namespace std;
 //Managery

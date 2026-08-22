@@ -45,8 +45,7 @@ void CRender::Render()
 		core.GetMultiplayer()->RepairDoor();
 		playerManager.RepairAllPlayers(); //BRAND NEW!!!
 
-		if( scr.IsScriptLoaded() == true )
-			scr.OnRender();
+		scr.OnRender();
 
 #ifndef DEV_MODE
 		//Sprawdzenie czy marvin nie jest aktywny

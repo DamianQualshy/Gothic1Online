@@ -50,19 +50,6 @@ bool CRPCDownloader::downloadNextSubDir()
     switch (++m_DownloadDir)
     {
     case 1:
-        id = m_DirectoryDeltaTransfer.DownloadFromSubdirectory(UPLOAD_SCRIPT_PATH, DOWNLOAD_SCRIPT_PATH, true, NETWORK.m_serverAdress, NETWORK.getFileTransferCallback(), HIGH_PRIORITY, 0, 0);
-        if (id == -1)
-		{
-			m_DownloadActive = false;
-            emit signalConnectionFailed();
-			NETWORK.disconnectFromCurrent(true);
-		}
-        else
-            m_SetID = id;
-
-        return true;
-
-    case 2:
         id = m_DirectoryDeltaTransfer.DownloadFromSubdirectory(UPLOAD_FILE_PATH, DOWNLOAD_FILE_PATH, true, NETWORK.m_serverAdress, NETWORK.getFileTransferCallback(), HIGH_PRIORITY, 0, 0);
         if (id == -1)
 		{

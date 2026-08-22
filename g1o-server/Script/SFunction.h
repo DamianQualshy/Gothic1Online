@@ -11,7 +11,6 @@ namespace SFunction
 	int isPlayerConnected(g1o::script::CallContext& context);
 	int sendMessageToAll(g1o::script::CallContext& context);
 	int sendMessageToPlayer(g1o::script::CallContext& context);
-	int sendPacketToPlayer(g1o::script::CallContext& context);
 	int getPlayerPosition(g1o::script::CallContext& context);
 	int isPlayerAdmin(g1o::script::CallContext& context);
 	int getMaxSlots(g1o::script::CallContext& context);
@@ -25,7 +24,6 @@ namespace SFunction
 	int setUnconsciousEnabled(g1o::script::CallContext& context);
 	int createGroundItem(g1o::script::CallContext& context);
 	int destroyGroundItem(g1o::script::CallContext& context);
-	int triggerClientEvent(g1o::script::CallContext& context);
 	int setPlayerInvisible(g1o::script::CallContext& context);
 	int isPlayerInvisible(g1o::script::CallContext& context);
 };

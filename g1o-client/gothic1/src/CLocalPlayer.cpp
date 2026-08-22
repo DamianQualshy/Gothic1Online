@@ -349,7 +349,7 @@ void CLocalPlayer::SendHand()
 					this->leftHand = "NULL";
 					//core.GetChat()->AddLine(RakString("L- %s", this->leftHand.C_String()), zCOLOR(255, 0, 0));
 					DLOG("Left hand: %s",this->leftHand.C_String());
-					CEvent::UseItem("NULL", 0, 0);
+					CEvent::UseItem("", 0, 0);
 
 					BitStream stream;
 					stream.Write((MessageID)GO_PLAYER);
@@ -385,7 +385,7 @@ void CLocalPlayer::SendHand()
 					this->rightHand = "NULL";
 					//core.GetChat()->AddLine(RakString("R- %s", this->rightHand.C_String()), zCOLOR(255, 0, 0));
 					DLOG("Right hand:%s", this->rightHand.C_String());
-					CEvent::UseItem("NULL", 0, 1);
+					CEvent::UseItem("", 0, 1);
 
 					BitStream stream;
 					stream.Write((MessageID)GO_PLAYER);
@@ -487,8 +487,6 @@ void CLocalPlayer::SendHitFocus(oCNpc *target)
 						{
 							if (!target->IsUnconscious() && minushp > 0)
 							{
-								CEvent::PlayerHit();
-
 								BitStream stream;
 								stream.Write((MessageID)GO_PLAYER);
 								stream.Write((MessageID)ATTACK_HIT);
@@ -565,8 +563,6 @@ void CLocalPlayer::SendStandUp()
 				if( hero->IsUnconscious() == 0 )
 				{
 					this->unconscious = false;
-					CEvent::PlayerStandUp();
-
 					//Wysłanie że wstaje
 					BitStream stream;
 					stream.Write((MessageID)GO_PLAYER);
@@ -751,13 +747,12 @@ void CLocalPlayer::SendArrow()
 	core.GetNetwork()->GetPeer()->Send(&stream, HIGH_PRIORITY, RELIABLE, 0, core.GetNetwork()->GetServerAddress(), false);
 }
 
-void CLocalPlayer::SendFocus(int playerID, int focusID, bool taken)
+void CLocalPlayer::SendFocus(int focusID, bool taken)
 {
 	BitStream stream;
 	stream.Write((MessageID)GO_SCRIPT);
 	stream.Write((MessageID)SCRIPT_FOCUS);
 	stream.Write(taken);
-	stream.Write(playerID);
 	stream.Write(focusID);
 
 	core.GetNetwork()->GetPeer()->Send(&stream, LOW_PRIORITY, RELIABLE, 0, core.GetNetwork()->GetServerAddress(), false);
@@ -865,8 +860,6 @@ void CLocalPlayer::Respawn()
 				lastDeathTimer = GetTimeMS() + 5000;
 				isDead = true;
 				
-				CEvent::PlayerDead();
-
 				if (hero->IsHuman())
 				{
 					// Unequip weapons
@@ -918,7 +911,6 @@ void CLocalPlayer::Respawn()
 					game->SetShowPlayerStatus(1);
 				}
 
-				CEvent::PlayerRespawn();
 			}
 		}
 		else
@@ -932,7 +924,6 @@ void CLocalPlayer::Unconscious()
 	if (oCNpc::GetHero()->IsUnconscious() && !this->unconscious && scr.GetScriptVars()->isUnconsciousEnabled)
 	{
 		this->unconscious = true;
-		CEvent::PlayerUnconscious();
 	}
 }
 
@@ -960,7 +951,6 @@ void CLocalPlayer::ReleaseMob()
 void CLocalPlayer::HandleFocus()
 {
 	static oCNpc *hasFocus = NULL;
-	static zSTRING focusName = "";
 	static int focusID = -1;
 
 	if (focusTimer < GetTimeMS())
@@ -972,36 +962,29 @@ void CLocalPlayer::HandleFocus()
 			{
 				hasFocus = focus;
 
-				CEvent::PlayerLostFocus(focusID, focusName.ToChar());
-				SendFocus(this->id, focusID, false);
+				SendFocus(focusID, false);
 
-				zVEC3 pos = focus->GetPosition();
 				CPlayer *player = playerManager.GetPlayer(focus);
 
 				focusID = player ? player->GetID() : -1;
 
-				CEvent::PlayerTakeFocus(focusID, focus->GetName(0).ToChar(), pos[0], pos[1], pos[2]);
-				SendFocus(this->id, focusID, true);
+				SendFocus(focusID, true);
 			}
 			else if (!hasFocus)
 			{
 				hasFocus = focus;
 
-				zVEC3 pos = focus->GetPosition();
 				CPlayer *player = playerManager.GetPlayer(focus);
 				
 				focusID = player ? player->GetID() : -1;
 
-				CEvent::PlayerTakeFocus(focusID, focus->GetName(0).ToChar(), pos[0], pos[1], pos[2]);
-				SendFocus(this->id, focusID, true);
+				SendFocus(focusID, true);
 			}
-
-			focusName = focus->GetName(0);
 		}
 		else if (hasFocus)
 		{
 			hasFocus = NULL;
-			CEvent::PlayerLostFocus(focusID, focusName.ToChar());
+			SendFocus(focusID, false);
 		}
 
 		focusTimer = GetTimeMS() + 50;

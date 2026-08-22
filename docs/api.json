@@ -3,3582 +3,6 @@
   "functions": [
     {
       "kind": "func",
-      "name": "addChatMessage",
-      "side": "client",
-      "category": "Chat",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function adds message.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "r",
-          "description": "Red color component."
-        },
-        {
-          "type": "int",
-          "name": "g",
-          "description": "Green color component."
-        },
-        {
-          "type": "int",
-          "name": "b",
-          "description": "Blue color component."
-        },
-        {
-          "type": "string",
-          "name": "message",
-          "description": "Message text."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 161,
-      "declaration": "void addChatMessage(int r, int g, int b, string message)"
-    },
-    {
-      "kind": "func",
-      "name": "clearMultiplayerMessages",
-      "side": "client",
-      "category": "Chat",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function clears chat.",
-      "notes": [],
-      "params": [],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2479,
-      "declaration": "void clearMultiplayerMessages()"
-    },
-    {
-      "kind": "func",
-      "name": "isChatVisible",
-      "side": "client",
-      "category": "Chat",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns whether the chat is visible.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "bool",
-        "description": "Whether the chat is visible."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 209,
-      "declaration": "bool isChatVisible()"
-    },
-    {
-      "kind": "func",
-      "name": "setChatVisible",
-      "side": "client",
-      "category": "Chat",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function shows or hides chat.",
-      "notes": [],
-      "params": [
-        {
-          "type": "bool",
-          "name": "enable",
-          "description": "True to enable the feature, false to disable it."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 188,
-      "declaration": "void setChatVisible(bool enable)"
-    },
-    {
-      "kind": "func",
-      "name": "getCursorPosition",
-      "side": "client",
-      "category": "Cursor",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns cursor position.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "table",
-        "description": "Cursor position."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1726,
-      "declaration": "table getCursorPosition()"
-    },
-    {
-      "kind": "func",
-      "name": "getCursorSensitivity",
-      "side": "client",
-      "category": "Cursor",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns cursor sensitivity.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "float",
-        "description": "Cursor sensitivity."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1772,
-      "declaration": "float getCursorSensitivity()"
-    },
-    {
-      "kind": "func",
-      "name": "getCursorTxt",
-      "side": "client",
-      "category": "Cursor",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns cursor texture.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "string",
-        "description": "Cursor texture."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1832,
-      "declaration": "string getCursorTxt()"
-    },
-    {
-      "kind": "func",
-      "name": "isCursorVisible",
-      "side": "client",
-      "category": "Cursor",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function checks whether cursor visible.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "bool",
-        "description": "True when the condition is met, otherwise false."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1709,
-      "declaration": "bool isCursorVisible()"
-    },
-    {
-      "kind": "func",
-      "name": "setCursorPosition",
-      "side": "client",
-      "category": "Cursor",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets cursor position.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "x",
-          "description": "X coordinate."
-        },
-        {
-          "type": "int",
-          "name": "y",
-          "description": "Y coordinate."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1749,
-      "declaration": "void setCursorPosition(int x, int y)"
-    },
-    {
-      "kind": "func",
-      "name": "setCursorSensitivity",
-      "side": "client",
-      "category": "Cursor",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets cursor sensitivity.",
-      "notes": [],
-      "params": [
-        {
-          "type": "float",
-          "name": "sensitivity",
-          "description": "Sensitivity."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1789,
-      "declaration": "void setCursorSensitivity(float sensitivity)"
-    },
-    {
-      "kind": "func",
-      "name": "setCursorTxt",
-      "side": "client",
-      "category": "Cursor",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets cursor texture.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "texName",
-          "description": "Tex name."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1811,
-      "declaration": "void setCursorTxt(string texName)"
-    },
-    {
-      "kind": "func",
-      "name": "setCursorVisible",
-      "side": "client",
-      "category": "Cursor",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets cursor visible.",
-      "notes": [],
-      "params": [
-        {
-          "type": "bool",
-          "name": "show",
-          "description": "Show."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1688,
-      "declaration": "void setCursorVisible(bool show)"
-    },
-    {
-      "kind": "func",
-      "name": "exitGame",
-      "side": "client",
-      "category": "Game",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function closes the game.",
-      "notes": [],
-      "params": [],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 226,
-      "declaration": "void exitGame()"
-    },
-    {
-      "kind": "func",
-      "name": "getLanguage",
-      "side": "client",
-      "category": "Game",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns language.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "string",
-        "description": "Language."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 3767,
-      "declaration": "string getLanguage()"
-    },
-    {
-      "kind": "func",
-      "name": "getTime",
-      "side": "client",
-      "category": "Game",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns time.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "table",
-        "description": "Time."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 390,
-      "declaration": "table getTime()"
-    },
-    {
-      "kind": "func",
-      "name": "scanPrograms",
-      "side": "client",
-      "category": "Game",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function scans visible window titles and triggers `onProgramName` for each one.",
-      "notes": [],
-      "params": [],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2897,
-      "declaration": "void scanPrograms()"
-    },
-    {
-      "kind": "func",
-      "name": "setCameraBehindVob",
-      "side": "client",
-      "category": "Game",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets camera behind vob.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "vobID",
-          "description": "Vob ID."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 3130,
-      "declaration": "void setCameraBehindVob(int vobID)"
-    },
-    {
-      "kind": "func",
-      "name": "setCameraInFrontOfPlayer",
-      "side": "client",
-      "category": "Game",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets camera before hero.",
-      "notes": [],
-      "params": [],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2612,
-      "declaration": "void setCameraInFrontOfPlayer()"
-    },
-    {
-      "kind": "func",
-      "name": "setCameraMovementEnabled",
-      "side": "client",
-      "category": "Game",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function enables or disables camera movement.",
-      "notes": [],
-      "params": [
-        {
-          "type": "bool",
-          "name": "enable",
-          "description": "True to enable the feature, false to disable it."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 3514,
-      "declaration": "void setCameraMovementEnabled(bool enable)"
-    },
-    {
-      "kind": "func",
-      "name": "setDefaultCamera",
-      "side": "client",
-      "category": "Game",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets default camera.",
-      "notes": [],
-      "params": [],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2640,
-      "declaration": "void setDefaultCamera()"
-    },
-    {
-      "kind": "func",
-      "name": "setGameNpcsEnabled",
-      "side": "client",
-      "category": "Game",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function enables or disables game npcs.",
-      "notes": [],
-      "params": [
-        {
-          "type": "bool",
-          "name": "enable",
-          "description": "True to enable the feature, false to disable it."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 269,
-      "declaration": "void setGameNpcsEnabled(bool enable)"
-    },
-    {
-      "kind": "func",
-      "name": "setMarvinEnabled",
-      "side": "client",
-      "category": "Game",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function enables or disables marvin.",
-      "notes": [],
-      "params": [
-        {
-          "type": "bool",
-          "name": "enable",
-          "description": "True to enable the feature, false to disable it."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 3575,
-      "declaration": "void setMarvinEnabled(bool enable)"
-    },
-    {
-      "kind": "func",
-      "name": "setTime",
-      "side": "client",
-      "category": "Game",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets time.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "hour",
-          "description": "Hour."
-        },
-        {
-          "type": "int",
-          "name": "minute",
-          "description": "Minute."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 367,
-      "declaration": "void setTime(int hour, int minute)"
-    },
-    {
-      "kind": "func",
-      "name": "md5File",
-      "side": "client",
-      "category": "Hash",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function calculates the MD5 digest of a file.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "filename",
-          "description": "Path to the file."
-        }
-      ],
-      "returns": {
-        "type": "string",
-        "description": "Lowercase hexadecimal MD5 digest."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2222,
-      "declaration": "string md5File(string filename)"
-    },
-    {
-      "kind": "func",
-      "name": "getExp",
-      "side": "client",
-      "category": "Hero",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns experience.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "int",
-        "description": "Experience."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 894,
-      "declaration": "int getExp()"
-    },
-    {
-      "kind": "func",
-      "name": "getLearnPoints",
-      "side": "client",
-      "category": "Hero",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns learn points.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "int",
-        "description": "Learn points."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 970,
-      "declaration": "int getLearnPoints()"
-    },
-    {
-      "kind": "func",
-      "name": "getNextLevelExp",
-      "side": "client",
-      "category": "Hero",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns next level experience.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "int",
-        "description": "Next level experience."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 932,
-      "declaration": "int getNextLevelExp()"
-    },
-    {
-      "kind": "func",
-      "name": "setExp",
-      "side": "client",
-      "category": "Hero",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets experience.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "experience",
-          "description": "Experience."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 873,
-      "declaration": "void setExp(int experience)"
-    },
-    {
-      "kind": "func",
-      "name": "setLearnPoints",
-      "side": "client",
-      "category": "Hero",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets learn points.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "lp",
-          "description": "Lp."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 949,
-      "declaration": "void setLearnPoints(int lp)"
-    },
-    {
-      "kind": "func",
-      "name": "setNextLevelExp",
-      "side": "client",
-      "category": "Hero",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets next level experience.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "experience",
-          "description": "Experience."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 911,
-      "declaration": "void setNextLevelExp(int experience)"
-    },
-    {
-      "kind": "func",
-      "name": "disableKey",
-      "side": "client",
-      "category": "Input",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function enables or disables a Gothic input key.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "key",
-          "description": "Gothic input key code."
-        },
-        {
-          "type": "bool",
-          "name": "toggle",
-          "description": "True to enable the feature, false to disable it."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 245,
-      "declaration": "void disableKey(int key, bool toggle)"
-    },
-    {
-      "kind": "func",
-      "name": "setGameKeysEnabled",
-      "side": "client",
-      "category": "Input",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function enables or disables game keys.",
-      "notes": [],
-      "params": [
-        {
-          "type": "bool",
-          "name": "enable",
-          "description": "True to enable the feature, false to disable it."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 304,
-      "declaration": "void setGameKeysEnabled(bool enable)"
-    },
-    {
-      "kind": "func",
-      "name": "createDraw",
-      "side": "client",
-      "category": "Interface",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function creates draw.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "text",
-          "description": "Text."
-        },
-        {
-          "type": "string",
-          "name": "font",
-          "description": "Font."
-        },
-        {
-          "type": "int",
-          "name": "x",
-          "description": "X coordinate."
-        },
-        {
-          "type": "int",
-          "name": "y",
-          "description": "Y coordinate."
-        },
-        {
-          "type": "int",
-          "name": "r",
-          "description": "Red color component."
-        },
-        {
-          "type": "int",
-          "name": "g",
-          "description": "Green color component."
-        },
-        {
-          "type": "int",
-          "name": "b",
-          "description": "Blue color component."
-        }
-      ],
-      "returns": {
-        "type": "int",
-        "description": "Identifier of the created object."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1397,
-      "declaration": "int createDraw(string text, string font, int x, int y, int r, int g, int b)"
-    },
-    {
-      "kind": "func",
-      "name": "createTexture",
-      "side": "client",
-      "category": "Interface",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function creates texture.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "x",
-          "description": "X coordinate."
-        },
-        {
-          "type": "int",
-          "name": "y",
-          "description": "Y coordinate."
-        },
-        {
-          "type": "int",
-          "name": "w",
-          "description": "Width."
-        },
-        {
-          "type": "int",
-          "name": "h",
-          "description": "Height."
-        },
-        {
-          "type": "string",
-          "name": "textureString",
-          "description": "Texture string."
-        }
-      ],
-      "returns": {
-        "type": "int",
-        "description": "Identifier of the created object."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1878,
-      "declaration": "int createTexture(int x, int y, int w, int h, string textureString)"
-    },
-    {
-      "kind": "func",
-      "name": "destroyDraw",
-      "side": "client",
-      "category": "Interface",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function destroys draw.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "drawID",
-          "description": "Draw ID."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1440,
-      "declaration": "void destroyDraw(int drawID)"
-    },
-    {
-      "kind": "func",
-      "name": "destroyTexture",
-      "side": "client",
-      "category": "Interface",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function destroys texture.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "texID",
-          "description": "Tex id."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1915,
-      "declaration": "void destroyTexture(int texID)"
-    },
-    {
-      "kind": "func",
-      "name": "enableHud",
-      "side": "client",
-      "category": "Interface",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function enables or disables interface.",
-      "notes": [],
-      "params": [
-        {
-          "type": "bool",
-          "name": "enable",
-          "description": "True to enable the feature, false to disable it."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 325,
-      "declaration": "void enableHud(bool enable)"
-    },
-    {
-      "kind": "func",
-      "name": "getDrawPosition",
-      "side": "client",
-      "category": "Interface",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns draw position.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "drawID",
-          "description": "Draw ID."
-        }
-      ],
-      "returns": {
-        "type": "table",
-        "description": "Draw position."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1655,
-      "declaration": "table getDrawPosition(int drawID)"
-    },
-    {
-      "kind": "func",
-      "name": "getFontHeight",
-      "side": "client",
-      "category": "Interface",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns font height.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "font",
-          "description": "Font."
-        }
-      ],
-      "returns": {
-        "type": "int",
-        "description": "Font height."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 3690,
-      "declaration": "int getFontHeight(string font)"
-    },
-    {
-      "kind": "func",
-      "name": "getLetterDistance",
-      "side": "client",
-      "category": "Interface",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns letter distance.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "font",
-          "description": "Font."
-        }
-      ],
-      "returns": {
-        "type": "float",
-        "description": "Letter distance."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 3742,
-      "declaration": "float getLetterDistance(string font)"
-    },
-    {
-      "kind": "func",
-      "name": "getLetterWidth",
-      "side": "client",
-      "category": "Interface",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns letter width.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "font",
-          "description": "Font."
-        },
-        {
-          "type": "int",
-          "name": "character",
-          "description": "Character."
-        }
-      ],
-      "returns": {
-        "type": "int",
-        "description": "Letter width."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 3715,
-      "declaration": "int getLetterWidth(string font, int character)"
-    },
-    {
-      "kind": "func",
-      "name": "getResolution",
-      "side": "client",
-      "category": "Interface",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns resolution.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "table",
-        "description": "Resolution."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 475,
-      "declaration": "table getResolution()"
-    },
-    {
-      "kind": "func",
-      "name": "getTexture",
-      "side": "client",
-      "category": "Interface",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns texture.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "texID",
-          "description": "Tex id."
-        }
-      ],
-      "returns": {
-        "type": "string|bool",
-        "description": "Texture."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1983,
-      "declaration": "string|bool getTexture(int texID)"
-    },
-    {
-      "kind": "func",
-      "name": "getTexturePosition",
-      "side": "client",
-      "category": "Interface",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns texture position.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "texID",
-          "description": "Tex id."
-        }
-      ],
-      "returns": {
-        "type": "table|bool",
-        "description": "Texture position."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2052,
-      "declaration": "table|bool getTexturePosition(int texID)"
-    },
-    {
-      "kind": "func",
-      "name": "getTextureSize",
-      "side": "client",
-      "category": "Interface",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns texture size.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "texID",
-          "description": "Tex id."
-        }
-      ],
-      "returns": {
-        "type": "table|bool",
-        "description": "Texture size."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2123,
-      "declaration": "table|bool getTextureSize(int texID)"
-    },
-    {
-      "kind": "func",
-      "name": "getTextWidth",
-      "side": "client",
-      "category": "Interface",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns text width.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "font",
-          "description": "Font."
-        },
-        {
-          "type": "string",
-          "name": "text",
-          "description": "Text."
-        }
-      ],
-      "returns": {
-        "type": "int",
-        "description": "Text width."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 3663,
-      "declaration": "int getTextWidth(string font, string text)"
-    },
-    {
-      "kind": "func",
-      "name": "isDrawVisible",
-      "side": "client",
-      "category": "Interface",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function checks whether draw visible.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "drawID",
-          "description": "Draw ID."
-        }
-      ],
-      "returns": {
-        "type": "bool",
-        "description": "True when the condition is met, otherwise false."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1499,
-      "declaration": "bool isDrawVisible(int drawID)"
-    },
-    {
-      "kind": "func",
-      "name": "isTextureVisible",
-      "side": "client",
-      "category": "Interface",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function checks whether texture visible.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "texID",
-          "description": "Tex id."
-        }
-      ],
-      "returns": {
-        "type": "bool",
-        "description": "True when the condition is met, otherwise false."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2191,
-      "declaration": "bool isTextureVisible(int texID)"
-    },
-    {
-      "kind": "func",
-      "name": "setDrawColor",
-      "side": "client",
-      "category": "Interface",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets draw color.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "drawID",
-          "description": "Draw ID."
-        },
-        {
-          "type": "int",
-          "name": "r",
-          "description": "Red color component."
-        },
-        {
-          "type": "int",
-          "name": "g",
-          "description": "Green color component."
-        },
-        {
-          "type": "int",
-          "name": "b",
-          "description": "Blue color component."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1528,
-      "declaration": "void setDrawColor(int drawID, int r, int g, int b)"
-    },
-    {
-      "kind": "func",
-      "name": "setDrawFont",
-      "side": "client",
-      "category": "Interface",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets draw font.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "drawID",
-          "description": "Draw ID."
-        },
-        {
-          "type": "string",
-          "name": "font",
-          "description": "Font."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1562,
-      "declaration": "void setDrawFont(int drawID, string font)"
-    },
-    {
-      "kind": "func",
-      "name": "setDrawPosition",
-      "side": "client",
-      "category": "Interface",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets draw position.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "drawID",
-          "description": "Draw ID."
-        },
-        {
-          "type": "int",
-          "name": "x",
-          "description": "X coordinate."
-        },
-        {
-          "type": "int",
-          "name": "y",
-          "description": "Y coordinate."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1592,
-      "declaration": "void setDrawPosition(int drawID, int x, int y)"
-    },
-    {
-      "kind": "func",
-      "name": "setDrawText",
-      "side": "client",
-      "category": "Interface",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets draw text.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "drawID",
-          "description": "Draw ID."
-        },
-        {
-          "type": "string",
-          "name": "text",
-          "description": "Text."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1625,
-      "declaration": "void setDrawText(int drawID, string text)"
-    },
-    {
-      "kind": "func",
-      "name": "setDrawVisible",
-      "side": "client",
-      "category": "Interface",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets draw visible.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "drawID",
-          "description": "Draw ID."
-        },
-        {
-          "type": "bool",
-          "name": "enable",
-          "description": "True to enable the feature, false to disable it."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1469,
-      "declaration": "void setDrawVisible(int drawID, bool enable)"
-    },
-    {
-      "kind": "func",
-      "name": "setTexture",
-      "side": "client",
-      "category": "Interface",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets texture.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "texID",
-          "description": "Tex id."
-        },
-        {
-          "type": "string",
-          "name": "texName",
-          "description": "Tex name."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1944,
-      "declaration": "void setTexture(int texID, string texName)"
-    },
-    {
-      "kind": "func",
-      "name": "setTexturePosition",
-      "side": "client",
-      "category": "Interface",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets texture position.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "texID",
-          "description": "Tex id."
-        },
-        {
-          "type": "int",
-          "name": "x",
-          "description": "X coordinate."
-        },
-        {
-          "type": "int",
-          "name": "y",
-          "description": "Y coordinate."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2016,
-      "declaration": "void setTexturePosition(int texID, int x, int y)"
-    },
-    {
-      "kind": "func",
-      "name": "setTextureSize",
-      "side": "client",
-      "category": "Interface",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets texture size.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "texID",
-          "description": "Tex id."
-        },
-        {
-          "type": "int",
-          "name": "w",
-          "description": "Width."
-        },
-        {
-          "type": "int",
-          "name": "h",
-          "description": "Height."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2087,
-      "declaration": "void setTextureSize(int texID, int w, int h)"
-    },
-    {
-      "kind": "func",
-      "name": "setTextureVisible",
-      "side": "client",
-      "category": "Interface",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets texture visible.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "texID",
-          "description": "Tex id."
-        },
-        {
-          "type": "bool",
-          "name": "enable",
-          "description": "True to enable the feature, false to disable it."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2158,
-      "declaration": "void setTextureVisible(int texID, bool enable)"
-    },
-    {
-      "kind": "func",
-      "name": "clearInventory",
-      "side": "client",
-      "category": "Inventory",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function clears inventory.",
-      "notes": [],
-      "params": [],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1349,
-      "declaration": "void clearInventory()"
-    },
-    {
-      "kind": "func",
-      "name": "closeInventory",
-      "side": "client",
-      "category": "Inventory",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function closes inventory.",
-      "notes": [],
-      "params": [],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1381,
-      "declaration": "void closeInventory()"
-    },
-    {
-      "kind": "func",
-      "name": "getItemDescription",
-      "side": "client",
-      "category": "Inventory",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns item description.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "instance",
-          "description": "Item instance name."
-        },
-        {
-          "type": "int",
-          "name": "index",
-          "description": "Index."
-        }
-      ],
-      "returns": {
-        "type": "string",
-        "description": "Item description."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2766,
-      "declaration": "string getItemDescription(string instance, int index)"
-    },
-    {
-      "kind": "func",
-      "name": "getItemName",
-      "side": "client",
-      "category": "Inventory",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns item name.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "instance",
-          "description": "Item instance name."
-        }
-      ],
-      "returns": {
-        "type": "string",
-        "description": "Item name."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2735,
-      "declaration": "string getItemName(string instance)"
-    },
-    {
-      "kind": "func",
-      "name": "getItemValue",
-      "side": "client",
-      "category": "Inventory",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns item value.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "instance",
-          "description": "Item instance name."
-        },
-        {
-          "type": "int",
-          "name": "index",
-          "description": "Index."
-        }
-      ],
-      "returns": {
-        "type": "int",
-        "description": "Item value."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2805,
-      "declaration": "int getItemValue(string instance, int index)"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerArmor",
-      "side": "client",
-      "category": "Inventory",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns armor instance.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "string",
-        "description": "Armor instance."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2411,
-      "declaration": "string getPlayerArmor()"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerEquipment",
-      "side": "client",
-      "category": "Inventory",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns eq.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "array",
-        "description": "Eq."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 3322,
-      "declaration": "array getPlayerEquipment()"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerMeleeWeapon",
-      "side": "client",
-      "category": "Inventory",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns melee instance.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "string",
-        "description": "Melee instance."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2433,
-      "declaration": "string getPlayerMeleeWeapon()"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerRangedWeapon",
-      "side": "client",
-      "category": "Inventory",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns ranged instance.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "string",
-        "description": "Ranged instance."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2456,
-      "declaration": "string getPlayerRangedWeapon()"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerSkillWeapon",
-      "side": "client",
-      "category": "Inventory",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns weapon skill.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "skillID",
-          "description": "Skill id."
-        }
-      ],
-      "returns": {
-        "type": "int",
-        "description": "Weapon skill."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 3179,
-      "declaration": "int getPlayerSkillWeapon(int skillID)"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerWeaponMode",
-      "side": "client",
-      "category": "Inventory",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns weapon mode.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "int",
-        "description": "Weapon mode."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2553,
-      "declaration": "int getPlayerWeaponMode()"
-    },
-    {
-      "kind": "func",
-      "name": "giveItem",
-      "side": "client",
-      "category": "Inventory",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function adds an item to the local player's inventory.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "instance",
-          "description": "Item instance name."
-        },
-        {
-          "type": "int",
-          "name": "amount",
-          "description": "Item amount."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2495,
-      "declaration": "void giveItem(string instance, int amount)"
-    },
-    {
-      "kind": "func",
-      "name": "hasItem",
-      "side": "client",
-      "category": "Inventory",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function checks whether the player has item.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "instance",
-          "description": "Item instance name."
-        }
-      ],
-      "returns": {
-        "type": "int",
-        "description": "True if the player has item, otherwise false."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 3289,
-      "declaration": "int hasItem(string instance)"
-    },
-    {
-      "kind": "func",
-      "name": "openInventory",
-      "side": "client",
-      "category": "Inventory",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function opens inventory.",
-      "notes": [],
-      "params": [],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1365,
-      "declaration": "void openInventory()"
-    },
-    {
-      "kind": "func",
-      "name": "removeItem",
-      "side": "client",
-      "category": "Inventory",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function removes item.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "instance",
-          "description": "Item instance name."
-        },
-        {
-          "type": "int",
-          "name": "amount",
-          "description": "Item amount."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2518,
-      "declaration": "void removeItem(string instance, int amount)"
-    },
-    {
-      "kind": "func",
-      "name": "setEquipmentEnabled",
-      "side": "client",
-      "category": "Inventory",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function enables or disables eq.",
-      "notes": [],
-      "params": [
-        {
-          "type": "bool",
-          "name": "enable",
-          "description": "True to enable the feature, false to disable it."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 346,
-      "declaration": "void setEquipmentEnabled(bool enable)"
-    },
-    {
-      "kind": "func",
-      "name": "setPlayerSkillWeapon",
-      "side": "client",
-      "category": "Inventory",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets weapon skill.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "skillID",
-          "description": "Skill id."
-        },
-        {
-          "type": "int",
-          "name": "value",
-          "description": "New value."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 3156,
-      "declaration": "void setPlayerSkillWeapon(int skillID, int value)"
-    },
-    {
-      "kind": "func",
-      "name": "setPlayerWeaponMode",
-      "side": "client",
-      "category": "Inventory",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets weapon mode.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "weaponMode",
-          "description": "Weapon mode."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2570,
-      "declaration": "void setPlayerWeaponMode(int weaponMode)"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerPing",
-      "side": "client",
-      "category": "Network",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns ping.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "int",
-        "description": "Ping."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 413,
-      "declaration": "int getPlayerPing()"
-    },
-    {
-      "kind": "func",
-      "name": "sendPacket",
-      "side": "client",
-      "category": "Network",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sends packet.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "priority",
-          "description": "Priority."
-        },
-        {
-          "type": "string",
-          "name": "data",
-          "description": "Packet data."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 430,
-      "declaration": "void sendPacket(int priority, string data)"
-    },
-    {
-      "kind": "func",
-      "name": "triggerServerEvent",
-      "side": "client",
-      "category": "Network",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function triggers a remotely enabled custom event on the server.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "eventName",
-          "description": "Custom server event name, from 1 to 128 bytes."
-        },
-        {
-          "type": "...",
-          "name": "arguments",
-          "description": "Values passed after the authenticated sender player ID."
-        }
-      ],
-      "returns": {
-        "type": "bool",
-        "description": "True if the event packet was sent."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 3624,
-      "declaration": "bool triggerServerEvent(string eventName, ... arguments)"
-    },
-    {
-      "kind": "func",
-      "name": "applyPlayerOverlay",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function applies overlay.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "overlay",
-          "description": "Overlay."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 3386,
-      "declaration": "void applyPlayerOverlay(string overlay)"
-    },
-    {
-      "kind": "func",
-      "name": "completeHeal",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function fully restores the local player health.",
-      "notes": [],
-      "params": [],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1236,
-      "declaration": "void completeHeal()"
-    },
-    {
-      "kind": "func",
-      "name": "equipArmor",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function equips armor.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "instance",
-          "description": "Item instance name."
-        }
-      ],
-      "returns": {
-        "type": "bool",
-        "description": "True when the condition is met, otherwise false."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2244,
-      "declaration": "bool equipArmor(string instance)"
-    },
-    {
-      "kind": "func",
-      "name": "equipMeleeWeapon",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function equips melee weapon.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "instance",
-          "description": "Item instance name."
-        }
-      ],
-      "returns": {
-        "type": "bool",
-        "description": "True when the condition is met, otherwise false."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2300,
-      "declaration": "bool equipMeleeWeapon(string instance)"
-    },
-    {
-      "kind": "func",
-      "name": "equipRangedWeapon",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function equips ranged weapon.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "instance",
-          "description": "Item instance name."
-        }
-      ],
-      "returns": {
-        "type": "bool",
-        "description": "True when the condition is met, otherwise false."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2355,
-      "declaration": "bool equipRangedWeapon(string instance)"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerAcrobatic",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns acrobatic.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "bool",
-        "description": "True when the condition is met, otherwise false."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1160,
-      "declaration": "bool getPlayerAcrobatic()"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerAngle",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns angle.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "float",
-        "description": "Angle."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 797,
-      "declaration": "float getPlayerAngle()"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerAni",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns animation name.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "string",
-        "description": "Animation name."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 3218,
-      "declaration": "string getPlayerAni()"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerAniId",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns animation id.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "int",
-        "description": "Animation id."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 3201,
-      "declaration": "int getPlayerAniId()"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerDexterity",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns dexterity.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "int",
-        "description": "Dexterity."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 602,
-      "declaration": "int getPlayerDexterity()"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerFocus",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns focus.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "string|bool",
-        "description": "Focus."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1325,
-      "declaration": "string|bool getPlayerFocus()"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerHealth",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns health.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "int",
-        "description": "Health."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 517,
-      "declaration": "int getPlayerHealth()"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerInstance",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns instance.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "string",
-        "description": "Instance."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2844,
-      "declaration": "string getPlayerInstance()"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerLevel",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns level.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "int",
-        "description": "Level."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 856,
-      "declaration": "int getPlayerLevel()"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerMagicLevel",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns magic level.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "int",
-        "description": "Magic level."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1122,
-      "declaration": "int getPlayerMagicLevel()"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerMana",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns mana.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "int",
-        "description": "Mana."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 551,
-      "declaration": "int getPlayerMana()"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerMaxHealth",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns max health.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "int",
-        "description": "Max health."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 534,
-      "declaration": "int getPlayerMaxHealth()"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerMaxMana",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns max mana.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "int",
-        "description": "Max mana."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 568,
-      "declaration": "int getPlayerMaxMana()"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerName",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns name.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "string",
-        "description": "Name."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 500,
-      "declaration": "string getPlayerName()"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerPosition",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns position.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "table|bool",
-        "description": "Position."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 745,
-      "declaration": "table|bool getPlayerPosition()"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerSkillOpenLocksLevel",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns skill open locks level.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "int",
-        "description": "Skill open locks level."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1010,
-      "declaration": "int getPlayerSkillOpenLocksLevel()"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerSkillOpenLocksValue",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns skill open locks value.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "int",
-        "description": "Skill open locks value."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1027,
-      "declaration": "int getPlayerSkillOpenLocksValue()"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerSkillPickPocketLevel",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns skill pick pocket level.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "int",
-        "description": "Skill pick pocket level."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1067,
-      "declaration": "int getPlayerSkillPickPocketLevel()"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerSkillPickPocketValue",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns skill pick pocket value.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "int",
-        "description": "Skill pick pocket value."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1084,
-      "declaration": "int getPlayerSkillPickPocketValue()"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerSneak",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns sneak.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "bool",
-        "description": "True when the condition is met, otherwise false."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1198,
-      "declaration": "bool getPlayerSneak()"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerStrength",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns strength.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "int",
-        "description": "Strength."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 585,
-      "declaration": "int getPlayerStrength()"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerVisual",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns additional visual.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "table",
-        "description": "Additional visual."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 3235,
-      "declaration": "table getPlayerVisual()"
-    },
-    {
-      "kind": "func",
-      "name": "isMouseBtnPressed",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function checks whether clicked.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "button",
-          "description": "Button."
-        }
-      ],
-      "returns": {
-        "type": "bool",
-        "description": "True when the condition is met, otherwise false."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1849,
-      "declaration": "bool isMouseBtnPressed(string button)"
-    },
-    {
-      "kind": "func",
-      "name": "isPlayerDead",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function checks whether dead.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "bool",
-        "description": "True when the condition is met, otherwise false."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1252,
-      "declaration": "bool isPlayerDead()"
-    },
-    {
-      "kind": "func",
-      "name": "isPlayerFrozen",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function checks whether frozen.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "bool",
-        "description": "True when the condition is met, otherwise false."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1308,
-      "declaration": "bool isPlayerFrozen()"
-    },
-    {
-      "kind": "func",
-      "name": "isPlayerSavingEnabled",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function checks whether saving enabled.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "bool",
-        "description": "True when the condition is met, otherwise false."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2718,
-      "declaration": "bool isPlayerSavingEnabled()"
-    },
-    {
-      "kind": "func",
-      "name": "isPlayerUnconscious",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function checks whether unconscious.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "bool",
-        "description": "True when the condition is met, otherwise false."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1269,
-      "declaration": "bool isPlayerUnconscious()"
-    },
-    {
-      "kind": "func",
-      "name": "playAni",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function plays animation.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "animation",
-          "description": "Animation."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2591,
-      "declaration": "void playAni(string animation)"
-    },
-    {
-      "kind": "func",
-      "name": "removePlayerOverlay",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function removes overlay.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "overlay",
-          "description": "Overlay."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 3407,
-      "declaration": "void removePlayerOverlay(string overlay)"
-    },
-    {
-      "kind": "func",
-      "name": "resetPlayerModel",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function resets model.",
-      "notes": [],
-      "params": [],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 3556,
-      "declaration": "void resetPlayerModel()"
-    },
-    {
-      "kind": "func",
-      "name": "setPlayerAcrobatic",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets acrobatic.",
-      "notes": [],
-      "params": [
-        {
-          "type": "bool",
-          "name": "acrobatic",
-          "description": "Acrobatic."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1139,
-      "declaration": "void setPlayerAcrobatic(bool acrobatic)"
-    },
-    {
-      "kind": "func",
-      "name": "setPlayerAngle",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets angle.",
-      "notes": [],
-      "params": [
-        {
-          "type": "float",
-          "name": "angle",
-          "description": "Angle."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 814,
-      "declaration": "void setPlayerAngle(float angle)"
-    },
-    {
-      "kind": "func",
-      "name": "setPlayerDexterity",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets dexterity.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "dexterity",
-          "description": "Dexterity."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 724,
-      "declaration": "void setPlayerDexterity(int dexterity)"
-    },
-    {
-      "kind": "func",
-      "name": "setPlayerFreeze",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets freeze.",
-      "notes": [],
-      "params": [
-        {
-          "type": "bool",
-          "name": "freeze",
-          "description": "Freeze."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1286,
-      "declaration": "void setPlayerFreeze(bool freeze)"
-    },
-    {
-      "kind": "func",
-      "name": "setPlayerHealth",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets health.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "health",
-          "description": "Health."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 619,
-      "declaration": "void setPlayerHealth(int health)"
-    },
-    {
-      "kind": "func",
-      "name": "setPlayerInstance",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets instance.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "instance",
-          "description": "NPC instance name."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2861,
-      "declaration": "void setPlayerInstance(string instance)"
-    },
-    {
-      "kind": "func",
-      "name": "setPlayerLevel",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets level.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "level",
-          "description": "Level."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 835,
-      "declaration": "void setPlayerLevel(int level)"
-    },
-    {
-      "kind": "func",
-      "name": "setPlayerMagicLevel",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets magic level.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "magic",
-          "description": "Magic."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1101,
-      "declaration": "void setPlayerMagicLevel(int magic)"
-    },
-    {
-      "kind": "func",
-      "name": "setPlayerMana",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets mana.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "mana",
-          "description": "Mana."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 661,
-      "declaration": "void setPlayerMana(int mana)"
-    },
-    {
-      "kind": "func",
-      "name": "setPlayerMaxHealth",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets max health.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "maxhealth",
-          "description": "Maxhealth."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 640,
-      "declaration": "void setPlayerMaxHealth(int maxhealth)"
-    },
-    {
-      "kind": "func",
-      "name": "setPlayerMaxMana",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets max mana.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "maxmana",
-          "description": "Maxmana."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 682,
-      "declaration": "void setPlayerMaxMana(int maxmana)"
-    },
-    {
-      "kind": "func",
-      "name": "setPlayerPosition",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets position.",
-      "notes": [],
-      "params": [
-        {
-          "type": "float",
-          "name": "x",
-          "description": "X coordinate."
-        },
-        {
-          "type": "float",
-          "name": "y",
-          "description": "Y coordinate."
-        },
-        {
-          "type": "float",
-          "name": "z",
-          "description": "Z coordinate."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 768,
-      "declaration": "void setPlayerPosition(float x, float y, float z)"
-    },
-    {
-      "kind": "func",
-      "name": "setPlayerResetModelEnabled",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function enables or disables reset model.",
-      "notes": [],
-      "params": [
-        {
-          "type": "bool",
-          "name": "enable",
-          "description": "True to enable the feature, false to disable it."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 3535,
-      "declaration": "void setPlayerResetModelEnabled(bool enable)"
-    },
-    {
-      "kind": "func",
-      "name": "setPlayerSavingEnabled",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets saving enabled.",
-      "notes": [],
-      "params": [
-        {
-          "type": "bool",
-          "name": "enable",
-          "description": "True to enable the feature, false to disable it."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2697,
-      "declaration": "void setPlayerSavingEnabled(bool enable)"
-    },
-    {
-      "kind": "func",
-      "name": "setPlayerSkillOpenLocks",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets skill open locks.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "skill",
-          "description": "Skill identifier."
-        },
-        {
-          "type": "int",
-          "name": "value",
-          "description": "New value."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 987,
-      "declaration": "void setPlayerSkillOpenLocks(int skill, int value)"
-    },
-    {
-      "kind": "func",
-      "name": "setPlayerSkillPickPocket",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets skill pick pocket.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "skill",
-          "description": "Skill identifier."
-        },
-        {
-          "type": "int",
-          "name": "value",
-          "description": "New value."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1044,
-      "declaration": "void setPlayerSkillPickPocket(int skill, int value)"
-    },
-    {
-      "kind": "func",
-      "name": "setPlayerSneak",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets sneak.",
-      "notes": [],
-      "params": [
-        {
-          "type": "bool",
-          "name": "sneak",
-          "description": "Sneak."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 1177,
-      "declaration": "void setPlayerSneak(bool sneak)"
-    },
-    {
-      "kind": "func",
-      "name": "setPlayerStatusVisible",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function shows or hides player status.",
-      "notes": [],
-      "params": [
-        {
-          "type": "bool",
-          "name": "enable",
-          "description": "True to enable the feature, false to disable it."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 3603,
-      "declaration": "void setPlayerStatusVisible(bool enable)"
-    },
-    {
-      "kind": "func",
-      "name": "setPlayerStrength",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets strength.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "strength",
-          "description": "Strength."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 703,
-      "declaration": "void setPlayerStrength(int strength)"
-    },
-    {
-      "kind": "func",
-      "name": "setPlayerVisual",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets additional visual.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "bodyModel",
-          "description": "Body model."
-        },
-        {
-          "type": "int",
-          "name": "bodyTexture",
-          "description": "Body texture."
-        },
-        {
-          "type": "string",
-          "name": "headModel",
-          "description": "Head model."
-        },
-        {
-          "type": "int",
-          "name": "headTexture",
-          "description": "Head texture."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 3262,
-      "declaration": "void setPlayerVisual(string bodyModel, int bodyTexture, string headModel, int headTexture)"
-    },
-    {
-      "kind": "func",
-      "name": "syncPlayerVisual",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sends visual.",
-      "notes": [],
-      "params": [],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 3353,
-      "declaration": "void syncPlayerVisual()"
-    },
-    {
-      "kind": "func",
-      "name": "unequipArmor",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function unequips armor.",
-      "notes": [],
-      "params": [],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2281,
-      "declaration": "void unequipArmor()"
-    },
-    {
-      "kind": "func",
-      "name": "unequipMeleeWeapon",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function unequips melee weapon.",
-      "notes": [],
-      "params": [],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2336,
-      "declaration": "void unequipMeleeWeapon()"
-    },
-    {
-      "kind": "func",
-      "name": "unequipRangedWeapon",
-      "side": "client",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function unequips ranged weapon.",
-      "notes": [],
-      "params": [],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2392,
-      "declaration": "void unequipRangedWeapon()"
-    },
-    {
-      "kind": "func",
-      "name": "changeWorld",
-      "side": "client",
-      "category": "World",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets world.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "world",
-          "description": "World name."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2657,
-      "declaration": "void changeWorld(string world)"
-    },
-    {
-      "kind": "func",
-      "name": "createVob",
-      "side": "client",
-      "category": "World",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function creates vob.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "visual",
-          "description": "Visual."
-        },
-        {
-          "type": "float",
-          "name": "x",
-          "description": "X coordinate."
-        },
-        {
-          "type": "float",
-          "name": "y",
-          "description": "Y coordinate."
-        },
-        {
-          "type": "float",
-          "name": "z",
-          "description": "Z coordinate."
-        },
-        {
-          "type": "float",
-          "name": "rotx",
-          "description": "Rotx."
-        },
-        {
-          "type": "float",
-          "name": "roty",
-          "description": "Roty."
-        },
-        {
-          "type": "float",
-          "name": "rotz",
-          "description": "Rotz."
-        }
-      ],
-      "returns": {
-        "type": "int",
-        "description": "Identifier of the created object."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2913,
-      "declaration": "int createVob(string visual, float x, float y, float z, float rotx, float roty, float rotz)"
-    },
-    {
-      "kind": "func",
-      "name": "destroyAllVobInWorld",
-      "side": "client",
-      "category": "World",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function destroys all vob in world.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "type",
-          "description": "Type."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 3428,
-      "declaration": "void destroyAllVobInWorld(int type)"
-    },
-    {
-      "kind": "func",
-      "name": "destroyVob",
-      "side": "client",
-      "category": "World",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function destroys vob.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "vobID",
-          "description": "Vob ID."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2953,
-      "declaration": "void destroyVob(int vobID)"
-    },
-    {
-      "kind": "func",
-      "name": "destroyVobsInWorld",
-      "side": "client",
-      "category": "World",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function destroys vobs in world.",
-      "notes": [],
-      "params": [
-        {
-          "type": "float",
-          "name": "x",
-          "description": "X coordinate."
-        },
-        {
-          "type": "float",
-          "name": "y",
-          "description": "Y coordinate."
-        },
-        {
-          "type": "float",
-          "name": "z",
-          "description": "Z coordinate."
-        },
-        {
-          "type": "int",
-          "name": "range",
-          "description": "Range."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 3473,
-      "declaration": "void destroyVobsInWorld(float x, float y, float z, int range)"
-    },
-    {
-      "kind": "func",
-      "name": "getVobPosition",
-      "side": "client",
-      "category": "World",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns vob position.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "vobID",
-          "description": "Vob ID."
-        }
-      ],
-      "returns": {
-        "type": "table",
-        "description": "Vob position."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2976,
-      "declaration": "table getVobPosition(int vobID)"
-    },
-    {
-      "kind": "func",
-      "name": "getVobRotation",
-      "side": "client",
-      "category": "World",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns vob rotation.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "vobID",
-          "description": "Vob ID."
-        }
-      ],
-      "returns": {
-        "type": "table",
-        "description": "Vob rotation."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 3010,
-      "declaration": "table getVobRotation(int vobID)"
-    },
-    {
-      "kind": "func",
-      "name": "getWorld",
-      "side": "client",
-      "category": "World",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns world.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "string",
-        "description": "World."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 2678,
-      "declaration": "string getWorld()"
-    },
-    {
-      "kind": "func",
-      "name": "setVobCollision",
-      "side": "client",
-      "category": "World",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets vob collision.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "vobID",
-          "description": "Vob ID."
-        },
-        {
-          "type": "bool",
-          "name": "enable",
-          "description": "True to enable the feature, false to disable it."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 3102,
-      "declaration": "void setVobCollision(int vobID, bool enable)"
-    },
-    {
-      "kind": "func",
-      "name": "setVobPosition",
-      "side": "client",
-      "category": "World",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets vob position.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "vobID",
-          "description": "Vob ID."
-        },
-        {
-          "type": "float",
-          "name": "x",
-          "description": "X coordinate."
-        },
-        {
-          "type": "float",
-          "name": "y",
-          "description": "Y coordinate."
-        },
-        {
-          "type": "float",
-          "name": "z",
-          "description": "Z coordinate."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 3044,
-      "declaration": "void setVobPosition(int vobID, float x, float y, float z)"
-    },
-    {
-      "kind": "func",
-      "name": "setVobRotation",
-      "side": "client",
-      "category": "World",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets vob rotation.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "vobID",
-          "description": "Vob ID."
-        },
-        {
-          "type": "float",
-          "name": "x",
-          "description": "X coordinate."
-        },
-        {
-          "type": "float",
-          "name": "y",
-          "description": "Y coordinate."
-        },
-        {
-          "type": "float",
-          "name": "z",
-          "description": "Z coordinate."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CFunction.cpp",
-      "line": 3073,
-      "declaration": "void setVobRotation(int vobID, float x, float y, float z)"
-    },
-    {
-      "kind": "func",
       "name": "sendMessageToAll",
       "side": "server",
       "category": "Chat",
@@ -3612,7 +36,7 @@
       "cancellable": false,
       "examples": [],
       "source": "g1o-server/Script/SFunction.cpp",
-      "line": 187,
+      "line": 183,
       "declaration": "void sendMessageToAll(int r, int g, int b, string message)"
     },
     {
@@ -3655,8 +79,289 @@
       "cancellable": false,
       "examples": [],
       "source": "g1o-server/Script/SFunction.cpp",
-      "line": 222,
+      "line": 218,
       "declaration": "void sendMessageToPlayer(int playerID, int r, int g, int b, string message)"
+    },
+    {
+      "kind": "func",
+      "name": "addEvent",
+      "side": "server",
+      "category": "Event",
+      "version": "0.5.0",
+      "deprecated": null,
+      "description": "This function registers a custom event.",
+      "notes": [],
+      "params": [
+        {
+          "type": "string",
+          "name": "eventName",
+          "description": "Event name, from 1 to 128 bytes."
+        }
+      ],
+      "returns": {
+        "type": "bool",
+        "description": "True if the event was registered."
+      },
+      "cancellable": false,
+      "examples": [],
+      "source": "Shared/Scripting/ScriptEngine.cpp",
+      "line": 156,
+      "declaration": "bool addEvent(string eventName)"
+    },
+    {
+      "kind": "func",
+      "name": "addEventHandler",
+      "side": "server",
+      "category": "Event",
+      "version": "0.5.0",
+      "deprecated": null,
+      "description": "This function binds a function to an event.",
+      "notes": [],
+      "params": [
+        {
+          "type": "string",
+          "name": "eventName",
+          "description": "Event name."
+        },
+        {
+          "type": "fun",
+          "name": "handler",
+          "description": "Function to invoke."
+        },
+        {
+          "type": "int",
+          "name": "priority",
+          "description": "Optional handler priority; lower values run first."
+        }
+      ],
+      "returns": {
+        "type": "bool",
+        "description": "True if the handler was added."
+      },
+      "cancellable": false,
+      "examples": [],
+      "source": "Shared/Scripting/ScriptEngine.cpp",
+      "line": 219,
+      "declaration": "bool addEventHandler(string eventName, fun handler, int priority)"
+    },
+    {
+      "kind": "func",
+      "name": "callEvent",
+      "side": "server",
+      "category": "Event",
+      "version": "0.5.0",
+      "deprecated": null,
+      "description": "This function dispatches a custom event to all of its handlers.",
+      "notes": [],
+      "params": [
+        {
+          "type": "string",
+          "name": "eventName",
+          "description": "Event name."
+        },
+        {
+          "type": "...",
+          "name": "arguments",
+          "description": "Values passed to each handler."
+        }
+      ],
+      "returns": {
+        "type": "bool",
+        "description": "True if the event existed, was enabled, and was not cancelled."
+      },
+      "cancellable": false,
+      "examples": [],
+      "source": "Shared/Scripting/ScriptEngine.cpp",
+      "line": 248,
+      "declaration": "bool callEvent(string eventName, ... arguments)"
+    },
+    {
+      "kind": "func",
+      "name": "cancelEvent",
+      "side": "server",
+      "category": "Event",
+      "version": "0.5.0",
+      "deprecated": null,
+      "description": "This function cancels the event currently being dispatched.",
+      "notes": [],
+      "params": [],
+      "returns": null,
+      "cancellable": false,
+      "examples": [],
+      "source": "Shared/Scripting/ScriptEngine.cpp",
+      "line": 262,
+      "declaration": "void cancelEvent()"
+    },
+    {
+      "kind": "func",
+      "name": "eventValue",
+      "side": "server",
+      "category": "Event",
+      "version": "0.5.0",
+      "deprecated": null,
+      "description": "This function replaces the integer value of the event currently being dispatched.",
+      "notes": [],
+      "params": [
+        {
+          "type": "int",
+          "name": "value",
+          "description": "New event value."
+        }
+      ],
+      "returns": null,
+      "cancellable": false,
+      "examples": [],
+      "source": "Shared/Scripting/ScriptEngine.cpp",
+      "line": 273,
+      "declaration": "void eventValue(int value)"
+    },
+    {
+      "kind": "func",
+      "name": "getEvents",
+      "side": "server",
+      "category": "Event",
+      "version": "0.5.0",
+      "deprecated": null,
+      "description": "This function returns the registered event names.",
+      "notes": [],
+      "params": [],
+      "returns": {
+        "type": "array",
+        "description": "Registered event names."
+      },
+      "cancellable": false,
+      "examples": [],
+      "source": "Shared/Scripting/ScriptEngine.cpp",
+      "line": 181,
+      "declaration": "array getEvents()"
+    },
+    {
+      "kind": "func",
+      "name": "isEventCancelled",
+      "side": "server",
+      "category": "Event",
+      "version": "0.5.0",
+      "deprecated": null,
+      "description": "This function checks whether the event currently being dispatched was cancelled.",
+      "notes": [],
+      "params": [],
+      "returns": {
+        "type": "bool",
+        "description": "True if the current event was cancelled."
+      },
+      "cancellable": false,
+      "examples": [],
+      "source": "Shared/Scripting/ScriptEngine.cpp",
+      "line": 285,
+      "declaration": "bool isEventCancelled()"
+    },
+    {
+      "kind": "func",
+      "name": "isEventEnabled",
+      "side": "server",
+      "category": "Event",
+      "version": "0.5.0",
+      "deprecated": null,
+      "description": "This function checks whether an event is enabled.",
+      "notes": [],
+      "params": [
+        {
+          "type": "string",
+          "name": "eventName",
+          "description": "Event name."
+        }
+      ],
+      "returns": {
+        "type": "bool",
+        "description": "True if the event is enabled."
+      },
+      "cancellable": false,
+      "examples": [],
+      "source": "Shared/Scripting/ScriptEngine.cpp",
+      "line": 206,
+      "declaration": "bool isEventEnabled(string eventName)"
+    },
+    {
+      "kind": "func",
+      "name": "removeEvent",
+      "side": "server",
+      "category": "Event",
+      "version": "0.5.0",
+      "deprecated": null,
+      "description": "This function removes a custom event and all of its handlers.",
+      "notes": [],
+      "params": [
+        {
+          "type": "string",
+          "name": "eventName",
+          "description": "Event name."
+        }
+      ],
+      "returns": null,
+      "cancellable": false,
+      "examples": [],
+      "source": "Shared/Scripting/ScriptEngine.cpp",
+      "line": 169,
+      "declaration": "void removeEvent(string eventName)"
+    },
+    {
+      "kind": "func",
+      "name": "removeEventHandler",
+      "side": "server",
+      "category": "Event",
+      "version": "0.5.0",
+      "deprecated": null,
+      "description": "This function unbinds a function from an event.",
+      "notes": [],
+      "params": [
+        {
+          "type": "string",
+          "name": "eventName",
+          "description": "Event name."
+        },
+        {
+          "type": "fun",
+          "name": "handler",
+          "description": "Previously registered function."
+        }
+      ],
+      "returns": {
+        "type": "bool",
+        "description": "True if a matching handler was removed."
+      },
+      "cancellable": false,
+      "examples": [],
+      "source": "Shared/Scripting/ScriptEngine.cpp",
+      "line": 234,
+      "declaration": "bool removeEventHandler(string eventName, fun handler)"
+    },
+    {
+      "kind": "func",
+      "name": "toggleEvent",
+      "side": "server",
+      "category": "Event",
+      "version": "0.5.0",
+      "deprecated": null,
+      "description": "This function enables or disables an event globally.",
+      "notes": [],
+      "params": [
+        {
+          "type": "string",
+          "name": "eventName",
+          "description": "Event name."
+        },
+        {
+          "type": "bool",
+          "name": "enabled",
+          "description": "Whether the event is enabled."
+        }
+      ],
+      "returns": null,
+      "cancellable": false,
+      "examples": [],
+      "source": "Shared/Scripting/ScriptEngine.cpp",
+      "line": 193,
+      "declaration": "void toggleEvent(string eventName, bool enabled)"
     },
     {
       "kind": "func",
@@ -3675,7 +380,7 @@
       "cancellable": false,
       "examples": [],
       "source": "g1o-server/Script/SFunction.cpp",
-      "line": 364,
+      "line": 313,
       "declaration": "int getMaxSlots()"
     },
     {
@@ -3695,7 +400,7 @@
       "cancellable": false,
       "examples": [],
       "source": "g1o-server/Script/SFunction.cpp",
-      "line": 381,
+      "line": 330,
       "declaration": "int getPlayersCount()"
     },
     {
@@ -3715,7 +420,7 @@
       "cancellable": false,
       "examples": [],
       "source": "g1o-server/Script/SFunction.cpp",
-      "line": 397,
+      "line": 346,
       "declaration": "string getServerDescription()"
     },
     {
@@ -3735,7 +440,7 @@
       "cancellable": false,
       "examples": [],
       "source": "g1o-server/Script/SFunction.cpp",
-      "line": 435,
+      "line": 384,
       "declaration": "string getServerWorld()"
     },
     {
@@ -3761,7 +466,7 @@
       "cancellable": false,
       "examples": [],
       "source": "g1o-server/Script/SFunction.cpp",
-      "line": 338,
+      "line": 287,
       "declaration": "bool isPlayerAdmin(int playerID)"
     },
     {
@@ -3787,7 +492,7 @@
       "cancellable": false,
       "examples": [],
       "source": "g1o-server/Script/SFunction.cpp",
-      "line": 161,
+      "line": 157,
       "declaration": "bool isPlayerConnected(int playerID)"
     },
     {
@@ -3810,7 +515,7 @@
       "cancellable": false,
       "examples": [],
       "source": "g1o-server/Script/SFunction.cpp",
-      "line": 414,
+      "line": 363,
       "declaration": "void setServerDescription(string desc)"
     },
     {
@@ -3833,7 +538,7 @@
       "cancellable": false,
       "examples": [],
       "source": "g1o-server/Script/SFunction.cpp",
-      "line": 452,
+      "line": 401,
       "declaration": "void setServerWorld(string world)"
     },
     {
@@ -3856,8 +561,138 @@
       "cancellable": false,
       "examples": [],
       "source": "g1o-server/Script/SFunction.cpp",
-      "line": 522,
+      "line": 471,
       "declaration": "void setUnconsciousEnabled(bool enable)"
+    },
+    {
+      "kind": "func",
+      "name": "md5",
+      "side": "server",
+      "category": "Hash",
+      "version": "0.4.0",
+      "deprecated": null,
+      "description": "This function calculates an MD5 digest.",
+      "notes": [],
+      "params": [
+        {
+          "type": "string",
+          "name": "text",
+          "description": "Input text."
+        }
+      ],
+      "returns": {
+        "type": "string",
+        "description": "Lowercase hexadecimal digest."
+      },
+      "cancellable": false,
+      "examples": [],
+      "source": "Shared/Scripting/SharedNatives.cpp",
+      "line": 209,
+      "declaration": "string md5(string text)"
+    },
+    {
+      "kind": "func",
+      "name": "sha1",
+      "side": "server",
+      "category": "Hash",
+      "version": "0.4.0",
+      "deprecated": null,
+      "description": "This function calculates a SHA-1 digest.",
+      "notes": [],
+      "params": [
+        {
+          "type": "string",
+          "name": "text",
+          "description": "Input text."
+        }
+      ],
+      "returns": {
+        "type": "string",
+        "description": "Lowercase hexadecimal digest."
+      },
+      "cancellable": false,
+      "examples": [],
+      "source": "Shared/Scripting/SharedNatives.cpp",
+      "line": 221,
+      "declaration": "string sha1(string text)"
+    },
+    {
+      "kind": "func",
+      "name": "sha256",
+      "side": "server",
+      "category": "Hash",
+      "version": "0.4.0",
+      "deprecated": null,
+      "description": "This function calculates a SHA-256 digest.",
+      "notes": [],
+      "params": [
+        {
+          "type": "string",
+          "name": "text",
+          "description": "Input text."
+        }
+      ],
+      "returns": {
+        "type": "string",
+        "description": "Lowercase hexadecimal digest."
+      },
+      "cancellable": false,
+      "examples": [],
+      "source": "Shared/Scripting/SharedNatives.cpp",
+      "line": 233,
+      "declaration": "string sha256(string text)"
+    },
+    {
+      "kind": "func",
+      "name": "sha384",
+      "side": "server",
+      "category": "Hash",
+      "version": "0.4.0",
+      "deprecated": null,
+      "description": "This function calculates a SHA-384 digest.",
+      "notes": [],
+      "params": [
+        {
+          "type": "string",
+          "name": "text",
+          "description": "Input text."
+        }
+      ],
+      "returns": {
+        "type": "string",
+        "description": "Lowercase hexadecimal digest."
+      },
+      "cancellable": false,
+      "examples": [],
+      "source": "Shared/Scripting/SharedNatives.cpp",
+      "line": 245,
+      "declaration": "string sha384(string text)"
+    },
+    {
+      "kind": "func",
+      "name": "sha512",
+      "side": "server",
+      "category": "Hash",
+      "version": "0.4.0",
+      "deprecated": null,
+      "description": "This function calculates a SHA-512 digest.",
+      "notes": [],
+      "params": [
+        {
+          "type": "string",
+          "name": "text",
+          "description": "Input text."
+        }
+      ],
+      "returns": {
+        "type": "string",
+        "description": "Lowercase hexadecimal digest."
+      },
+      "cancellable": false,
+      "examples": [],
+      "source": "Shared/Scripting/SharedNatives.cpp",
+      "line": 257,
+      "declaration": "string sha512(string text)"
     },
     {
       "kind": "func",
@@ -3907,7 +742,7 @@
       "cancellable": false,
       "examples": [],
       "source": "g1o-server/Script/SFunction.cpp",
-      "line": 543,
+      "line": 492,
       "declaration": "int createGroundItem(string itemInstance, int amount, float x, float y, float z, string world)"
     },
     {
@@ -3930,730 +765,13 @@
       "cancellable": false,
       "examples": [],
       "source": "g1o-server/Script/SFunction.cpp",
-      "line": 579,
+      "line": 528,
       "declaration": "void destroyGroundItem(int itemID)"
     },
     {
       "kind": "func",
-      "name": "sendPacketToPlayer",
-      "side": "server",
-      "category": "Network",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sends packet.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "playerID",
-          "description": "Player ID."
-        },
-        {
-          "type": "int",
-          "name": "priority",
-          "description": "Priority."
-        },
-        {
-          "type": "string",
-          "name": "data",
-          "description": "Packet data."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-server/Script/SFunction.cpp",
-      "line": 262,
-      "declaration": "void sendPacketToPlayer(int playerID, int priority, string data)"
-    },
-    {
-      "kind": "func",
-      "name": "triggerClientEvent",
-      "side": "server",
-      "category": "Network",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function triggers a remotely enabled custom event on a client.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "playerID",
-          "description": "Target player ID, or -1 for every connected player."
-        },
-        {
-          "type": "string",
-          "name": "eventName",
-          "description": "Custom client event name, from 1 to 128 bytes."
-        },
-        {
-          "type": "...",
-          "name": "arguments",
-          "description": "Values passed to the event handlers."
-        }
-      ],
-      "returns": {
-        "type": "bool",
-        "description": "True if the event packet was sent."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-server/Script/SFunction.cpp",
-      "line": 600,
-      "declaration": "bool triggerClientEvent(int playerID, string eventName, ... arguments)"
-    },
-    {
-      "kind": "func",
-      "name": "ban",
-      "side": "server",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function bans a player from the server.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "playerID",
-          "description": "Player ID."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-server/Script/SFunction.cpp",
-      "line": 474,
-      "declaration": "void ban(int playerID)"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerName",
-      "side": "server",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns player name.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "playerID",
-          "description": "Player ID."
-        }
-      ],
-      "returns": {
-        "type": "string",
-        "description": "Player name, or `NULL` when the player does not exist."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-server/Script/SFunction.cpp",
-      "line": 32,
-      "declaration": "string getPlayerName(int playerID)"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerPing",
-      "side": "server",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns player ping.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "playerID",
-          "description": "Player ID."
-        }
-      ],
-      "returns": {
-        "type": "int",
-        "description": "Player ping."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-server/Script/SFunction.cpp",
-      "line": 58,
-      "declaration": "int getPlayerPing(int playerID)"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerPosition",
-      "side": "server",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns position.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "playerID",
-          "description": "Player ID."
-        }
-      ],
-      "returns": {
-        "type": "table|bool",
-        "description": "Position."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-server/Script/SFunction.cpp",
-      "line": 309,
-      "declaration": "table|bool getPlayerPosition(int playerID)"
-    },
-    {
-      "kind": "func",
-      "name": "getPlayerVirtualWorld",
-      "side": "server",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function returns player virtual world.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "playerID",
-          "description": "Player ID."
-        }
-      ],
-      "returns": {
-        "type": "int",
-        "description": "Virtual-world ID, or -1 if the player does not exist."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-server/Script/SFunction.cpp",
-      "line": 135,
-      "declaration": "int getPlayerVirtualWorld(int playerID)"
-    },
-    {
-      "kind": "func",
-      "name": "isPlayerInvisible",
-      "side": "server",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function checks whether player invisible.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "playerID",
-          "description": "Player ID."
-        }
-      ],
-      "returns": {
-        "type": "bool",
-        "description": "True when the condition is met, otherwise false."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-server/Script/SFunction.cpp",
-      "line": 694,
-      "declaration": "bool isPlayerInvisible(int playerID)"
-    },
-    {
-      "kind": "func",
-      "name": "kick",
-      "side": "server",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function disconnects a player from the server.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "playerID",
-          "description": "Player ID."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-server/Script/SFunction.cpp",
-      "line": 499,
-      "declaration": "void kick(int playerID)"
-    },
-    {
-      "kind": "func",
-      "name": "setPlayerInvisible",
-      "side": "server",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets player invisible.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "playerID",
-          "description": "Player ID."
-        },
-        {
-          "type": "bool",
-          "name": "invisible",
-          "description": "Invisible."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-server/Script/SFunction.cpp",
-      "line": 654,
-      "declaration": "void setPlayerInvisible(int playerID, bool invisible)"
-    },
-    {
-      "kind": "func",
-      "name": "setPlayerVirtualWorld",
-      "side": "server",
-      "category": "Player",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function sets player virtual world.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "playerID",
-          "description": "Player ID."
-        },
-        {
-          "type": "int",
-          "name": "virtualWorld",
-          "description": "Virtual world."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-server/Script/SFunction.cpp",
-      "line": 84,
-      "declaration": "void setPlayerVirtualWorld(int playerID, int virtualWorld)"
-    },
-    {
-      "kind": "func",
-      "name": "addEvent",
-      "side": "shared",
-      "category": "Event",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This function registers a custom event.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "eventName",
-          "description": "Event name, from 1 to 128 bytes."
-        },
-        {
-          "type": "bool",
-          "name": "allowRemoteTrigger",
-          "description": "Whether the event accepts network triggers."
-        }
-      ],
-      "returns": {
-        "type": "bool",
-        "description": "True if the event was registered."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "Shared/Scripting/ScriptEngine.cpp",
-      "line": 200,
-      "declaration": "bool addEvent(string eventName, bool allowRemoteTrigger)"
-    },
-    {
-      "kind": "func",
-      "name": "addEventHandler",
-      "side": "shared",
-      "category": "Event",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This function binds a function to an event.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "eventName",
-          "description": "Event name."
-        },
-        {
-          "type": "fun",
-          "name": "handler",
-          "description": "Function to invoke."
-        },
-        {
-          "type": "int",
-          "name": "priority",
-          "description": "Optional handler priority; lower values run first."
-        }
-      ],
-      "returns": {
-        "type": "bool",
-        "description": "True if the handler was added."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "Shared/Scripting/ScriptEngine.cpp",
-      "line": 264,
-      "declaration": "bool addEventHandler(string eventName, fun handler, int priority)"
-    },
-    {
-      "kind": "func",
-      "name": "callEvent",
-      "side": "shared",
-      "category": "Event",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This function dispatches a custom event to all of its handlers.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "eventName",
-          "description": "Event name."
-        },
-        {
-          "type": "...",
-          "name": "arguments",
-          "description": "Values passed to each handler."
-        }
-      ],
-      "returns": {
-        "type": "bool",
-        "description": "True if the event existed, was enabled, and was not cancelled."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "Shared/Scripting/ScriptEngine.cpp",
-      "line": 293,
-      "declaration": "bool callEvent(string eventName, ... arguments)"
-    },
-    {
-      "kind": "func",
-      "name": "cancelEvent",
-      "side": "shared",
-      "category": "Event",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This function cancels the event currently being dispatched.",
-      "notes": [],
-      "params": [],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "Shared/Scripting/ScriptEngine.cpp",
-      "line": 307,
-      "declaration": "void cancelEvent()"
-    },
-    {
-      "kind": "func",
-      "name": "eventValue",
-      "side": "shared",
-      "category": "Event",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This function replaces the integer value of the event currently being dispatched.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "value",
-          "description": "New event value."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "Shared/Scripting/ScriptEngine.cpp",
-      "line": 318,
-      "declaration": "void eventValue(int value)"
-    },
-    {
-      "kind": "func",
-      "name": "getEvents",
-      "side": "shared",
-      "category": "Event",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This function returns the registered event names.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "array",
-        "description": "Registered event names."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "Shared/Scripting/ScriptEngine.cpp",
-      "line": 226,
-      "declaration": "array getEvents()"
-    },
-    {
-      "kind": "func",
-      "name": "isEventCancelled",
-      "side": "shared",
-      "category": "Event",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This function checks whether the event currently being dispatched was cancelled.",
-      "notes": [],
-      "params": [],
-      "returns": {
-        "type": "bool",
-        "description": "True if the current event was cancelled."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "Shared/Scripting/ScriptEngine.cpp",
-      "line": 330,
-      "declaration": "bool isEventCancelled()"
-    },
-    {
-      "kind": "func",
-      "name": "isEventEnabled",
-      "side": "shared",
-      "category": "Event",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This function checks whether an event is enabled.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "eventName",
-          "description": "Event name."
-        }
-      ],
-      "returns": {
-        "type": "bool",
-        "description": "True if the event is enabled."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "Shared/Scripting/ScriptEngine.cpp",
-      "line": 251,
-      "declaration": "bool isEventEnabled(string eventName)"
-    },
-    {
-      "kind": "func",
-      "name": "removeEvent",
-      "side": "shared",
-      "category": "Event",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This function removes a custom event and all of its handlers.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "eventName",
-          "description": "Event name."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "Shared/Scripting/ScriptEngine.cpp",
-      "line": 214,
-      "declaration": "void removeEvent(string eventName)"
-    },
-    {
-      "kind": "func",
-      "name": "removeEventHandler",
-      "side": "shared",
-      "category": "Event",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This function unbinds a function from an event.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "eventName",
-          "description": "Event name."
-        },
-        {
-          "type": "fun",
-          "name": "handler",
-          "description": "Previously registered function."
-        }
-      ],
-      "returns": {
-        "type": "bool",
-        "description": "True if a matching handler was removed."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "Shared/Scripting/ScriptEngine.cpp",
-      "line": 279,
-      "declaration": "bool removeEventHandler(string eventName, fun handler)"
-    },
-    {
-      "kind": "func",
-      "name": "toggleEvent",
-      "side": "shared",
-      "category": "Event",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This function enables or disables an event globally.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "eventName",
-          "description": "Event name."
-        },
-        {
-          "type": "bool",
-          "name": "enabled",
-          "description": "Whether the event is enabled."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "Shared/Scripting/ScriptEngine.cpp",
-      "line": 238,
-      "declaration": "void toggleEvent(string eventName, bool enabled)"
-    },
-    {
-      "kind": "func",
-      "name": "md5",
-      "side": "shared",
-      "category": "Hash",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function calculates an MD5 digest.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "text",
-          "description": "Input text."
-        }
-      ],
-      "returns": {
-        "type": "string",
-        "description": "Lowercase hexadecimal digest."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "Shared/Scripting/SharedNatives.cpp",
-      "line": 209,
-      "declaration": "string md5(string text)"
-    },
-    {
-      "kind": "func",
-      "name": "sha1",
-      "side": "shared",
-      "category": "Hash",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function calculates a SHA-1 digest.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "text",
-          "description": "Input text."
-        }
-      ],
-      "returns": {
-        "type": "string",
-        "description": "Lowercase hexadecimal digest."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "Shared/Scripting/SharedNatives.cpp",
-      "line": 221,
-      "declaration": "string sha1(string text)"
-    },
-    {
-      "kind": "func",
-      "name": "sha256",
-      "side": "shared",
-      "category": "Hash",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function calculates a SHA-256 digest.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "text",
-          "description": "Input text."
-        }
-      ],
-      "returns": {
-        "type": "string",
-        "description": "Lowercase hexadecimal digest."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "Shared/Scripting/SharedNatives.cpp",
-      "line": 233,
-      "declaration": "string sha256(string text)"
-    },
-    {
-      "kind": "func",
-      "name": "sha384",
-      "side": "shared",
-      "category": "Hash",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function calculates a SHA-384 digest.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "text",
-          "description": "Input text."
-        }
-      ],
-      "returns": {
-        "type": "string",
-        "description": "Lowercase hexadecimal digest."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "Shared/Scripting/SharedNatives.cpp",
-      "line": 245,
-      "declaration": "string sha384(string text)"
-    },
-    {
-      "kind": "func",
-      "name": "sha512",
-      "side": "shared",
-      "category": "Hash",
-      "version": "0.4.0",
-      "deprecated": null,
-      "description": "This function calculates a SHA-512 digest.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "text",
-          "description": "Input text."
-        }
-      ],
-      "returns": {
-        "type": "string",
-        "description": "Lowercase hexadecimal digest."
-      },
-      "cancellable": false,
-      "examples": [],
-      "source": "Shared/Scripting/SharedNatives.cpp",
-      "line": 257,
-      "declaration": "string sha512(string text)"
-    },
-    {
-      "kind": "func",
       "name": "getDistance2d",
-      "side": "shared",
+      "side": "server",
       "category": "Math",
       "version": "0.4.0",
       "deprecated": null,
@@ -4694,7 +812,7 @@
     {
       "kind": "func",
       "name": "getDistance3d",
-      "side": "shared",
+      "side": "server",
       "category": "Math",
       "version": "0.4.0",
       "deprecated": null,
@@ -4744,8 +862,240 @@
     },
     {
       "kind": "func",
+      "name": "ban",
+      "side": "server",
+      "category": "Player",
+      "version": "0.4.0",
+      "deprecated": null,
+      "description": "This function bans a player from the server.",
+      "notes": [],
+      "params": [
+        {
+          "type": "int",
+          "name": "playerID",
+          "description": "Player ID."
+        }
+      ],
+      "returns": null,
+      "cancellable": false,
+      "examples": [],
+      "source": "g1o-server/Script/SFunction.cpp",
+      "line": 423,
+      "declaration": "void ban(int playerID)"
+    },
+    {
+      "kind": "func",
+      "name": "getPlayerName",
+      "side": "server",
+      "category": "Player",
+      "version": "0.4.0",
+      "deprecated": null,
+      "description": "This function returns player name.",
+      "notes": [],
+      "params": [
+        {
+          "type": "int",
+          "name": "playerID",
+          "description": "Player ID."
+        }
+      ],
+      "returns": {
+        "type": "string",
+        "description": "Player name, or `NULL` when the player does not exist."
+      },
+      "cancellable": false,
+      "examples": [],
+      "source": "g1o-server/Script/SFunction.cpp",
+      "line": 28,
+      "declaration": "string getPlayerName(int playerID)"
+    },
+    {
+      "kind": "func",
+      "name": "getPlayerPing",
+      "side": "server",
+      "category": "Player",
+      "version": "0.4.0",
+      "deprecated": null,
+      "description": "This function returns player ping.",
+      "notes": [],
+      "params": [
+        {
+          "type": "int",
+          "name": "playerID",
+          "description": "Player ID."
+        }
+      ],
+      "returns": {
+        "type": "int",
+        "description": "Player ping."
+      },
+      "cancellable": false,
+      "examples": [],
+      "source": "g1o-server/Script/SFunction.cpp",
+      "line": 54,
+      "declaration": "int getPlayerPing(int playerID)"
+    },
+    {
+      "kind": "func",
+      "name": "getPlayerPosition",
+      "side": "server",
+      "category": "Player",
+      "version": "0.4.0",
+      "deprecated": null,
+      "description": "This function returns position.",
+      "notes": [],
+      "params": [
+        {
+          "type": "int",
+          "name": "playerID",
+          "description": "Player ID."
+        }
+      ],
+      "returns": {
+        "type": "table|bool",
+        "description": "Position."
+      },
+      "cancellable": false,
+      "examples": [],
+      "source": "g1o-server/Script/SFunction.cpp",
+      "line": 258,
+      "declaration": "table|bool getPlayerPosition(int playerID)"
+    },
+    {
+      "kind": "func",
+      "name": "getPlayerVirtualWorld",
+      "side": "server",
+      "category": "Player",
+      "version": "0.4.0",
+      "deprecated": null,
+      "description": "This function returns player virtual world.",
+      "notes": [],
+      "params": [
+        {
+          "type": "int",
+          "name": "playerID",
+          "description": "Player ID."
+        }
+      ],
+      "returns": {
+        "type": "int",
+        "description": "Virtual-world ID, or -1 if the player does not exist."
+      },
+      "cancellable": false,
+      "examples": [],
+      "source": "g1o-server/Script/SFunction.cpp",
+      "line": 131,
+      "declaration": "int getPlayerVirtualWorld(int playerID)"
+    },
+    {
+      "kind": "func",
+      "name": "isPlayerInvisible",
+      "side": "server",
+      "category": "Player",
+      "version": "0.4.0",
+      "deprecated": null,
+      "description": "This function checks whether player invisible.",
+      "notes": [],
+      "params": [
+        {
+          "type": "int",
+          "name": "playerID",
+          "description": "Player ID."
+        }
+      ],
+      "returns": {
+        "type": "bool",
+        "description": "True when the condition is met, otherwise false."
+      },
+      "cancellable": false,
+      "examples": [],
+      "source": "g1o-server/Script/SFunction.cpp",
+      "line": 589,
+      "declaration": "bool isPlayerInvisible(int playerID)"
+    },
+    {
+      "kind": "func",
+      "name": "kick",
+      "side": "server",
+      "category": "Player",
+      "version": "0.4.0",
+      "deprecated": null,
+      "description": "This function disconnects a player from the server.",
+      "notes": [],
+      "params": [
+        {
+          "type": "int",
+          "name": "playerID",
+          "description": "Player ID."
+        }
+      ],
+      "returns": null,
+      "cancellable": false,
+      "examples": [],
+      "source": "g1o-server/Script/SFunction.cpp",
+      "line": 448,
+      "declaration": "void kick(int playerID)"
+    },
+    {
+      "kind": "func",
+      "name": "setPlayerInvisible",
+      "side": "server",
+      "category": "Player",
+      "version": "0.4.0",
+      "deprecated": null,
+      "description": "This function sets player invisible.",
+      "notes": [],
+      "params": [
+        {
+          "type": "int",
+          "name": "playerID",
+          "description": "Player ID."
+        },
+        {
+          "type": "bool",
+          "name": "invisible",
+          "description": "Invisible."
+        }
+      ],
+      "returns": null,
+      "cancellable": false,
+      "examples": [],
+      "source": "g1o-server/Script/SFunction.cpp",
+      "line": 549,
+      "declaration": "void setPlayerInvisible(int playerID, bool invisible)"
+    },
+    {
+      "kind": "func",
+      "name": "setPlayerVirtualWorld",
+      "side": "server",
+      "category": "Player",
+      "version": "0.4.0",
+      "deprecated": null,
+      "description": "This function sets player virtual world.",
+      "notes": [],
+      "params": [
+        {
+          "type": "int",
+          "name": "playerID",
+          "description": "Player ID."
+        },
+        {
+          "type": "int",
+          "name": "virtualWorld",
+          "description": "Virtual world."
+        }
+      ],
+      "returns": null,
+      "cancellable": false,
+      "examples": [],
+      "source": "g1o-server/Script/SFunction.cpp",
+      "line": 80,
+      "declaration": "void setPlayerVirtualWorld(int playerID, int virtualWorld)"
+    },
+    {
+      "kind": "func",
       "name": "killTimer",
-      "side": "shared",
+      "side": "server",
       "category": "Timer",
       "version": "0.4.0",
       "deprecated": null,
@@ -4765,13 +1115,13 @@
       "cancellable": false,
       "examples": [],
       "source": "Shared/Scripting/ScriptEngine.cpp",
-      "line": 358,
+      "line": 313,
       "declaration": "bool killTimer(int timerId)"
     },
     {
       "kind": "func",
       "name": "setTimer",
-      "side": "shared",
+      "side": "server",
       "category": "Timer",
       "version": "0.4.0",
       "deprecated": null,
@@ -4806,13 +1156,13 @@
       "cancellable": false,
       "examples": [],
       "source": "Shared/Scripting/ScriptEngine.cpp",
-      "line": 342,
+      "line": 297,
       "declaration": "int setTimer(fun handler, int interval, bool repeat, mixed data)"
     },
     {
       "kind": "func",
       "name": "setTimerData",
-      "side": "shared",
+      "side": "server",
       "category": "Timer",
       "version": "0.4.0",
       "deprecated": null,
@@ -4837,13 +1187,13 @@
       "cancellable": false,
       "examples": [],
       "source": "Shared/Scripting/ScriptEngine.cpp",
-      "line": 399,
+      "line": 354,
       "declaration": "bool setTimerData(int timerId, mixed data)"
     },
     {
       "kind": "func",
       "name": "setTimerInterval",
-      "side": "shared",
+      "side": "server",
       "category": "Timer",
       "version": "0.4.0",
       "deprecated": null,
@@ -4868,13 +1218,13 @@
       "cancellable": false,
       "examples": [],
       "source": "Shared/Scripting/ScriptEngine.cpp",
-      "line": 371,
+      "line": 326,
       "declaration": "bool setTimerInterval(int timerId, int interval)"
     },
     {
       "kind": "func",
       "name": "setTimerRepeat",
-      "side": "shared",
+      "side": "server",
       "category": "Timer",
       "version": "0.4.0",
       "deprecated": null,
@@ -4899,13 +1249,13 @@
       "cancellable": false,
       "examples": [],
       "source": "Shared/Scripting/ScriptEngine.cpp",
-      "line": 385,
+      "line": 340,
       "declaration": "bool setTimerRepeat(int timerId, bool repeat)"
     },
     {
       "kind": "func",
       "name": "getTickCount",
-      "side": "shared",
+      "side": "server",
       "category": "Utility",
       "version": "0.4.0",
       "deprecated": null,
@@ -4925,7 +1275,7 @@
     {
       "kind": "func",
       "name": "hexToRgb",
-      "side": "shared",
+      "side": "server",
       "category": "Utility",
       "version": "0.4.0",
       "deprecated": null,
@@ -4951,7 +1301,7 @@
     {
       "kind": "func",
       "name": "rgbToHex",
-      "side": "shared",
+      "side": "server",
       "category": "Utility",
       "version": "0.4.0",
       "deprecated": null,
@@ -4987,7 +1337,7 @@
     {
       "kind": "func",
       "name": "sscanf",
-      "side": "shared",
+      "side": "server",
       "category": "Utility",
       "version": "0.4.0",
       "deprecated": null,
@@ -5019,558 +1369,6 @@
   "events": [
     {
       "kind": "event",
-      "name": "onInit",
-      "side": "client",
-      "category": "Game",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This event is triggered once when the client script runtime initializes.",
-      "notes": [],
-      "params": [],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CEvent.cpp",
-      "line": 38,
-      "declaration": "void onInit()"
-    },
-    {
-      "kind": "event",
-      "name": "onProgramName",
-      "side": "client",
-      "category": "Game",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This event is triggered when a monitored program window is detected.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "windowText",
-          "description": "Detected window title."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CEvent.cpp",
-      "line": 194,
-      "declaration": "void onProgramName(string windowText)"
-    },
-    {
-      "kind": "event",
-      "name": "onRender",
-      "side": "client",
-      "category": "Game",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This event is triggered before each rendered frame.",
-      "notes": [],
-      "params": [],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CEvent.cpp",
-      "line": 49,
-      "declaration": "void onRender()"
-    },
-    {
-      "kind": "event",
-      "name": "onUseItem",
-      "side": "client",
-      "category": "Hero",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This event is triggered when the player uses an item.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "instance",
-          "description": "Item instance name."
-        },
-        {
-          "type": "int",
-          "name": "amount",
-          "description": "Item amount."
-        },
-        {
-          "type": "int",
-          "name": "hand",
-          "description": "Hand identifier."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CEvent.cpp",
-      "line": 260,
-      "declaration": "void onUseItem(string instance, int amount, int hand)"
-    },
-    {
-      "kind": "event",
-      "name": "onCommand",
-      "side": "client",
-      "category": "Input",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This event is triggered when a script command is submitted.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "command",
-          "description": "Command name."
-        },
-        {
-          "type": "string",
-          "name": "params",
-          "description": "Command arguments."
-        }
-      ],
-      "returns": null,
-      "cancellable": true,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CEvent.cpp",
-      "line": 60,
-      "declaration": "void onCommand(string command, string params)"
-    },
-    {
-      "kind": "event",
-      "name": "onKeyDown",
-      "side": "client",
-      "category": "Input",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This event is triggered when a keyboard key is pressed.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "key",
-          "description": "Key code."
-        },
-        {
-          "type": "string",
-          "name": "letter",
-          "description": "Translated key character."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CEvent.cpp",
-      "line": 122,
-      "declaration": "void onKeyDown(int key, string letter)"
-    },
-    {
-      "kind": "event",
-      "name": "onCloseInventory",
-      "side": "client",
-      "category": "Inventory",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This event is triggered when the inventory closes.",
-      "notes": [],
-      "params": [],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CEvent.cpp",
-      "line": 217,
-      "declaration": "void onCloseInventory()"
-    },
-    {
-      "kind": "event",
-      "name": "onOpenInventory",
-      "side": "client",
-      "category": "Inventory",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This event is triggered when the inventory opens.",
-      "notes": [],
-      "params": [],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CEvent.cpp",
-      "line": 206,
-      "declaration": "void onOpenInventory()"
-    },
-    {
-      "kind": "event",
-      "name": "onMouseDown",
-      "side": "client",
-      "category": "Mouse",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This event is triggered when a mouse button is pressed.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "button",
-          "description": "Mouse button: `0` for left or `1` for right."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CEvent.cpp",
-      "line": 86,
-      "declaration": "void onMouseDown(int button)"
-    },
-    {
-      "kind": "event",
-      "name": "onMouseUp",
-      "side": "client",
-      "category": "Mouse",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This event is triggered when a mouse button is released.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "button",
-          "description": "Mouse button: `0` for left or `1` for right."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CEvent.cpp",
-      "line": 98,
-      "declaration": "void onMouseUp(int button)"
-    },
-    {
-      "kind": "event",
-      "name": "onMouseWheel",
-      "side": "client",
-      "category": "Mouse",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This event is triggered when the mouse wheel is scrolled.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "delta",
-          "description": "Mouse-wheel delta."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CEvent.cpp",
-      "line": 110,
-      "declaration": "void onMouseWheel(int delta)"
-    },
-    {
-      "kind": "event",
-      "name": "onPacket",
-      "side": "client",
-      "category": "Network",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This event is triggered when a script packet is received.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "data",
-          "description": "Packet data."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CEvent.cpp",
-      "line": 74,
-      "declaration": "void onPacket(string data)"
-    },
-    {
-      "kind": "event",
-      "name": "onPlayerDead",
-      "side": "client",
-      "category": "Player",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This event is triggered when the player dies.",
-      "notes": [],
-      "params": [],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CEvent.cpp",
-      "line": 150,
-      "declaration": "void onPlayerDead()"
-    },
-    {
-      "kind": "event",
-      "name": "onPlayerHit",
-      "side": "client",
-      "category": "Player",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This event is triggered when a hit occurs.",
-      "notes": [],
-      "params": [],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CEvent.cpp",
-      "line": 139,
-      "declaration": "void onPlayerHit()"
-    },
-    {
-      "kind": "event",
-      "name": "onPlayerRenderNickname",
-      "side": "client",
-      "category": "Player",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This event is triggered when a player nickname is rendered.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "id",
-          "description": "Entity ID."
-        },
-        {
-          "type": "string",
-          "name": "name",
-          "description": "Entity name."
-        },
-        {
-          "type": "int",
-          "name": "x",
-          "description": "X coordinate."
-        },
-        {
-          "type": "int",
-          "name": "y",
-          "description": "Y coordinate."
-        }
-      ],
-      "returns": null,
-      "cancellable": true,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CEvent.cpp",
-      "line": 303,
-      "declaration": "void onPlayerRenderNickname(int id, string name, int x, int y)"
-    },
-    {
-      "kind": "event",
-      "name": "onPlayerRespawn",
-      "side": "client",
-      "category": "Player",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This event is triggered when the player respawns.",
-      "notes": [],
-      "params": [],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CEvent.cpp",
-      "line": 161,
-      "declaration": "void onPlayerRespawn()"
-    },
-    {
-      "kind": "event",
-      "name": "onPlayerStandUp",
-      "side": "client",
-      "category": "Player",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This event is triggered when the player stands up.",
-      "notes": [],
-      "params": [],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CEvent.cpp",
-      "line": 183,
-      "declaration": "void onPlayerStandUp()"
-    },
-    {
-      "kind": "event",
-      "name": "onPlayerUnconscious",
-      "side": "client",
-      "category": "Player",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This event is triggered when the player becomes unconscious.",
-      "notes": [],
-      "params": [],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CEvent.cpp",
-      "line": 172,
-      "declaration": "void onPlayerUnconscious()"
-    },
-    {
-      "kind": "event",
-      "name": "onMobTrigger",
-      "side": "client",
-      "category": "World",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This event is triggered when the player starts interacting with a mob.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "name",
-          "description": "Entity name."
-        },
-        {
-          "type": "float",
-          "name": "x",
-          "description": "X coordinate."
-        },
-        {
-          "type": "float",
-          "name": "y",
-          "description": "Y coordinate."
-        },
-        {
-          "type": "float",
-          "name": "z",
-          "description": "Z coordinate."
-        },
-        {
-          "type": "int",
-          "name": "type",
-          "description": "Mob type."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CEvent.cpp",
-      "line": 228,
-      "declaration": "void onMobTrigger(string name, float x, float y, float z, int type)"
-    },
-    {
-      "kind": "event",
-      "name": "onMobUntrigger",
-      "side": "client",
-      "category": "World",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This event is triggered when the player stops interacting with a mob.",
-      "notes": [],
-      "params": [
-        {
-          "type": "string",
-          "name": "name",
-          "description": "Entity name."
-        },
-        {
-          "type": "float",
-          "name": "x",
-          "description": "X coordinate."
-        },
-        {
-          "type": "float",
-          "name": "y",
-          "description": "Y coordinate."
-        },
-        {
-          "type": "float",
-          "name": "z",
-          "description": "Z coordinate."
-        },
-        {
-          "type": "int",
-          "name": "type",
-          "description": "Mob type."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CEvent.cpp",
-      "line": 244,
-      "declaration": "void onMobUntrigger(string name, float x, float y, float z, int type)"
-    },
-    {
-      "kind": "event",
-      "name": "onPlayerLostFocus",
-      "side": "client",
-      "category": "World",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This event is triggered when an entity loses focus.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "id",
-          "description": "Entity ID."
-        },
-        {
-          "type": "string",
-          "name": "name",
-          "description": "Entity name."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CEvent.cpp",
-      "line": 290,
-      "declaration": "void onPlayerLostFocus(int id, string name)"
-    },
-    {
-      "kind": "event",
-      "name": "onPlayerTakeFocus",
-      "side": "client",
-      "category": "World",
-      "version": "0.5.0",
-      "deprecated": null,
-      "description": "This event is triggered when an entity gains focus.",
-      "notes": [],
-      "params": [
-        {
-          "type": "int",
-          "name": "id",
-          "description": "Entity ID."
-        },
-        {
-          "type": "string",
-          "name": "name",
-          "description": "Entity name."
-        },
-        {
-          "type": "float",
-          "name": "x",
-          "description": "X coordinate."
-        },
-        {
-          "type": "float",
-          "name": "y",
-          "description": "Y coordinate."
-        },
-        {
-          "type": "float",
-          "name": "z",
-          "description": "Z coordinate."
-        }
-      ],
-      "returns": null,
-      "cancellable": false,
-      "examples": [],
-      "source": "g1o-client/gothic1/src/Script/CEvent.cpp",
-      "line": 274,
-      "declaration": "void onPlayerTakeFocus(int id, string name, float x, float y, float z)"
-    },
-    {
-      "kind": "event",
       "name": "onAdminCommand",
       "side": "server",
       "category": "Game",
@@ -5594,7 +1392,7 @@
       "cancellable": false,
       "examples": [],
       "source": "g1o-server/Script/SEvent.cpp",
-      "line": 154,
+      "line": 141,
       "declaration": "void onAdminCommand(int playerID, string command)"
     },
     {
@@ -5633,31 +1431,166 @@
     },
     {
       "kind": "event",
-      "name": "onPlayerPacket",
+      "name": "onKeyDown",
       "side": "server",
-      "category": "Network",
+      "category": "Input",
       "version": "0.5.0",
       "deprecated": null,
-      "description": "This event is triggered when a script packet is received.",
+      "description": "This event is triggered on the server when a connected client presses a key.",
       "notes": [],
       "params": [
         {
           "type": "int",
           "name": "playerID",
-          "description": "Player ID."
+          "description": "Authenticated player ID."
+        },
+        {
+          "type": "int",
+          "name": "key",
+          "description": "Gothic DirectInput scan code."
         },
         {
           "type": "string",
-          "name": "data",
-          "description": "Packet data."
+          "name": "letter",
+          "description": "Translated key character."
         }
       ],
       "returns": null,
       "cancellable": false,
       "examples": [],
       "source": "g1o-server/Script/SEvent.cpp",
-      "line": 141,
-      "declaration": "void onPlayerPacket(int playerID, string data)"
+      "line": 233,
+      "declaration": "void onKeyDown(int playerID, int key, string letter)"
+    },
+    {
+      "kind": "event",
+      "name": "onCloseInventory",
+      "side": "server",
+      "category": "Inventory",
+      "version": "0.5.0",
+      "deprecated": null,
+      "description": "This event is triggered on the server when a connected client closes the inventory.",
+      "notes": [],
+      "params": [
+        {
+          "type": "int",
+          "name": "playerID",
+          "description": "Authenticated player ID."
+        }
+      ],
+      "returns": null,
+      "cancellable": false,
+      "examples": [],
+      "source": "g1o-server/Script/SEvent.cpp",
+      "line": 303,
+      "declaration": "void onCloseInventory(int playerID)"
+    },
+    {
+      "kind": "event",
+      "name": "onOpenInventory",
+      "side": "server",
+      "category": "Inventory",
+      "version": "0.5.0",
+      "deprecated": null,
+      "description": "This event is triggered on the server when a connected client opens the inventory.",
+      "notes": [],
+      "params": [
+        {
+          "type": "int",
+          "name": "playerID",
+          "description": "Authenticated player ID."
+        }
+      ],
+      "returns": null,
+      "cancellable": false,
+      "examples": [],
+      "source": "g1o-server/Script/SEvent.cpp",
+      "line": 290,
+      "declaration": "void onOpenInventory(int playerID)"
+    },
+    {
+      "kind": "event",
+      "name": "onMouseDown",
+      "side": "server",
+      "category": "Mouse",
+      "version": "0.5.0",
+      "deprecated": null,
+      "description": "This event is triggered on the server when a connected client presses a mouse button.",
+      "notes": [],
+      "params": [
+        {
+          "type": "int",
+          "name": "playerID",
+          "description": "Authenticated player ID."
+        },
+        {
+          "type": "int",
+          "name": "button",
+          "description": "Mouse button: `0` for left or `1` for right."
+        }
+      ],
+      "returns": null,
+      "cancellable": false,
+      "examples": [],
+      "source": "g1o-server/Script/SEvent.cpp",
+      "line": 248,
+      "declaration": "void onMouseDown(int playerID, int button)"
+    },
+    {
+      "kind": "event",
+      "name": "onMouseUp",
+      "side": "server",
+      "category": "Mouse",
+      "version": "0.5.0",
+      "deprecated": null,
+      "description": "This event is triggered on the server when a connected client releases a mouse button.",
+      "notes": [],
+      "params": [
+        {
+          "type": "int",
+          "name": "playerID",
+          "description": "Authenticated player ID."
+        },
+        {
+          "type": "int",
+          "name": "button",
+          "description": "Mouse button: `0` for left or `1` for right."
+        }
+      ],
+      "returns": null,
+      "cancellable": false,
+      "examples": [],
+      "source": "g1o-server/Script/SEvent.cpp",
+      "line": 262,
+      "declaration": "void onMouseUp(int playerID, int button)"
+    },
+    {
+      "kind": "event",
+      "name": "onMouseWheel",
+      "side": "server",
+      "category": "Mouse",
+      "version": "0.5.0",
+      "deprecated": null,
+      "description": "This event is triggered on the server when a connected client scrolls the mouse wheel.",
+      "notes": [],
+      "params": [
+        {
+          "type": "int",
+          "name": "playerID",
+          "description": "Authenticated player ID."
+        },
+        {
+          "type": "int",
+          "name": "delta",
+          "description": "Mouse-wheel delta."
+        }
+      ],
+      "returns": null,
+      "cancellable": false,
+      "examples": [],
+      "source": "g1o-server/Script/SEvent.cpp",
+      "line": 276,
+      "declaration": "void onMouseWheel(int playerID, int delta)"
     },
     {
       "kind": "event",
@@ -5811,7 +1744,7 @@
       "cancellable": false,
       "examples": [],
       "source": "g1o-server/Script/SEvent.cpp",
-      "line": 200,
+      "line": 187,
       "declaration": "void onPlayerDropItem(int playerID, int itemID, string instance, int amount, string world)"
     },
     {
@@ -5867,7 +1800,7 @@
       "cancellable": false,
       "examples": [],
       "source": "g1o-server/Script/SEvent.cpp",
-      "line": 232,
+      "line": 219,
       "declaration": "void onPlayerLostFocus(int playerID, int focusID)"
     },
     {
@@ -5895,7 +1828,7 @@
       "cancellable": true,
       "examples": [],
       "source": "g1o-server/Script/SEvent.cpp",
-      "line": 167,
+      "line": 154,
       "declaration": "void onPlayerMessage(int playerID, string message)"
     },
     {
@@ -5969,7 +1902,7 @@
       "cancellable": false,
       "examples": [],
       "source": "g1o-server/Script/SEvent.cpp",
-      "line": 219,
+      "line": 206,
       "declaration": "void onPlayerTakeFocus(int playerID, int focusID)"
     },
     {
@@ -6012,7 +1945,7 @@
       "cancellable": false,
       "examples": [],
       "source": "g1o-server/Script/SEvent.cpp",
-      "line": 181,
+      "line": 168,
       "declaration": "void onPlayerTakeItem(int playerID, int itemID, string instance, int amount, string world)"
     },
     {
@@ -6042,6 +1975,140 @@
       "source": "g1o-server/Script/SEvent.cpp",
       "line": 77,
       "declaration": "void onPlayerUnconscious(int playerID, int killerID)"
+    },
+    {
+      "kind": "event",
+      "name": "onUseItem",
+      "side": "server",
+      "category": "Player",
+      "version": "0.5.0",
+      "deprecated": null,
+      "description": "This event is triggered on the server when a connected client changes the item held in a hand.",
+      "notes": [],
+      "params": [
+        {
+          "type": "int",
+          "name": "playerID",
+          "description": "Authenticated player ID."
+        },
+        {
+          "type": "string",
+          "name": "instance",
+          "description": "Item instance name or an empty string."
+        },
+        {
+          "type": "int",
+          "name": "amount",
+          "description": "Item amount."
+        },
+        {
+          "type": "int",
+          "name": "hand",
+          "description": "Hand identifier."
+        }
+      ],
+      "returns": null,
+      "cancellable": false,
+      "examples": [],
+      "source": "g1o-server/Script/SEvent.cpp",
+      "line": 358,
+      "declaration": "void onUseItem(int playerID, string instance, int amount, int hand)"
+    },
+    {
+      "kind": "event",
+      "name": "onMobTrigger",
+      "side": "server",
+      "category": "World",
+      "version": "0.5.0",
+      "deprecated": null,
+      "description": "This event is triggered on the server when a connected client starts interacting with a mob.",
+      "notes": [],
+      "params": [
+        {
+          "type": "int",
+          "name": "playerID",
+          "description": "Authenticated player ID."
+        },
+        {
+          "type": "string",
+          "name": "name",
+          "description": "Mob name."
+        },
+        {
+          "type": "float",
+          "name": "x",
+          "description": "X coordinate."
+        },
+        {
+          "type": "float",
+          "name": "y",
+          "description": "Y coordinate."
+        },
+        {
+          "type": "float",
+          "name": "z",
+          "description": "Z coordinate."
+        },
+        {
+          "type": "int",
+          "name": "type",
+          "description": "Mob type."
+        }
+      ],
+      "returns": null,
+      "cancellable": false,
+      "examples": [],
+      "source": "g1o-server/Script/SEvent.cpp",
+      "line": 316,
+      "declaration": "void onMobTrigger(int playerID, string name, float x, float y, float z, int type)"
+    },
+    {
+      "kind": "event",
+      "name": "onMobUntrigger",
+      "side": "server",
+      "category": "World",
+      "version": "0.5.0",
+      "deprecated": null,
+      "description": "This event is triggered on the server when a connected client stops interacting with a mob.",
+      "notes": [],
+      "params": [
+        {
+          "type": "int",
+          "name": "playerID",
+          "description": "Authenticated player ID."
+        },
+        {
+          "type": "string",
+          "name": "name",
+          "description": "Mob name."
+        },
+        {
+          "type": "float",
+          "name": "x",
+          "description": "X coordinate."
+        },
+        {
+          "type": "float",
+          "name": "y",
+          "description": "Y coordinate."
+        },
+        {
+          "type": "float",
+          "name": "z",
+          "description": "Z coordinate."
+        },
+        {
+          "type": "int",
+          "name": "type",
+          "description": "Mob type."
+        }
+      ],
+      "returns": null,
+      "cancellable": false,
+      "examples": [],
+      "source": "g1o-server/Script/SEvent.cpp",
+      "line": 337,
+      "declaration": "void onMobUntrigger(int playerID, string name, float x, float y, float z, int type)"
     }
   ]
 }

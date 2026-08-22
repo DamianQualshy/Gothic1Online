@@ -24,7 +24,7 @@ namespace {
  * This function returns the monotonic runtime tick count.
  *
  * @name getTickCount
- * @side shared
+ * @side server
  * @category Utility
  * @version 0.4.0
  * @return (int) Elapsed milliseconds.
@@ -41,7 +41,7 @@ int GetTickCount(CallContext& context, TimerManager::Clock clock)
  * This function calculates the distance between two 3D points.
  *
  * @name getDistance3d
- * @side shared
+ * @side server
  * @category Math
  * @version 0.4.0
  * @param (float) x1 First X coordinate.
@@ -71,7 +71,7 @@ int GetDistance3D(CallContext& context)
  * This function calculates the distance between two 2D points.
  *
  * @name getDistance2d
- * @side shared
+ * @side server
  * @category Math
  * @version 0.4.0
  * @param (float) x1 First X coordinate.
@@ -97,7 +97,7 @@ int GetDistance2D(CallContext& context)
  * This function parses a command string using a sequence of `d`, `f`, and `s` format characters.
  *
  * @name sscanf
- * @side shared
+ * @side server
  * @category Utility
  * @version 0.4.0
  * @param (string) format Value types to parse.
@@ -150,7 +150,7 @@ int Scan(CallContext& context)
  * This function converts RGB color components to a hexadecimal string.
  *
  * @name rgbToHex
- * @side shared
+ * @side server
  * @category Utility
  * @version 0.4.0
  * @param (int) red Red component.
@@ -174,7 +174,7 @@ int RgbToHex(CallContext& context)
  * This function converts a hexadecimal color to RGB components.
  *
  * @name hexToRgb
- * @side shared
+ * @side server
  * @category Utility
  * @version 0.4.0
  * @param (string) color Hexadecimal color, with or without a leading `#`.
@@ -210,7 +210,7 @@ int HexToRgb(CallContext& context)
  *
  * This function calculates an MD5 digest.
  * @name md5
- * @side shared
+ * @side server
  * @category Hash
  * @version 0.4.0
  * @param (string) text Input text.
@@ -222,7 +222,7 @@ G1O_HASH_NATIVE(Md5, md5wrapper)
  *
  * This function calculates a SHA-1 digest.
  * @name sha1
- * @side shared
+ * @side server
  * @category Hash
  * @version 0.4.0
  * @param (string) text Input text.
@@ -234,7 +234,7 @@ G1O_HASH_NATIVE(Sha1, sha1wrapper)
  *
  * This function calculates a SHA-256 digest.
  * @name sha256
- * @side shared
+ * @side server
  * @category Hash
  * @version 0.4.0
  * @param (string) text Input text.
@@ -246,7 +246,7 @@ G1O_HASH_NATIVE(Sha256, sha256wrapper)
  *
  * This function calculates a SHA-384 digest.
  * @name sha384
- * @side shared
+ * @side server
  * @category Hash
  * @version 0.4.0
  * @param (string) text Input text.
@@ -258,7 +258,7 @@ G1O_HASH_NATIVE(Sha384, sha384wrapper)
  *
  * This function calculates a SHA-512 digest.
  * @name sha512
- * @side shared
+ * @side server
  * @category Hash
  * @version 0.4.0
  * @param (string) text Input text.

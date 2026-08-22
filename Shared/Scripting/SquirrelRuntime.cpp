@@ -138,13 +138,10 @@ ScriptValue ReadValue(HSQUIRRELVM vm, SQInteger index, int depth)
 
 class SquirrelRuntime final : public IScriptRuntime {
 public:
-	SquirrelRuntime(ScriptEngine& engine, RuntimePolicy policy)
+	SquirrelRuntime(ScriptEngine& engine)
 		: engine_(engine)
 	{
-		const unsigned char libraries = policy == RuntimePolicy::TrustedServer
-			? Sqrat::SqratVM::LIB_ALL
-			: static_cast<unsigned char>(Sqrat::SqratVM::LIB_BLOB | Sqrat::SqratVM::LIB_MATH | Sqrat::SqratVM::LIB_STR);
-		vm_ = std::make_unique<Sqrat::SqratVM>(1024, libraries);
+		vm_ = std::make_unique<Sqrat::SqratVM>(1024, Sqrat::SqratVM::LIB_ALL);
 		sq_setforeignptr(vm_->GetVM(), &engine_);
 		vm_->SetPrintFunc(Print, Print);
 		vm_->SetErrorHandler(RuntimeError, CompileError);
@@ -159,22 +156,6 @@ public:
 		if (result == Sqrat::SqratVM::SQRAT_NO_ERROR) return true;
 		engine_.Log("[Squirrel] " + vm_->GetLastErrorMsg());
 		return false;
-	}
-
-	bool LoadBuffer(const std::string& name, const std::vector<std::uint8_t>& bytes) override
-	{
-		auto& script = vm_->GetScript();
-		Sqrat::string error;
-		const std::string data(reinterpret_cast<const char*>(bytes.data()), bytes.size());
-		const bool compiled = bytes.size() >= 2 && bytes[0] == 0xfa && bytes[1] == 0xfa
-			? script.LoadBytecode(data)
-			: script.CompileString(data, error, name);
-		if (!compiled || !script.Run(error))
-		{
-			engine_.Log("[Squirrel] " + (error.empty() ? vm_->GetLastErrorMsg() : error));
-			return false;
-		}
-		return true;
 	}
 
 	bool Call(const std::string& function, const ScriptArguments& arguments) override
@@ -271,9 +252,9 @@ private:
 
 } // namespace
 
-std::unique_ptr<IScriptRuntime> CreateSquirrelRuntime(ScriptEngine& engine, RuntimePolicy policy)
+std::unique_ptr<IScriptRuntime> CreateSquirrelRuntime(ScriptEngine& engine)
 {
-	return std::make_unique<SquirrelRuntime>(engine, policy);
+	return std::make_unique<SquirrelRuntime>(engine);
 }
 
 } // namespace g1o::script

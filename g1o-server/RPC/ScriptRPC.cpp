@@ -1,6 +1,6 @@
 #include "../stdafx.h"
 
-#include <Scripting/ScriptWire.h>
+#include <cmath>
 
 void ScriptRPC::HandleScriptRPC(CNetwork* network, Packet* packet)
 {
@@ -13,26 +13,12 @@ void ScriptRPC::HandleScriptRPC(CNetwork* network, Packet* packet)
 
 	switch (eScriptRPC)
 	{
-	case SCRIPT_PACKET:
-		ScriptPacket(network, stream, packet); break;
 	case SCRIPT_VISUAL:
 		ScriptVisual(network, stream, packet); break;
 	case SCRIPT_FOCUS:
 		ScriptFocus(network, stream, packet); break;
-	case SCRIPT_EVENT:
-		ScriptEvent(network, stream, packet); break;
-	}
-};
-
-void ScriptRPC::ScriptPacket(CNetwork* network, BitStream& stream, Packet* packet)
-{
-	//LOG("ScriptRPC::ScriptPacket()");
-	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
-	if( player )
-	{
-		RakString data;
-		stream.Read(data);
-		SEvent::PlayerPacket(player->GetID(), data.C_String());
+	case SCRIPT_CLIENT_EVENT:
+		ClientEvent(network, stream, packet); break;
 	}
 };
 
@@ -61,39 +47,84 @@ void ScriptRPC::ScriptVisual(CNetwork* network, BitStream& stream, Packet* packe
 
 void ScriptRPC::ScriptFocus(CNetwork* network, BitStream& stream, Packet* packet)
 {
+	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
 	bool focusType;
-	int playerID, focusID;
+	int focusID;
 
-	stream.Read(focusType);
-	stream.Read(playerID);
-	stream.Read(focusID);
+	if (!player || !stream.Read(focusType) || !stream.Read(focusID))
+		return;
 
-	focusType ? SEvent::PlayerTakeFocus(playerID, focusID) : SEvent::PlayerLostFocus(playerID, focusID);
+	if (focusType)
+		SEvent::PlayerTakeFocus(player->GetID(), focusID);
+	else
+		SEvent::PlayerLostFocus(player->GetID(), focusID);
 }
 
-void ScriptRPC::ScriptEvent(CNetwork* network, BitStream& stream, Packet* packet)
+void ScriptRPC::ClientEvent(CNetwork* network, BitStream& stream, Packet* packet)
 {
 	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
-	RakString event_name;
-	g1o::script::ScriptArguments arguments;
-	std::string error;
-	if (!player || !stream.Read(event_name))
-		return;
-	if (!g1o::script::EventManager::IsValidName(event_name.C_String()))
+	MessageID rawEvent;
+	if (!player || !stream.Read(rawEvent)) return;
+
+	const int playerID = player->GetID();
+	switch (static_cast<EClientScriptEvent>(rawEvent))
 	{
-		LOG("[script] Rejected invalid remote event name from player %d", player->GetID());
-		return;
+	case CLIENT_EVENT_KEY_DOWN: {
+		int key;
+		RakString letter;
+		if (stream.Read(key) && key >= 0 && key < 512 && stream.Read(letter) && letter.GetLength() <= 8)
+			SEvent::KeyDown(playerID, key, letter.C_String());
+		break;
 	}
-	if (!g1o::script::wire::ReadArguments(stream, arguments, error))
-	{
-		if (!error.empty()) LOG("[script] Rejected remote event packet: %s", error.c_str());
-		return;
+	case CLIENT_EVENT_MOUSE_DOWN:
+	case CLIENT_EVENT_MOUSE_UP: {
+		int button;
+		if (stream.Read(button) && button >= 0 && button <= 1)
+		{
+			if (rawEvent == CLIENT_EVENT_MOUSE_DOWN)
+				SEvent::MouseDown(playerID, button);
+			else
+				SEvent::MouseUp(playerID, button);
+		}
+		break;
 	}
-	if (!scr.GetEngine().Events().CanTriggerRemotely(event_name.C_String()))
-	{
-		LOG("[script] Player %d tried to trigger protected event '%s'", player->GetID(), event_name.C_String());
-		return;
+	case CLIENT_EVENT_MOUSE_WHEEL: {
+		int delta;
+		if (stream.Read(delta)) SEvent::MouseWheel(playerID, delta);
+		break;
 	}
-	arguments.insert(arguments.begin(), g1o::script::ScriptValue(player->GetID()));
-	scr.GetEngine().Dispatch(event_name.C_String(), arguments);
+	case CLIENT_EVENT_OPEN_INVENTORY:
+		SEvent::OpenInventory(playerID);
+		break;
+	case CLIENT_EVENT_CLOSE_INVENTORY:
+		SEvent::CloseInventory(playerID);
+		break;
+	case CLIENT_EVENT_MOB_TRIGGER:
+	case CLIENT_EVENT_MOB_UNTRIGGER: {
+		RakString name;
+		float x, y, z;
+		int type;
+		if (stream.Read(name) && name.GetLength() <= 256 && stream.Read(x) && stream.Read(y) && stream.Read(z) &&
+			std::isfinite(x) && std::isfinite(y) && std::isfinite(z) &&
+			stream.Read(type) && type >= -1 && type <= 6)
+		{
+			if (rawEvent == CLIENT_EVENT_MOB_TRIGGER)
+				SEvent::MobTrigger(playerID, name.C_String(), x, y, z, type);
+			else
+				SEvent::MobUntrigger(playerID, name.C_String(), x, y, z, type);
+		}
+		break;
+	}
+	case CLIENT_EVENT_USE_ITEM: {
+		RakString instance;
+		int amount, hand;
+		if (stream.Read(instance) && instance.GetLength() <= 256 && stream.Read(amount) && amount >= 0 &&
+			stream.Read(hand) && hand >= 0 && hand <= 1)
+			SEvent::UseItem(playerID, instance.C_String(), amount, hand);
+		break;
+	}
+	default:
+		LOG("[script] Rejected unknown client event %u from player %d", static_cast<unsigned>(rawEvent), playerID);
+		break;
+	}
 }

@@ -4,7 +4,6 @@
 #include "NativeRegistry.h"
 #include "TimerManager.h"
 
-#include <cstdint>
 #include <functional>
 #include <memory>
 #include <optional>
@@ -18,11 +17,6 @@ enum class RuntimeLanguage {
 	Lua
 };
 
-enum class RuntimePolicy {
-	TrustedServer,
-	SandboxedClient
-};
-
 using ScriptLogger = std::function<void(const std::string&)>;
 
 class IScriptRuntime {
@@ -30,14 +24,7 @@ public:
 	virtual ~IScriptRuntime() = default;
 	virtual RuntimeLanguage Language() const = 0;
 	virtual bool LoadFile(const std::string& path) = 0;
-	virtual bool LoadBuffer(const std::string& name, const std::vector<std::uint8_t>& bytes) = 0;
 	virtual bool Call(const std::string& function, const ScriptArguments& arguments) = 0;
-};
-
-struct ScriptBuffer {
-	std::string name;
-	std::vector<std::uint8_t> bytes;
-	RuntimeLanguage language = RuntimeLanguage::Squirrel;
 };
 
 class ScriptEngine {
@@ -53,10 +40,8 @@ public:
 	TimerManager& Timers() { return timers_; }
 
 	void RegisterEvents(const std::vector<std::string>& names);
-	bool StartFile(const std::string& path, RuntimePolicy policy);
-	bool StartFiles(const std::vector<std::string>& paths, RuntimePolicy policy);
-	bool StartBuffer(const std::string& name, const std::vector<std::uint8_t>& bytes, RuntimeLanguage language, RuntimePolicy policy);
-	bool StartBuffers(const std::vector<ScriptBuffer>& scripts, RuntimePolicy policy);
+	bool StartFile(const std::string& path);
+	bool StartFiles(const std::vector<std::string>& paths);
 	void Stop();
 	bool IsRunning() const { return runtime_ != nullptr; }
 
@@ -68,7 +53,7 @@ public:
 	void Log(const std::string& message) const;
 
 private:
-	bool CreateRuntime(RuntimeLanguage language, RuntimePolicy policy);
+	bool CreateRuntime(RuntimeLanguage language);
 	static std::optional<RuntimeLanguage> LanguageFromPath(const std::string& path);
 
 	NativeRegistry natives_;
@@ -79,8 +64,8 @@ private:
 	std::vector<std::string> registered_events_;
 };
 
-std::unique_ptr<IScriptRuntime> CreateSquirrelRuntime(ScriptEngine& engine, RuntimePolicy policy);
-std::unique_ptr<IScriptRuntime> CreateLuaRuntime(ScriptEngine& engine, RuntimePolicy policy);
+std::unique_ptr<IScriptRuntime> CreateSquirrelRuntime(ScriptEngine& engine);
+std::unique_ptr<IScriptRuntime> CreateLuaRuntime(ScriptEngine& engine);
 const std::vector<const char*>& CoreHostFunctionNames();
 
 } // namespace g1o::script

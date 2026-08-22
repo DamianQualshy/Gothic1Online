@@ -9,7 +9,7 @@ This repository contains the Gothic 1 client DLL, external Qt launcher, game ser
 - `g1o-client/gothic1/lib/gothic-api` — maintained Union Gothic API, configured for Gothic 1 Classic
 - `g1o-server` — multiplayer game server
 - `g1o-master` — master server
-- `Shared` — RakNet, language-neutral scripting, resource packaging, TinyXML, hashing, threading, and common protocol code
+- `Shared` — RakNet, the language-neutral server scripting core, TinyXML, hashing, threading, and common protocol code
 - `dependencies` — pinned Squirrel and Sqrat submodules
 
 The old hand-written ZenGin class layouts have been removed. G1O-specific helpers and hooks live in `g1o-client/gothic1/src/game`, while declarations that extend ZenGin classes use `ZenGin/Gothic_UserAPI`.
@@ -61,4 +61,4 @@ This installs `GO_Launcher.exe`, the matching Qt runtime, plugins, and launcher 
 
 The Gothic API target is deliberately compiled with `__G1`. Do not change it to `__G2` or `__G2A`; the class layouts, globals, and function addresses are not compatible.
 
-The scripting layer supports Squirrel and Lua through runtime adapters over one shared value, event, timer, and native-function API. Server `config.xml` uses ordered `<script src="..." type="client|server|shared" />` declarations and recursive `<import src="..." />` files. The default resources provide parallel `squirrel-scripts` and `lua-scripts` imports, with Squirrel enabled and Lua commented for quick testing. Each imported resource and each server/client runtime must use one language; mixed Squirrel/Lua resources or runtime lists are rejected during configuration loading. Client scripts are distributed as packaged stripped Lua or Squirrel bytecode rather than source text. The game bindings remain explicitly Gothic 1 (`__G1`); the GMPC/G2O references are used only for scripting and resource-system behavior.
+The scripting layer supports Squirrel and Lua through runtime adapters over one server-side value, event, timer, and native-function API. Server `config.xml` uses ordered `<script src="..." />` declarations and recursive `<import src="..." />` files. Imports are expanded inline, so the declared loading order remains authoritative. The complete list must use one language; mixed Squirrel/Lua lists are rejected before execution. Clients do not download or execute game-mode scripts. They report a fixed set of input and gameplay observations to server events, with the player identity derived from the authenticated connection. The game bindings remain explicitly Gothic 1 (`__G1`); the GMPC/GMPA/G2O references are used only for multiplayer behavior.

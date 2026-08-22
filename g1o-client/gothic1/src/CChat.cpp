@@ -147,19 +147,8 @@ void CChat::KeyEvent(int key)
 		if( this->currentText.GetLength() > 0 )
 		{
 			CNetwork* net = core.GetNetwork();
-			if( this->currentText.Find("/") == 0)
+			// Commands and regular messages are both evaluated by the server.
 			{
-				std::string text = this->currentText.C_String();
-				int pos = text.find(' ');
-				
-				if (CEvent::Command(text.substr(1, pos - 1).c_str(), pos == std::string::npos ? "" : text.substr(pos + 1).c_str()) == 0)
-				{
-					goto sendMessage;
-				}
-			}
-			else
-			{
-sendMessage:
 				//Wysłanie wiadomości
 				if( net->IsConnected() == true )
 				{

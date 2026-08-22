@@ -10,7 +10,7 @@ target("G1O.Shared")
         "../dependencies/squirrel/sqstdlib",
         "../dependencies/sqrat/include",
         {public = true})
-    add_packages("lua", "sol2", "nlohmann_json", "minizip", {public = true})
+    add_packages("lua", "sol2", {public = true})
 
     add_files("RakNet/*.cpp")
     remove_files(
@@ -29,7 +29,6 @@ target("G1O.Shared")
         "../dependencies/squirrel/squirrel/*.cpp",
         "../dependencies/squirrel/sqstdlib/*.cpp",
         "Scripting/*.cpp",
-        "Resource/*.cpp",
         "TinyThread/tinythread.cpp",
         "tinyxml/*.cpp",
         "hashlib/*.cpp",

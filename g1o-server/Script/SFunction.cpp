@@ -1,7 +1,5 @@
 #include "../stdafx.h"
 
-#include <Scripting/ScriptWire.h>
-
 void SFunction::Register(g1o::script::NativeRegistry& registry)
 {
 	registry.Add("getPlayerName", SFunction::getPlayerName);
@@ -11,7 +9,6 @@ void SFunction::Register(g1o::script::NativeRegistry& registry)
 	registry.Add("isPlayerConnected", SFunction::isPlayerConnected);
 	registry.Add("sendMessageToAll", SFunction::sendMessageToAll);
 	registry.Add("sendMessageToPlayer", SFunction::sendMessageToPlayer);
-	registry.Add("sendPacketToPlayer", SFunction::sendPacketToPlayer);
 	registry.Add("getPlayerPosition", SFunction::getPlayerPosition);
 	registry.Add("isPlayerAdmin", SFunction::isPlayerAdmin);
 	registry.Add("getMaxSlots", SFunction::getMaxSlots);
@@ -25,7 +22,6 @@ void SFunction::Register(g1o::script::NativeRegistry& registry)
 	registry.Add("setUnconsciousEnabled", SFunction::setUnconsciousEnabled);
 	registry.Add("createGroundItem", SFunction::createGroundItem);
 	registry.Add("destroyGroundItem", SFunction::destroyGroundItem);
-	registry.Add("triggerClientEvent", SFunction::triggerClientEvent);
 	registry.Add("setPlayerInvisible", SFunction::setPlayerInvisible);
 	registry.Add("isPlayerInvisible", SFunction::isPlayerInvisible);
 };
@@ -254,53 +250,6 @@ int SFunction::sendMessageToPlayer(g1o::script::CallContext& context)
 		s.Write(g);
 		s.Write(b);
 		core.GetNetwork()->GetPeer()->Send(&s, LOW_PRIORITY, RELIABLE, 0, player->GetAddress(), false);
-	}
-
-	return 0;
-};
-
-/* g1odoc (func)
- *
- * This function sends packet.
- *
- * @name sendPacketToPlayer
- * @side server
- * @category Network
- * @version 0.4.0
- * @param (int) playerID Player ID.
- * @param (int) priority Priority.
- * @param (string) data Packet data.
- *
- */
-int SFunction::sendPacketToPlayer(g1o::script::CallContext& context)
-{
-	SCRIPT_CHECK_PARAM_COUNT(context, 3);
-	SCRIPT_CHECK_PARAM_INT(context, playerID, 0);
-	SCRIPT_CHECK_PARAM_INT(context, priority, 1);
-	SCRIPT_CHECK_PARAM_STRING(context, data, 2);
-
-	CPlayer* player = playerManager.GetPlayer(playerID);
-	if (player)
-	{
-		BitStream s;
-		s.Write((MessageID)GO_SCRIPT);
-		s.Write((MessageID)SCRIPT_PACKET);
-		s.Write(RakString(data));
-
-		switch (priority)
-		{
-		case 0:
-			core.GetNetwork()->GetPeer()->Send(&s, LOW_PRIORITY, UNRELIABLE, 0, player->GetAddress(), false);
-			break;
-
-		case 1:
-			core.GetNetwork()->GetPeer()->Send(&s, LOW_PRIORITY, RELIABLE, 0, player->GetAddress(), false);
-			break;
-
-		case 2:
-			core.GetNetwork()->GetPeer()->Send(&s, LOW_PRIORITY, RELIABLE_ORDERED, 0, player->GetAddress(), false);
-			break;
-		}
 	}
 
 	return 0;
@@ -596,60 +545,6 @@ int SFunction::destroyGroundItem(g1o::script::CallContext& context)
 
 	return 0;
 };
-
-/* g1odoc (func)
- *
- * This function triggers a remotely enabled custom event on a client.
- *
- * @name triggerClientEvent
- * @side server
- * @category Network
- * @version 0.4.0
- * @param (int) playerID Target player ID, or -1 for every connected player.
- * @param (string) eventName Custom client event name, from 1 to 128 bytes.
- * @param (...) arguments Values passed to the event handlers.
- * @return (bool) True if the event packet was sent.
- *
- */
-int SFunction::triggerClientEvent(g1o::script::CallContext& context)
-{
-	SCRIPT_CHECK_PARAM_COUNT(context, 2);
-	SCRIPT_CHECK_PARAM_INT(context, playerID, 0);
-	SCRIPT_CHECK_PARAM_STRING(context, eventName, 1);
-	if (!g1o::script::EventManager::IsValidName(eventName))
-	{
-		context.Error("triggerClientEvent expects an event name between 1 and 128 bytes");
-		return -1;
-	}
-
-	BitStream stream;
-	stream.Write(static_cast<MessageID>(GO_SCRIPT));
-	stream.Write(static_cast<MessageID>(SCRIPT_EVENT));
-	stream.Write(eventName);
-	std::string error;
-	if (!g1o::script::wire::WriteArguments(stream, context.ArgumentsFrom(2), error))
-	{
-		context.Error(error);
-		return -1;
-	}
-
-	if (playerID == -1)
-	{
-		core.GetNetwork()->SendToAll(stream, LOW_PRIORITY, RELIABLE_ORDERED);
-		context.Push(true);
-		return 1;
-	}
-
-	CPlayer* player = playerManager.GetPlayer(playerID);
-	if (!player)
-	{
-		context.Push(false);
-		return 1;
-	}
-	core.GetNetwork()->GetPeer()->Send(&stream, LOW_PRIORITY, RELIABLE_ORDERED, 0, player->GetAddress(), false);
-	context.Push(true);
-	return 1;
-}
 
 /* g1odoc (func)
  *

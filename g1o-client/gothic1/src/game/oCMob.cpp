@@ -78,7 +78,7 @@ void oCMobInter::Hook_OnTrigger(zCVob *target, zCVob *sender)
 	{
 		if (oCNpc::GetHero() == (oCNpc*)sender)
 		{
-			int result = CEvent::MobTrigger(this);
+			CEvent::MobTrigger(this);
 
 			switch (::GetVobType(this))
 			{
@@ -89,7 +89,7 @@ void oCMobInter::Hook_OnTrigger(zCVob *target, zCVob *sender)
 				break;
 			case VOB_TYPE_VT_OCMOBINTER:
 			case VOB_TYPE_VT_OCMOBCONTAINER:
-				if (!this->GetName().IsEmpty() || result)
+				if (!this->GetName().IsEmpty())
 				{
 					playerManager.GetLocalPlayer()->lastMob = this;
 					playerManager.GetLocalPlayer()->SendMobTrigger(true, this);
@@ -109,7 +109,7 @@ void oCMobInter::Hook_OnUntrigger(zCVob *target, zCVob *sender)
 	{
 		if (oCNpc::GetHero() == (oCNpc*)sender)
 		{
-			int result = CEvent::MobUntrigger(this);
+			CEvent::MobUntrigger(this);
 
 			switch (::GetVobType(this))
 			{
@@ -120,7 +120,7 @@ void oCMobInter::Hook_OnUntrigger(zCVob *target, zCVob *sender)
 				break;
 			case VOB_TYPE_VT_OCMOBINTER:
 			case VOB_TYPE_VT_OCMOBCONTAINER:
-				if (!this->GetName().IsEmpty() || result)
+				if (!this->GetName().IsEmpty())
 				{
 					playerManager.GetLocalPlayer()->lastMob = NULL;
 					playerManager.GetLocalPlayer()->SendMobTrigger(false, this);

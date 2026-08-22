@@ -1,7 +1,7 @@
 #ifndef GOMESSAGES_H
 #define GOMESSAGES_H
 
-#define versionNumber 227
+#define versionNumber 228
 
 enum EMultiplayerMessages
 {
@@ -74,13 +74,26 @@ enum EItemRPC
 
 enum EScriptRPC
 {
-	SCRIPT_RESOURCE_RESERVED, // Retains the legacy wire ID; resources now load from their manifest.
-	SCRIPT_PACKET,
+	SCRIPT_RESOURCE_RESERVED, // Retains the removed client-resource wire ID.
+	SCRIPT_PACKET_RESERVED,   // Retains the removed client-script packet wire ID.
 	SCRIPT_UNCONSCIOUS,
 	SCRIPT_VISUAL,
 	SCRIPT_OVERLAY,
 	SCRIPT_FOCUS,
-	SCRIPT_EVENT
+	SCRIPT_CLIENT_EVENT
+};
+
+enum EClientScriptEvent
+{
+	CLIENT_EVENT_KEY_DOWN,
+	CLIENT_EVENT_MOUSE_DOWN,
+	CLIENT_EVENT_MOUSE_UP,
+	CLIENT_EVENT_MOUSE_WHEEL,
+	CLIENT_EVENT_OPEN_INVENTORY,
+	CLIENT_EVENT_CLOSE_INVENTORY,
+	CLIENT_EVENT_MOB_TRIGGER,
+	CLIENT_EVENT_MOB_UNTRIGGER,
+	CLIENT_EVENT_USE_ITEM
 };
 
 #endif //GOMESSAGES_H

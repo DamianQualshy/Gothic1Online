@@ -9,9 +9,10 @@ std::uint64_t ScriptClock()
 
 const std::vector<std::string> kServerEvents = {
 	"onInit", "onTick", "onPlayerConnect", "onPlayerHit", "onPlayerDeath", "onPlayerUnconscious",
-	"onPlayerRespawn", "onPlayerStandUp", "onPlayerDisconnect", "onPlayerCommand", "onPlayerPacket",
+	"onPlayerRespawn", "onPlayerStandUp", "onPlayerDisconnect", "onPlayerCommand",
 	"onAdminCommand", "onPlayerMessage", "onPlayerTakeItem", "onPlayerDropItem", "onPlayerTakeFocus",
-	"onPlayerLostFocus"
+	"onPlayerLostFocus", "onKeyDown", "onMouseDown", "onMouseUp", "onMouseWheel", "onOpenInventory",
+	"onCloseInventory", "onMobTrigger", "onMobUntrigger", "onUseItem"
 };
 
 } // namespace
@@ -30,7 +31,7 @@ CScript::~CScript() = default;
 
 bool CScript::StartScripts(const std::vector<std::string>& paths)
 {
-	if (!engine->StartFiles(paths, g1o::script::RuntimePolicy::TrustedServer))
+	if (!engine->StartFiles(paths))
 	{
 		std::fprintf(stderr, "Cannot load the configured server scripts.\n");
 		return false;

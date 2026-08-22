@@ -32,9 +32,6 @@ void CScriptState::DrawTop()
 
 void CScriptState::OnRender()
 {
-	scr.GetEngine().PulseTimers();
-	CEvent::Render();
-		
 	drawView->ClrPrintwin();
 	for( size_t i = 0; i < drawList.Num(); ++i )
 		drawList[i]->OnRender(drawView);
