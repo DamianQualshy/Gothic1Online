@@ -22,8 +22,8 @@ target("G1O.Launcher")
         "RakNet/RakNetSocket2_WindowsStore8.cpp",
         "RakNet/VitaIncludes.cpp",
         "RakNet/PS4Includes.cpp")
-    add_includedirs(".", "RakNet")
-    add_packages("qt5widgets")
+    add_includedirs(".", "RakNet", "../../../Shared")
+    add_packages("fmt", "nlohmann_json", "qt5widgets", "spdlog")
     add_frameworks("QtCore", "QtGui", "QtNetwork", "QtWidgets")
     set_values("qt.deploy.flags",
                "--release",
@@ -31,7 +31,13 @@ target("G1O.Launcher")
                "--no-system-d3d-compiler",
                "--no-opengl-sw",
                "--no-compiler-runtime")
-    add_defines("_CRT_SECURE_NO_WARNINGS", "NOMINMAX", "_ATL_XP_TARGETING", "D_ATL_XP_TARGETING")
+    add_defines(
+        "_CRT_SECURE_NO_WARNINGS",
+        "NOMINMAX",
+        "_ATL_XP_TARGETING",
+        "D_ATL_XP_TARGETING",
+        "SPDLOG_FMT_EXTERNAL",
+        "SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_TRACE")
     add_syslinks("ws2_32", "shell32", "advapi32")
 
     local master_server_list_url = get_config("master_server_list_url")

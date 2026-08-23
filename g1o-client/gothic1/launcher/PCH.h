@@ -19,7 +19,7 @@
 
 // Headers
 #include "SLauncher.h"
-#include "SLog.h"
+#include "Logging.h"
 #include "CLanguage.h"
 #include "CServerInfo.h"
 #include "CServerManager.h"

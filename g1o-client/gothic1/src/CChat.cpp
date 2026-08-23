@@ -2,7 +2,7 @@
 
 CChat::CChat()
 {
-	DLOG("CChat::CChat()");
+	SPDLOG_TRACE("CChat::CChat()");
 
 	bIsInitiated = false;
 	bIsShowing = false;
@@ -16,7 +16,7 @@ CChat::CChat()
 
 CChat::~CChat()
 {
-	DLOG("CChat::~CChat()");
+	SPDLOG_TRACE("CChat::~CChat()");
 
 	bIsInitiated = false;
 	bIsShowing = false;
@@ -42,7 +42,7 @@ void CChat::InitChat()
 
 void CChat::AddLine(RakString text, zCOLOR color)
 {
-	DLOG("CChat::AddLine()");
+	SPDLOG_TRACE("CChat::AddLine()");
 	if(this->IsInitiated() == true)
 	{
 		ChatLine line;

@@ -5,11 +5,8 @@ class CConfig
 {
 private:
 	RakString playerName;
-	RakString serverIp;
-	RakString serverPort;
-	RakString startWorld;
-	RakString playerInstance;
 	RakString language;
+	bool LoadLegacyConfigFromFile(RakString fileName);
 public:
 	CConfig();
 	~CConfig();
@@ -19,10 +16,6 @@ public:
 	void SetDefault();
 
 	inline RakString GetPlayerName(){ return this->playerName;};
-	inline RakString GetServerIp(){ return this->serverIp;};
-	inline RakString GetServerPort(){ return this->serverPort;};
-	inline RakString GetStartWorld(){ return this->startWorld;};
-	inline RakString GetPlayerInstance(){ return this->playerInstance;};
 	inline RakString GetLanguage(){ return this->language; };
 
 };

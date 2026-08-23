@@ -1,5 +1,5 @@
 {
-  "format": 1,
+  "format": 2,
   "functions": [
     {
       "kind": "func",
@@ -566,6 +566,32 @@
     },
     {
       "kind": "func",
+      "name": "blake2b",
+      "side": "server",
+      "category": "Hash",
+      "version": "0.5.0",
+      "deprecated": null,
+      "description": "This function calculates a BLAKE2b digest using libsodium.",
+      "notes": [],
+      "params": [
+        {
+          "type": "string",
+          "name": "text",
+          "description": "Input text."
+        }
+      ],
+      "returns": {
+        "type": "string",
+        "description": "Lowercase hexadecimal digest."
+      },
+      "cancellable": false,
+      "examples": [],
+      "source": "Shared/Scripting/SharedNatives.cpp",
+      "line": 264,
+      "declaration": "string blake2b(string text)"
+    },
+    {
+      "kind": "func",
       "name": "md5",
       "side": "server",
       "category": "Hash",
@@ -587,7 +613,7 @@
       "cancellable": false,
       "examples": [],
       "source": "Shared/Scripting/SharedNatives.cpp",
-      "line": 209,
+      "line": 204,
       "declaration": "string md5(string text)"
     },
     {
@@ -613,7 +639,7 @@
       "cancellable": false,
       "examples": [],
       "source": "Shared/Scripting/SharedNatives.cpp",
-      "line": 221,
+      "line": 216,
       "declaration": "string sha1(string text)"
     },
     {
@@ -639,7 +665,7 @@
       "cancellable": false,
       "examples": [],
       "source": "Shared/Scripting/SharedNatives.cpp",
-      "line": 233,
+      "line": 228,
       "declaration": "string sha256(string text)"
     },
     {
@@ -665,7 +691,7 @@
       "cancellable": false,
       "examples": [],
       "source": "Shared/Scripting/SharedNatives.cpp",
-      "line": 245,
+      "line": 240,
       "declaration": "string sha384(string text)"
     },
     {
@@ -691,7 +717,7 @@
       "cancellable": false,
       "examples": [],
       "source": "Shared/Scripting/SharedNatives.cpp",
-      "line": 257,
+      "line": 252,
       "declaration": "string sha512(string text)"
     },
     {
@@ -806,7 +832,7 @@
       "cancellable": false,
       "examples": [],
       "source": "Shared/Scripting/SharedNatives.cpp",
-      "line": 69,
+      "line": 65,
       "declaration": "float getDistance2d(float x1, float y1, float x2, float y2)"
     },
     {
@@ -857,7 +883,7 @@
       "cancellable": false,
       "examples": [],
       "source": "Shared/Scripting/SharedNatives.cpp",
-      "line": 39,
+      "line": 35,
       "declaration": "float getDistance3d(float x1, float y1, float z1, float x2, float y2, float z2)"
     },
     {
@@ -1269,7 +1295,7 @@
       "cancellable": false,
       "examples": [],
       "source": "Shared/Scripting/SharedNatives.cpp",
-      "line": 22,
+      "line": 18,
       "declaration": "int getTickCount()"
     },
     {
@@ -1295,7 +1321,7 @@
       "cancellable": false,
       "examples": [],
       "source": "Shared/Scripting/SharedNatives.cpp",
-      "line": 172,
+      "line": 168,
       "declaration": "table hexToRgb(string color)"
     },
     {
@@ -1331,7 +1357,7 @@
       "cancellable": false,
       "examples": [],
       "source": "Shared/Scripting/SharedNatives.cpp",
-      "line": 148,
+      "line": 144,
       "declaration": "string rgbToHex(int red, int green, int blue)"
     },
     {
@@ -1362,7 +1388,7 @@
       "cancellable": false,
       "examples": [],
       "source": "Shared/Scripting/SharedNatives.cpp",
-      "line": 95,
+      "line": 91,
       "declaration": "array|bool sscanf(string format, string input)"
     }
   ],
@@ -2109,6 +2135,831 @@
       "source": "g1o-server/Script/SEvent.cpp",
       "line": 337,
       "declaration": "void onMobUntrigger(int playerID, string name, float x, float y, float z, int type)"
+    }
+  ],
+  "constants": [
+    {
+      "name": "Keys",
+      "slug": "keys",
+      "description": "DirectInput scan codes and aliases accepted by Gothic's keyboard input handling.",
+      "constants": [
+        {
+          "name": "KEY_ESCAPE",
+          "value": 1
+        },
+        {
+          "name": "KEY_1",
+          "value": 2
+        },
+        {
+          "name": "KEY_2",
+          "value": 3
+        },
+        {
+          "name": "KEY_3",
+          "value": 4
+        },
+        {
+          "name": "KEY_4",
+          "value": 5
+        },
+        {
+          "name": "KEY_5",
+          "value": 6
+        },
+        {
+          "name": "KEY_6",
+          "value": 7
+        },
+        {
+          "name": "KEY_7",
+          "value": 8
+        },
+        {
+          "name": "KEY_8",
+          "value": 9
+        },
+        {
+          "name": "KEY_9",
+          "value": 10
+        },
+        {
+          "name": "KEY_0",
+          "value": 11
+        },
+        {
+          "name": "KEY_MINUS",
+          "value": 12
+        },
+        {
+          "name": "KEY_EQUALS",
+          "value": 13
+        },
+        {
+          "name": "KEY_BACK",
+          "value": 14
+        },
+        {
+          "name": "KEY_TAB",
+          "value": 15
+        },
+        {
+          "name": "KEY_Q",
+          "value": 16
+        },
+        {
+          "name": "KEY_W",
+          "value": 17
+        },
+        {
+          "name": "KEY_E",
+          "value": 18
+        },
+        {
+          "name": "KEY_R",
+          "value": 19
+        },
+        {
+          "name": "KEY_T",
+          "value": 20
+        },
+        {
+          "name": "KEY_Y",
+          "value": 21
+        },
+        {
+          "name": "KEY_U",
+          "value": 22
+        },
+        {
+          "name": "KEY_I",
+          "value": 23
+        },
+        {
+          "name": "KEY_O",
+          "value": 24
+        },
+        {
+          "name": "KEY_P",
+          "value": 25
+        },
+        {
+          "name": "KEY_LBRACKET",
+          "value": 26
+        },
+        {
+          "name": "KEY_RBRACKET",
+          "value": 27
+        },
+        {
+          "name": "KEY_RETURN",
+          "value": 28
+        },
+        {
+          "name": "KEY_LCONTROL",
+          "value": 29
+        },
+        {
+          "name": "KEY_A",
+          "value": 30
+        },
+        {
+          "name": "KEY_S",
+          "value": 31
+        },
+        {
+          "name": "KEY_D",
+          "value": 32
+        },
+        {
+          "name": "KEY_F",
+          "value": 33
+        },
+        {
+          "name": "KEY_G",
+          "value": 34
+        },
+        {
+          "name": "KEY_H",
+          "value": 35
+        },
+        {
+          "name": "KEY_J",
+          "value": 36
+        },
+        {
+          "name": "KEY_K",
+          "value": 37
+        },
+        {
+          "name": "KEY_L",
+          "value": 38
+        },
+        {
+          "name": "KEY_SEMICOLON",
+          "value": 39
+        },
+        {
+          "name": "KEY_APOSTROPHE",
+          "value": 40
+        },
+        {
+          "name": "KEY_GRAVE",
+          "value": 41
+        },
+        {
+          "name": "KEY_TILDE",
+          "value": 41
+        },
+        {
+          "name": "KEY_LSHIFT",
+          "value": 42
+        },
+        {
+          "name": "KEY_BACKSLASH",
+          "value": 43
+        },
+        {
+          "name": "KEY_Z",
+          "value": 44
+        },
+        {
+          "name": "KEY_X",
+          "value": 45
+        },
+        {
+          "name": "KEY_C",
+          "value": 46
+        },
+        {
+          "name": "KEY_V",
+          "value": 47
+        },
+        {
+          "name": "KEY_B",
+          "value": 48
+        },
+        {
+          "name": "KEY_N",
+          "value": 49
+        },
+        {
+          "name": "KEY_M",
+          "value": 50
+        },
+        {
+          "name": "KEY_COMMA",
+          "value": 51
+        },
+        {
+          "name": "KEY_PERIOD",
+          "value": 52
+        },
+        {
+          "name": "KEY_SLASH",
+          "value": 53
+        },
+        {
+          "name": "KEY_RSHIFT",
+          "value": 54
+        },
+        {
+          "name": "KEY_MULTIPLY",
+          "value": 55
+        },
+        {
+          "name": "KEY_LMENU",
+          "value": 56
+        },
+        {
+          "name": "KEY_SPACE",
+          "value": 57
+        },
+        {
+          "name": "KEY_CAPITAL",
+          "value": 58
+        },
+        {
+          "name": "KEY_F1",
+          "value": 59
+        },
+        {
+          "name": "KEY_F2",
+          "value": 60
+        },
+        {
+          "name": "KEY_F3",
+          "value": 61
+        },
+        {
+          "name": "KEY_F4",
+          "value": 62
+        },
+        {
+          "name": "KEY_F5",
+          "value": 63
+        },
+        {
+          "name": "KEY_F6",
+          "value": 64
+        },
+        {
+          "name": "KEY_F7",
+          "value": 65
+        },
+        {
+          "name": "KEY_F8",
+          "value": 66
+        },
+        {
+          "name": "KEY_F9",
+          "value": 67
+        },
+        {
+          "name": "KEY_F10",
+          "value": 68
+        },
+        {
+          "name": "KEY_NUMLOCK",
+          "value": 69
+        },
+        {
+          "name": "KEY_SCROLL",
+          "value": 70
+        },
+        {
+          "name": "KEY_NUMPAD7",
+          "value": 71
+        },
+        {
+          "name": "KEY_NUMPAD8",
+          "value": 72
+        },
+        {
+          "name": "KEY_NUMPAD9",
+          "value": 73
+        },
+        {
+          "name": "KEY_SUBTRACT",
+          "value": 74
+        },
+        {
+          "name": "KEY_NUMPAD4",
+          "value": 75
+        },
+        {
+          "name": "KEY_NUMPAD5",
+          "value": 76
+        },
+        {
+          "name": "KEY_NUMPAD6",
+          "value": 77
+        },
+        {
+          "name": "KEY_ADD",
+          "value": 78
+        },
+        {
+          "name": "KEY_NUMPAD1",
+          "value": 79
+        },
+        {
+          "name": "KEY_NUMPAD2",
+          "value": 80
+        },
+        {
+          "name": "KEY_NUMPAD3",
+          "value": 81
+        },
+        {
+          "name": "KEY_NUMPAD0",
+          "value": 82
+        },
+        {
+          "name": "KEY_DECIMAL",
+          "value": 83
+        },
+        {
+          "name": "KEY_OEM_102",
+          "value": 86
+        },
+        {
+          "name": "KEY_F11",
+          "value": 87
+        },
+        {
+          "name": "KEY_F12",
+          "value": 88
+        },
+        {
+          "name": "KEY_F13",
+          "value": 100
+        },
+        {
+          "name": "KEY_F14",
+          "value": 101
+        },
+        {
+          "name": "KEY_F15",
+          "value": 102
+        },
+        {
+          "name": "KEY_KANA",
+          "value": 112
+        },
+        {
+          "name": "KEY_ABNT_C1",
+          "value": 115
+        },
+        {
+          "name": "KEY_CONVERT",
+          "value": 121
+        },
+        {
+          "name": "KEY_NOCONVERT",
+          "value": 123
+        },
+        {
+          "name": "KEY_YEN",
+          "value": 125
+        },
+        {
+          "name": "KEY_ABNT_C2",
+          "value": 126
+        },
+        {
+          "name": "KEY_NUMPADEQUALS",
+          "value": 141
+        },
+        {
+          "name": "KEY_PREVTRACK",
+          "value": 144
+        },
+        {
+          "name": "KEY_AT",
+          "value": 145
+        },
+        {
+          "name": "KEY_COLON",
+          "value": 146
+        },
+        {
+          "name": "KEY_UNDERLINE",
+          "value": 147
+        },
+        {
+          "name": "KEY_KANJI",
+          "value": 148
+        },
+        {
+          "name": "KEY_STOP",
+          "value": 149
+        },
+        {
+          "name": "KEY_AX",
+          "value": 150
+        },
+        {
+          "name": "KEY_UNLABELED",
+          "value": 151
+        },
+        {
+          "name": "KEY_NEXTTRACK",
+          "value": 153
+        },
+        {
+          "name": "KEY_NUMPADENTER",
+          "value": 156
+        },
+        {
+          "name": "KEY_RCONTROL",
+          "value": 157
+        },
+        {
+          "name": "KEY_MUTE",
+          "value": 160
+        },
+        {
+          "name": "KEY_CALCULATOR",
+          "value": 161
+        },
+        {
+          "name": "KEY_PLAYPAUSE",
+          "value": 162
+        },
+        {
+          "name": "KEY_MEDIASTOP",
+          "value": 164
+        },
+        {
+          "name": "KEY_VOLUMEDOWN",
+          "value": 174
+        },
+        {
+          "name": "KEY_VOLUMEUP",
+          "value": 176
+        },
+        {
+          "name": "KEY_WEBHOME",
+          "value": 178
+        },
+        {
+          "name": "KEY_NUMPADCOMMA",
+          "value": 179
+        },
+        {
+          "name": "KEY_DIVIDE",
+          "value": 181
+        },
+        {
+          "name": "KEY_SYSRQ",
+          "value": 183
+        },
+        {
+          "name": "KEY_RMENU",
+          "value": 184
+        },
+        {
+          "name": "KEY_PAUSE",
+          "value": 197
+        },
+        {
+          "name": "KEY_HOME",
+          "value": 199
+        },
+        {
+          "name": "KEY_UP",
+          "value": 200
+        },
+        {
+          "name": "KEY_PRIOR",
+          "value": 201
+        },
+        {
+          "name": "KEY_LEFT",
+          "value": 203
+        },
+        {
+          "name": "KEY_RIGHT",
+          "value": 205
+        },
+        {
+          "name": "KEY_END",
+          "value": 207
+        },
+        {
+          "name": "KEY_DOWN",
+          "value": 208
+        },
+        {
+          "name": "KEY_NEXT",
+          "value": 209
+        },
+        {
+          "name": "KEY_INSERT",
+          "value": 210
+        },
+        {
+          "name": "KEY_DELETE",
+          "value": 211
+        },
+        {
+          "name": "KEY_LWIN",
+          "value": 219
+        },
+        {
+          "name": "KEY_RWIN",
+          "value": 220
+        },
+        {
+          "name": "KEY_APPS",
+          "value": 221
+        },
+        {
+          "name": "KEY_POWER",
+          "value": 222
+        },
+        {
+          "name": "KEY_SLEEP",
+          "value": 223
+        },
+        {
+          "name": "KEY_WAKE",
+          "value": 227
+        },
+        {
+          "name": "KEY_WEBSEARCH",
+          "value": 229
+        },
+        {
+          "name": "KEY_WEBFAVORITES",
+          "value": 230
+        },
+        {
+          "name": "KEY_WEBREFRESH",
+          "value": 231
+        },
+        {
+          "name": "KEY_WEBSTOP",
+          "value": 232
+        },
+        {
+          "name": "KEY_WEBFORWARD",
+          "value": 233
+        },
+        {
+          "name": "KEY_WEBBACK",
+          "value": 234
+        },
+        {
+          "name": "KEY_MYCOMPUTER",
+          "value": 235
+        },
+        {
+          "name": "KEY_MAIL",
+          "value": 236
+        },
+        {
+          "name": "KEY_MEDIASELECT",
+          "value": 237
+        },
+        {
+          "name": "KEY_BACKSPACE",
+          "value": 14
+        },
+        {
+          "name": "KEY_NUMPADSTAR",
+          "value": 55
+        },
+        {
+          "name": "KEY_LALT",
+          "value": 56
+        },
+        {
+          "name": "KEY_CAPSLOCK",
+          "value": 58
+        },
+        {
+          "name": "KEY_NUMPADMINUS",
+          "value": 74
+        },
+        {
+          "name": "KEY_NUMPADPLUS",
+          "value": 78
+        },
+        {
+          "name": "KEY_NUMPADPERIOD",
+          "value": 83
+        },
+        {
+          "name": "KEY_NUMPADSLASH",
+          "value": 181
+        },
+        {
+          "name": "KEY_RALT",
+          "value": 184
+        },
+        {
+          "name": "KEY_UPARROW",
+          "value": 200
+        },
+        {
+          "name": "KEY_PGUP",
+          "value": 201
+        },
+        {
+          "name": "KEY_LEFTARROW",
+          "value": 203
+        },
+        {
+          "name": "KEY_RIGHTARROW",
+          "value": 205
+        },
+        {
+          "name": "KEY_DOWNARROW",
+          "value": 208
+        },
+        {
+          "name": "KEY_PGDN",
+          "value": 209
+        },
+        {
+          "name": "KEY_CIRCUMFLEX",
+          "value": 144
+        }
+      ],
+      "source": "g1o-server/Script/SVariable.cpp",
+      "line": 14
+    },
+    {
+      "name": "Weapon modes",
+      "slug": "weapon-modes",
+      "description": "Values describing the weapon mode currently used by an NPC.",
+      "constants": [
+        {
+          "name": "NPC_WEAPON_NONE",
+          "value": 0
+        },
+        {
+          "name": "NPC_WEAPON_FIST",
+          "value": 1
+        },
+        {
+          "name": "NPC_WEAPON_DAG",
+          "value": 2
+        },
+        {
+          "name": "NPC_WEAPON_1HS",
+          "value": 3
+        },
+        {
+          "name": "NPC_WEAPON_2HS",
+          "value": 4
+        },
+        {
+          "name": "NPC_WEAPON_BOW",
+          "value": 5
+        },
+        {
+          "name": "NPC_WEAPON_CBOW",
+          "value": 6
+        },
+        {
+          "name": "NPC_WEAPON_MAG",
+          "value": 7
+        },
+        {
+          "name": "NPC_WEAPON_MAX",
+          "value": 8
+        }
+      ],
+      "source": "g1o-server/Script/SVariable.cpp",
+      "line": 58
+    },
+    {
+      "name": "Weapon skills",
+      "slug": "weapon-skills",
+      "description": "Identifiers for the weapon-skill categories exposed to scripts.",
+      "constants": [
+        {
+          "name": "WEAPON_1H",
+          "value": 1
+        },
+        {
+          "name": "WEAPON_2H",
+          "value": 2
+        },
+        {
+          "name": "WEAPON_BOW",
+          "value": 3
+        },
+        {
+          "name": "WEAPON_CBOW",
+          "value": 4
+        }
+      ],
+      "source": "g1o-server/Script/SVariable.cpp",
+      "line": 61
+    },
+    {
+      "name": "Skill levels",
+      "slug": "skill-levels",
+      "description": "Values describing an NPC's learned weapon-skill level.",
+      "constants": [
+        {
+          "name": "SKILL_LOW",
+          "value": 0
+        },
+        {
+          "name": "SKILL_MEDIUM",
+          "value": 1
+        },
+        {
+          "name": "SKILL_MASTER",
+          "value": 2
+        }
+      ],
+      "source": "g1o-server/Script/SVariable.cpp",
+      "line": 62
+    },
+    {
+      "name": "Protection types",
+      "slug": "protection-types",
+      "description": "Damage protection categories used by NPC attributes.",
+      "constants": [
+        {
+          "name": "PROT_WEAPON",
+          "value": 0
+        },
+        {
+          "name": "PROT_ARROW",
+          "value": 1
+        },
+        {
+          "name": "PROT_FIRE",
+          "value": 2
+        },
+        {
+          "name": "PROT_MAGIC",
+          "value": 3
+        }
+      ],
+      "source": "g1o-server/Script/SVariable.cpp",
+      "line": 63
+    },
+    {
+      "name": "Mob types",
+      "slug": "mob-types",
+      "description": "Interactive world-object categories reported to scripts.",
+      "constants": [
+        {
+          "name": "MOB_BED",
+          "value": 0
+        },
+        {
+          "name": "MOB_CONTAINER",
+          "value": 1
+        },
+        {
+          "name": "MOB_DOOR",
+          "value": 2
+        },
+        {
+          "name": "MOB_INTER",
+          "value": 3
+        },
+        {
+          "name": "MOB_LADDER",
+          "value": 4
+        },
+        {
+          "name": "MOB_SWITCH",
+          "value": 5
+        },
+        {
+          "name": "MOB_WHEEL",
+          "value": 6
+        }
+      ],
+      "source": "g1o-server/Script/SVariable.cpp",
+      "line": 64
+    },
+    {
+      "name": "Hands",
+      "slug": "hands",
+      "description": "Left- and right-hand identifiers used by inventory functions.",
+      "constants": [
+        {
+          "name": "HAND_LEFT",
+          "value": 0
+        },
+        {
+          "name": "HAND_RIGHT",
+          "value": 1
+        }
+      ],
+      "source": "g1o-server/Script/SVariable.cpp",
+      "line": 66
     }
   ]
 }

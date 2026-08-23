@@ -14,6 +14,7 @@ int main(int argc, char *argv[]) try
     // the directory that actually contains GO_Launcher.exe.
     QDir::setCurrent(QCoreApplication::applicationDirPath());
 
+    g1o::logging::InitializeLauncher();
     LAUNCHER.init();
 
     return app.exec();

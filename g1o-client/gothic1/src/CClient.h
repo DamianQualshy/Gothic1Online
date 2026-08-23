@@ -1,12 +1,17 @@
 #ifndef CCLIENT_H
 #define CCLIENT_H
 
+#include <optional>
+
+#include <LaunchSession.h>
+
 #define core CClient::GetCore()
 
 class CClient
 {
 private:
 	bool bIsLateHooksInitiated;
+	std::optional<g1o::LaunchSession> launchSession;
 
 	CSplashScreen* pSplashScreen;
 	CGothicGame* pGothicGame;
@@ -43,6 +48,7 @@ public:
 	inline CMultiplayer* GetMultiplayer() { return this->pMultiplayer; };
 	inline CChat* GetChat() { return this->pChat; };
 	inline CKeyBoard* GetKeyBoard() { return this->pKeyBoard; };
+	inline const g1o::LaunchSession& GetLaunchSession() const { return this->launchSession.value(); };
 };
 
 

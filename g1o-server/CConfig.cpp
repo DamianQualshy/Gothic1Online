@@ -154,14 +154,14 @@ bool CConfig::LoadConfigFromFile(RakString fileName)
 		TiXmlDocument document(configPath.string().c_str());
 		if (!document.LoadFile())
 		{
-			LOG("[error] Config file doesn't exist or is invalid: %s", configPath.string().c_str());
+			SPDLOG_ERROR("Config file doesn't exist or is invalid: {}", configPath.string().c_str());
 			return false;
 		}
 
 		TiXmlElement* root = document.FirstChildElement("server");
 		if (!root)
 		{
-			LOG("[error] Config root element <server> doesn't exist");
+			SPDLOG_ERROR("Config root element <server> doesn't exist");
 			return false;
 		}
 
@@ -191,12 +191,12 @@ bool CConfig::LoadConfigFromFile(RakString fileName)
 		adminPassword = parsedPassword;
 		scripts = std::move(parsed.scripts);
 		valid = true;
-		LOG("[info] Config file found: %u server script(s)", static_cast<unsigned>(scripts.size()));
+		SPDLOG_INFO("Config file found: {} server script(s)", static_cast<unsigned>(scripts.size()));
 		return true;
 	}
 	catch (const std::exception& error)
 	{
-		LOG("[error] Cannot load config: %s", error.what());
+		SPDLOG_ERROR("Cannot load config: {}", error.what());
 		return false;
 	}
 }
@@ -222,7 +222,7 @@ void CConfig::SaveConfigToFile(RakString fileName)
 		root->LinkEndChild(element);
 	}
 	if (!document.SaveFile(fileName.C_String()))
-		LOG("[error] Cannot create config file %s", fileName.C_String());
+		SPDLOG_ERROR("Cannot create config file {}", fileName.C_String());
 }
 
 void CConfig::SetDefault()

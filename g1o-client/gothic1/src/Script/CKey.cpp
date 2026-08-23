@@ -2,7 +2,7 @@
 
 CKey::CKey()
 {
-	DLOG("CKey::CKey()");
+	SPDLOG_TRACE("CKey::CKey()");
 
 	timeLastKey = 0;
 	disabledKeys.Clear();
@@ -10,7 +10,7 @@ CKey::CKey()
 
 CKey::~CKey()
 {
-	DLOG("CKey::~CKey()");
+	SPDLOG_TRACE("CKey::~CKey()");
 };
 
 void CKey::KeyEvent(int key)

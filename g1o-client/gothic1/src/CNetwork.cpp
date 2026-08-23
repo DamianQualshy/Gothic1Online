@@ -4,7 +4,7 @@
 
 CNetwork::CNetwork()
 {
-	DLOG("CNetwork::CNetwork()");
+	SPDLOG_TRACE("CNetwork::CNetwork()");
 
 	bIsInitiated = false;
 	bConnected = false;
@@ -14,7 +14,7 @@ CNetwork::CNetwork()
 
 CNetwork::~CNetwork()
 {
-	DLOG("CNetwork::~CNetwork()");
+	SPDLOG_TRACE("CNetwork::~CNetwork()");
 	/*if(peer)	//Blokuje wyłączenie gry powodując crasha
 		RakPeerInterface::DestroyInstance(peer);*/
 	delete pReceiver;
@@ -22,7 +22,7 @@ CNetwork::~CNetwork()
 
 bool CNetwork::InitNetwork()
 {
-	DLOG("CNetwork::InitNetwork()");
+	SPDLOG_TRACE("CNetwork::InitNetwork()");
 	
 	this->peer = RakPeerInterface::GetInstance();
 	if( this->peer )
@@ -39,7 +39,7 @@ bool CNetwork::InitNetwork()
 
 void CNetwork::Connect(RakString address, unsigned short port)
 {
-	DLOG("CNetwork::Connect(%s, %u)", address.C_String(), port);
+	SPDLOG_TRACE("CNetwork::Connect({}, {})", address.C_String(), port);
 
 	if(this->IsConnected() == false)
 	{
@@ -50,7 +50,7 @@ void CNetwork::Connect(RakString address, unsigned short port)
 
 void CNetwork::Disconnect()
 {
-	DLOG("CNetwork::Disconnect()");
+	SPDLOG_TRACE("CNetwork::Disconnect()");
 	if (playerManager.GetLocalPlayer()) playerManager.GetLocalPlayer()->ReleaseMob();
 	this->GetPeer()->CloseConnection(this->GetServerAddress(), true);
 	RakSleep(30);

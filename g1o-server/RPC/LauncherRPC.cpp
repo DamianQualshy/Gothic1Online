@@ -2,7 +2,7 @@
 
 void LauncherRPC::HandleLauncherRPC(CNetwork* network, Packet* packet)
 {
-	LOG("[info] Sending server information to launcher...");
+	SPDLOG_INFO("Sending server information to launcher...");
 	CConfig* cfg = core.GetConfig();
 	BitStream s;
 	s.Write((MessageID)GO_LAUNCHER);

@@ -49,7 +49,7 @@ bool CBan::LoadBanList(RakString fileName)
 		char buff[20];
 		while( fgets(buff, 20, f) != NULL )
 		{
-			LOG("Banlist.go: %s\n", &buff[0]);
+			SPDLOG_INFO("Banlist.go: {}", &buff[0]);
 			PushToBanList(RakString(buff));
 		}
 		fclose(f);
@@ -65,7 +65,7 @@ bool CBan::SaveBanList(RakString fileName)
 	{
 		for( size_t i = 0; i < banList.Num(); i++ )
 		{
-			LOG("Banlist.go: %s\n", banList[i]);
+			SPDLOG_INFO("Banlist.go: {}", banList[i]);
 			fputs(banList[i], f);
 		}
 		fclose(f);

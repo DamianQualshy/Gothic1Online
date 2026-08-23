@@ -2,7 +2,7 @@
 
 void zCModel::Hook_StartAni(zCModelAni *pA, int pB)
 {
-	pMemLib->RemoveHook(0x005612F0);
+	g1o::hooking::GetHookManager().Remove(0x005612F0);
 	if (!CAnimation::GetInstance().IsAniBlockedForAll(pA))
 	{
 		//core.GetChat()->AddLine(RakString("%s %d %d", pA->GetAniName().ToChar(), pA->GetAniID(), pB), zCOLOR(255, 255, 0));
@@ -29,5 +29,5 @@ void zCModel::Hook_StartAni(zCModelAni *pA, int pB)
 				this->StartAni(pA, pB);
 		}
 	}
-	pMemLib->ImportHook(0x005612F0, sizeof(void(zCModel::*)(zCModelAni*,int)), &zCModel::Hook_StartAni);
+	g1o::hooking::GetHookManager().Install(0x005612F0, &zCModel::Hook_StartAni);
 };

@@ -2,7 +2,7 @@
 
 CPlayer::CPlayer(SystemAddress _clientAddress, int _playerID, RakString _playerName)
 {
-	//DLOG("CPlayer::CPlayer()\n");
+	//SPDLOG_TRACE("CPlayer::CPlayer()");
 	bool bConnected = false;
 	addr = _clientAddress;
 	playerId = _playerID;
@@ -16,7 +16,7 @@ CPlayer::CPlayer(SystemAddress _clientAddress, int _playerID, RakString _playerN
 
 CPlayer::~CPlayer()
 {
-	//DLOG("CPlayer::~CPlayer()\n");
+	//SPDLOG_TRACE("CPlayer::~CPlayer()");
 	streamedPlayers.Clear();
 	streamedItems.Clear();
 	overlaysList.Clear();

@@ -2,8 +2,8 @@
 
 void CGameManager::Hook_Menu(int i)
 {
-	DLOG("CGameManager::Hook_Menu()");
-	pMemLib->RemoveHook(0x004279F0); //Tylko usunięcie hooka, bo cała operacja inicjacji jest wykonywana tylko raz
+	SPDLOG_TRACE("CGameManager::Hook_Menu()");
+	g1o::hooking::GetHookManager().Remove(0x004279F0); //Tylko usunięcie hooka, bo cała operacja inicjacji jest wykonywana tylko raz
 	//Inicjacja gry
 	CGothicGame* gothicGame = core.GetGothicGame();
 	CNetwork* net = core.GetNetwork();
@@ -16,13 +16,13 @@ void CGameManager::Hook_Menu(int i)
 
 void CGameManager::Hook_Done()
 {
-	DLOG("CGameManager::Hook_Done()");
-	pMemLib->RemoveHook(0x00424850);
+	SPDLOG_TRACE("CGameManager::Hook_Done()");
+	g1o::hooking::GetHookManager().Remove(0x00424850);
 	CNetwork* net = core.GetNetwork();
 	if( net )
 		if( net->IsConnected() == true )
 			net->Disconnect();
 
 	this->Done();
-	pMemLib->ImportHook(0x00424850, sizeof(void(CGameManager::*)(void)), &CGameManager::Hook_Done);
+	g1o::hooking::GetHookManager().Install(0x00424850, &CGameManager::Hook_Done);
 };

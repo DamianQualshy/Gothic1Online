@@ -2,7 +2,7 @@
 title: '{{ name }}'
 ---
 
-# `event` {{ name }} <font size="4">({{ side }}-side)</font>
+# `event` {{ name }}
 
 {% if deprecated %}
 !!! danger "Deprecated since version: {{ deprecated }}"

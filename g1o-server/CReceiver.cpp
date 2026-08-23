@@ -2,12 +2,12 @@
 
 CReceiver::CReceiver()
 {
-	//DLOG("CReceiver::CReceiver()\n");
+	//SPDLOG_TRACE("CReceiver::CReceiver()");
 };
 
 CReceiver::~CReceiver()
 {
-	//DLOG("CReceiver::~CReceiver()\n");
+	//SPDLOG_TRACE("CReceiver::~CReceiver()");
 };
 
 void CReceiver::ReceivePackets(CNetwork *network)

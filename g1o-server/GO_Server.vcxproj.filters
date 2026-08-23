@@ -131,7 +131,7 @@
     <ClCompile Include="RPC\ScriptRPC.cpp">
       <Filter>Core\RPC</Filter>
     </ClCompile>
-    <ClCompile Include="Log\Log.cpp">
+    <ClCompile Include="Logging\Logging.cpp">
       <Filter>Core\Log</Filter>
     </ClCompile>
     <ClCompile Include="CCreature.cpp">
@@ -691,7 +691,7 @@
     <ClInclude Include="RPC\ScriptRPC.h">
       <Filter>Core\RPC</Filter>
     </ClInclude>
-    <ClInclude Include="Log\Log.h">
+    <ClInclude Include="Logging\Logging.h">
       <Filter>Core\Log</Filter>
     </ClInclude>
     <ClInclude Include="CCreature.h">

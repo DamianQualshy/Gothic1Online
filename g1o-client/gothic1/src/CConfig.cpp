@@ -1,12 +1,22 @@
 #include "stdafx.h"
 
+#include <fstream>
+#include <iomanip>
+#include <nlohmann/json.hpp>
+
 namespace
 {
-	void ReadString(TiXmlElement* parent, const char* name, RakString& value)
+	void ReadString(const nlohmann::json& config, const char* name, RakString& value)
+	{
+		const auto field = config.find(name);
+		if (field != config.end() && field->is_string())
+			value = field->get_ref<const std::string&>().c_str();
+	}
+
+	void ReadLegacyString(TiXmlElement* parent, const char* name, RakString& value)
 	{
 		if (!parent)
 			return;
-
 		TiXmlElement* element = parent->FirstChildElement(name);
 		if (element && element->GetText())
 			value = element->GetText();
@@ -15,81 +25,93 @@ namespace
 
 CConfig::CConfig()
 {
-	DLOG("CConfig::CConfig()");
+	SPDLOG_TRACE("CConfig::CConfig()");
 	SetDefault();
 
-	if (LoadConfigFromFile("..\\Multiplayer\\G1O_Config.xml") == false)
+	if (LoadConfigFromFile("..\\Multiplayer\\G1O_Config.json") == false)
 	{
-		if (LoadConfigFromFile("Multiplayer\\G1O_Config.xml") == false)
-			SaveConfigToFile("..\\Multiplayer\\G1O_Config.xml");
+		if (LoadConfigFromFile("Multiplayer\\G1O_Config.json") == false)
+		{
+			if (LoadLegacyConfigFromFile("..\\Multiplayer\\G1O_Config.xml") ||
+				LoadLegacyConfigFromFile("Multiplayer\\G1O_Config.xml"))
+				SPDLOG_INFO("Using legacy client XML configuration until the launcher migrates it to JSON");
+			else
+				SaveConfigToFile("..\\Multiplayer\\G1O_Config.json");
+		}
 	}
 }
 
 CConfig::~CConfig()
 {
-	DLOG("CConfig::~CConfig()");
+	SPDLOG_TRACE("CConfig::~CConfig()");
 }
 
 bool CConfig::LoadConfigFromFile(RakString fileName)
 {
-	DLOG("CConfig::LoadConfigFromFile(%s)", fileName.C_String());
+	SPDLOG_TRACE("CConfig::LoadConfigFromFile({})", fileName.C_String());
 
-	TiXmlDocument document(fileName.C_String());
-	if (!document.LoadFile())
+	std::ifstream file(fileName.C_String());
+	if (!file)
 	{
-		DLOG("Config file doesn't exist");
+		SPDLOG_TRACE("Config file doesn't exist");
 		return false;
 	}
+
+	try
+	{
+		nlohmann::json config;
+		file >> config;
+		if (!config.is_object())
+			return false;
+
+		SPDLOG_TRACE("Config file found");
+		ReadString(config, "playerName", playerName);
+		ReadString(config, "lang", language);
+	}
+	catch (const nlohmann::json::exception& exception)
+	{
+		SPDLOG_WARN("Could not parse {}: {}", fileName.C_String(), exception.what());
+		return false;
+	}
+
+	return true;
+}
+
+bool CConfig::LoadLegacyConfigFromFile(RakString fileName)
+{
+	TiXmlDocument document(fileName.C_String());
+	if (!document.LoadFile())
+		return false;
 
 	TiXmlElement* root = document.FirstChildElement("GO_Config");
 	if (!root)
-	{
-		DLOG("Config root element doesn't exist");
 		return false;
-	}
 
-	DLOG("Config file found");
-	// G2O-style flat layout used by the launcher and injected client.
-	ReadString(root, "playerName", playerName);
-	ReadString(root, "lang", language);
-	ReadString(root, "serverIp", serverIp);
-	ReadString(root, "serverPort", serverPort);
-	ReadString(root, "startWorld", startWorld);
-	ReadString(root, "playerInstance", playerInstance);
-
+	ReadLegacyString(root, "playerName", playerName);
+	ReadLegacyString(root, "lang", language);
 	return true;
 }
 
 void CConfig::SaveConfigToFile(RakString fileName)
 {
-	DLOG("CConfig::SaveConfigToFile(%s)", fileName.C_String());
-	FILE* config = fopen(fileName.C_String(), "w");
-	if (!config)
+	SPDLOG_TRACE("CConfig::SaveConfigToFile({})", fileName.C_String());
+	std::ofstream file(fileName.C_String());
+	if (!file)
 		return;
 
-	fprintf(config, "<!-- Gothic Online client configuration. All available options are listed below. -->\n");
-	fprintf(config, "<GO_Config>\n");
-	fprintf(config, "\t<playerName>%s</playerName>\n", playerName.C_String());
-	fprintf(config, "\t<serverIp>%s</serverIp>\n", serverIp.C_String());
-	fprintf(config, "\t<serverPort>%s</serverPort>\n", serverPort.C_String());
-	fprintf(config, "\t<startWorld>%s</startWorld>\n", startWorld.C_String());
-	fprintf(config, "\t<playerInstance>%s</playerInstance>\n", playerInstance.C_String());
-	fprintf(config, "\t<lang>%s</lang>\n", language.C_String());
-	fprintf(config, "\t<launcherPosX>-1</launcherPosX>\n");
-	fprintf(config, "\t<launcherPosY>-1</launcherPosY>\n");
-	fprintf(config, "\t<favorites />\n");
-	fprintf(config, "</GO_Config>\n");
-	fclose(config);
+	nlohmann::ordered_json config;
+	config["playerName"] = playerName.C_String();
+	config["lang"] = language.C_String();
+	config["launcherPosX"] = -1;
+	config["launcherPosY"] = -1;
+	config["favorites"] = nlohmann::ordered_json::array();
+	file << std::setw(2) << config << '\n';
 }
 
 void CConfig::SetDefault()
 {
-	DLOG("CConfig::SetDefault()");
+	SPDLOG_TRACE("CConfig::SetDefault()");
 
 	playerName = "Nickname";
-	serverIp = "127.0.0.1";
-	serverPort = "28970";
-	startWorld = "WORLD.ZEN";
-	playerInstance = "PC_HERO";
 	language = "en";
 }

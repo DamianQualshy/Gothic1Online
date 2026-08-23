@@ -2,12 +2,12 @@
 
 CAnimation::CAnimation()
 {
-	DLOG("CAnimation::CAnimation()");
+	SPDLOG_TRACE("CAnimation::CAnimation()");
 };
 
 CAnimation::~CAnimation()
 {
-	DLOG("CAnimation::~CAnimation()");
+	SPDLOG_TRACE("CAnimation::~CAnimation()");
 };
 
 bool CAnimation::IsAnimationTurning(RakString aniName)

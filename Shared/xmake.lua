@@ -10,7 +10,7 @@ target("G1O.Shared")
         "../dependencies/squirrel/sqstdlib",
         "../dependencies/sqrat/include",
         {public = true})
-    add_packages("lua", "sol2", {public = true})
+    add_packages("libsodium", "lua", "sol2", {public = true})
 
     add_files("RakNet/*.cpp")
     remove_files(
@@ -28,12 +28,13 @@ target("G1O.Shared")
     add_files(
         "../dependencies/squirrel/squirrel/*.cpp",
         "../dependencies/squirrel/sqstdlib/*.cpp",
+        "Crypto/*.cpp",
         "Scripting/*.cpp",
         "TinyThread/tinythread.cpp",
         "tinyxml/*.cpp",
-        "hashlib/*.cpp",
         "goMath/goMath.cpp",
         "Utility/utility.cpp")
 
     add_defines("_CRT_SECURE_NO_WARNINGS")
+    add_syslinks("bcrypt", {public = true})
     add_syslinks("ws2_32", "winmm")

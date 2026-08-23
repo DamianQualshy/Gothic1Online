@@ -8,7 +8,7 @@ CServerManager::CServerManager(QTreeWidget *treeWidget) :
     m_SortPlayers(false)
 {
 #ifdef DEBUG_MODE
-    LOG(__FUNCTION__)
+    SPDLOG_TRACE("{}", __FUNCTION__);
 #endif
     initConnections();
 }
@@ -256,19 +256,6 @@ void CServerManager::updateInfo(QString ipAdress, QString port)
         delete &info;
 }
 
-bool CServerManager::updateXmlClient(CServerInfo serverInfo)
-{
-    if (!LAUNCHER.getSettings().saveConnectionSettings(serverInfo.getIpAdress(),
-                                                       serverInfo.getPort(),
-                                                       serverInfo.getWorld(),
-                                                       "PC_HERO"))
-    {
-        CMessageBox::warrning(TRANSLATE("C_NAME"), TRANSLATE("C_WRITE_ERROR"));
-        return false;
-    }
-    return true;
-}
-
 //-------------------------------------------------------------------------------------------------------------------------------
 //  Private slots
 //-------------------------------------------------------------------------------------------------------------------------------
@@ -359,6 +346,12 @@ void CServerManager::onServerDoubleClicked(QTreeWidgetItem *item, int column)
         return;
     }
 
-    if (updateXmlClient(info))
-        LAUNCHER.getNetwork().downloadServerFiles(item->text(0), item->text(1), item->text(2).toInt(), info.getVersion());
+    if (!LAUNCHER.getSettings().saveLauncherSettings())
+    {
+        CMessageBox::warrning(TRANSLATE("C_NAME"), TRANSLATE("C_WRITE_ERROR"));
+        return;
+    }
+
+    LAUNCHER.getNetwork().downloadServerFiles(
+        item->text(0), item->text(1), item->text(2).toInt(), info.getVersion(), info.getWorld());
 }

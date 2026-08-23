@@ -13,7 +13,7 @@ zCView* zCView::CreateView(int x, int y, int width, int height, zSTRING const& t
 
 void zCView::Hook_Print(int p1, int p2, zSTRING const& p3)
 {
-	pMemLib->RemoveHook(0x006FFEB0);
+	g1o::hooking::GetHookManager().Remove(0x006FFEB0);
 	oCNpc *focus = oCNpc::GetHero()->GetFocusNpc();
 
 	if (focus)
@@ -24,12 +24,12 @@ void zCView::Hook_Print(int p1, int p2, zSTRING const& p3)
 		{
 			this->Print(p1, p2, p3);
 
-			pMemLib->ImportHook(0x006FFEB0, sizeof(void(zCView::*)(int, int, zSTRING const&)), &zCView::Hook_Print);
+			g1o::hooking::GetHookManager().Install(0x006FFEB0, &zCView::Hook_Print);
 			return;
 		}
 	}
 
 	this->Print(p1, p2, p3);
-	pMemLib->ImportHook(0x006FFEB0, sizeof(void(zCView::*)(int, int, zSTRING const&)), &zCView::Hook_Print);
+	g1o::hooking::GetHookManager().Install(0x006FFEB0, &zCView::Hook_Print);
 };
 

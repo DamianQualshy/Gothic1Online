@@ -14,7 +14,7 @@ void ConnectionRPC::HandleConnectionRPC(CNetwork* network, Packet* packet)
 
 void ConnectionRPC::CatchConnection(CNetwork* network, Packet* packet)
 {
-	LOG("[connection] %s is trying to connect, index : %d", packet->systemAddress.ToString(true, '_'), packet->systemAddress.systemIndex);
+	SPDLOG_INFO("[connection] {} is trying to connect, index : {}", packet->systemAddress.ToString(true, '_'), packet->systemAddress.systemIndex);
 };
 
 void ConnectionRPC::LostConnection(CNetwork* network, Packet* packet)
@@ -24,7 +24,7 @@ void ConnectionRPC::LostConnection(CNetwork* network, Packet* packet)
 	{
 		SEvent::PlayerDisconnect(player->GetID(), "LOST_CONNECTION");
 		player->spawned = false;
-		LOG("[connection] %s lost connection with the server %s",player->name.C_String(),player->GetAddress().ToString());
+		SPDLOG_INFO("[connection] {} lost connection with the server {}", player->name.C_String(),player->GetAddress().ToString());
 		player->Disconnect();
 		playerManager.DestroyPlayer(player);
 	}
@@ -39,7 +39,7 @@ void ConnectionRPC::Disconnection(CNetwork* network, Packet* packet)
 	{
 		SEvent::PlayerDisconnect(player->GetID(), "DISCONNECTED");
 		player->spawned = false;
-		LOG("[connection] %s disconnected from server %s",player->name.C_String(),player->GetAddress().ToString());
+		SPDLOG_INFO("[connection] {} disconnected from server {}", player->name.C_String(),player->GetAddress().ToString());
 
 		player->Disconnect();
 		playerManager.DestroyPlayer(player);
@@ -51,7 +51,7 @@ void ConnectionRPC::Disconnection(CNetwork* network, Packet* packet)
 
 void ConnectionRPC::PleaseConnect(CNetwork* network, BitStream& stream, SystemAddress clientAddress)
 {
-	LOG("[connection] Incoming connection: %s",clientAddress.ToString());
+	SPDLOG_INFO("[connection] Incoming connection: {}", clientAddress.ToString());
 
 	int versionNum;
 	RakString playerName;
@@ -104,7 +104,7 @@ void ConnectionRPC::PleaseConnect(CNetwork* network, BitStream& stream, SystemAd
 					player->spawned = true;
 					SEvent::PlayerConnect(player->GetID());
 
-				LOG("[join] %s has joined the server %s",playerName.C_String(),player->GetAddress().ToString());
+				SPDLOG_INFO("[join] {} has joined the server {}", playerName.C_String(),player->GetAddress().ToString());
 				}
 			}
 			else

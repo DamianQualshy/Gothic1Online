@@ -4,7 +4,7 @@ CMasterServerList::CMasterServerList(QThread &thread) :
     m_ThreadRunning(true)
 {
 #ifdef DEBUG_MODE
-    LOG(__FUNCTION__)
+    SPDLOG_TRACE("{}", __FUNCTION__);
 #endif
     initConnections(thread);
     moveToThread(&thread);
@@ -13,7 +13,7 @@ CMasterServerList::CMasterServerList(QThread &thread) :
 CMasterServerList::~CMasterServerList()
 {
 #ifdef DEBUG_MODE
-    LOG(__FUNCTION__)
+    SPDLOG_TRACE("{}", __FUNCTION__);
 #endif
 }
 

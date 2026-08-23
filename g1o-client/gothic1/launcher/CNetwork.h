@@ -5,6 +5,8 @@
 #include <QMutex>
 #include <QThread>
 
+#include <LaunchSession.h>
+
 #include "RakNetInclude.h"
 #include "CNetworkThread.h"
 #include "CServerInfo.h"
@@ -24,7 +26,7 @@ public:
 
     void sendRequest(const QVector<CServerInfo> &serverList, int index);
     void sendRequest(QString ipAdress, int port, int index);
-    bool downloadServerFiles(QString hostName, QString ipAdress, int port, QString version);
+    bool downloadServerFiles(QString hostName, QString ipAdress, int port, QString version, QString world);
     void downloadFileFromUrl(QString url, int index = 0);
 
 public slots:
@@ -45,6 +47,7 @@ private:
     CUrlDownloader m_UrlDownloader;
     CMessageBox m_MsgBoxConnectionFailed, m_MsgBoxCheckingFiles;
     QString m_TempServerName, m_TempServerVersion;
+    g1o::LaunchSession m_LaunchSession;
 
     int m_CurrServers, m_MaxServers, m_DownloadIndex;
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the G1O scripting reference from strict g1odoc blocks."""
+"""Generate the G1O scripting reference from source metadata and registrations."""
 
 from __future__ import annotations
 
@@ -22,16 +22,52 @@ TEMPLATES_ROOT = SCRIPT_DIR / "templates"
 
 SOURCE_EXTENSIONS = {".cpp", ".h", ".hpp"}
 EXCLUDED_PARTS = {".git", ".xmake", "build", "dependencies", "docs"}
-GENERATED_DIRECTORIES = {
-    "client-functions",
-    "server-functions",
-    "shared-functions",
-    "client-events",
-    "server-events",
-    "shared-events",
-}
+GENERATED_DIRECTORIES = (
+    "functions",
+    "events",
+    "constants",
+)
 VALID_KINDS = {"func", "event"}
 VALID_SIDES = {"server"}
+
+CONSTANT_SOURCE = PROJECT_ROOT / "g1o-server" / "Script" / "SVariable.cpp"
+CONSTANT_ARRAY_RE = re.compile(
+    r"constexpr\s+IntegerConstant\s+kConstants\[\]\s*=\s*\{(?P<body>.*?)\n\s*\};",
+    re.DOTALL,
+)
+CONSTANT_RE = re.compile(
+    r'\{\s*"(?P<name>[A-Z][A-Z0-9_]*)"\s*,\s*(?P<value>0x[0-9A-Fa-f]+|[0-9]+)\s*\}'
+)
+CONSTANT_GROUPS = {
+    "keys": (
+        "Keys",
+        "DirectInput scan codes and aliases accepted by Gothic's keyboard input handling.",
+    ),
+    "weapon-modes": (
+        "Weapon modes",
+        "Values describing the weapon mode currently used by an NPC.",
+    ),
+    "weapon-skills": (
+        "Weapon skills",
+        "Identifiers for the weapon-skill categories exposed to scripts.",
+    ),
+    "skill-levels": (
+        "Skill levels",
+        "Values describing an NPC's learned weapon-skill level.",
+    ),
+    "protection-types": (
+        "Protection types",
+        "Damage protection categories used by NPC attributes.",
+    ),
+    "mob-types": (
+        "Mob types",
+        "Interactive world-object categories reported to scripts.",
+    ),
+    "hands": (
+        "Hands",
+        "Left- and right-hand identifiers used by inventory functions.",
+    ),
+}
 
 BLOCK_RE = re.compile(
     r"/\*\s*g1odoc\s*\((?P<kind>[^)]+)\)\s*(?P<body>.*?)\*/",
@@ -79,6 +115,22 @@ class DocumentationBlock:
     source: str
     line: int
     declaration: str = ""
+
+
+@dataclass(frozen=True)
+class ConstantValue:
+    name: str
+    value: int
+
+
+@dataclass
+class ConstantGroup:
+    name: str
+    slug: str
+    description: str
+    constants: list[ConstantValue]
+    source: str
+    line: int
 
 
 class DocumentationError(RuntimeError):
@@ -249,12 +301,83 @@ def scan() -> list[DocumentationBlock]:
     return sorted(blocks, key=lambda block: (block.side, block.kind, block.category.lower(), block.name.lower()))
 
 
+def classify_constant(name: str) -> str:
+    if name.startswith("KEY_"):
+        return "keys"
+    if name.startswith("NPC_WEAPON_"):
+        return "weapon-modes"
+    if name.startswith("WEAPON_"):
+        return "weapon-skills"
+    if name.startswith("SKILL_"):
+        return "skill-levels"
+    if name.startswith("PROT_"):
+        return "protection-types"
+    if name.startswith("MOB_"):
+        return "mob-types"
+    if name.startswith("HAND_"):
+        return "hands"
+    raise DocumentationError(f"{CONSTANT_SOURCE.relative_to(PROJECT_ROOT).as_posix()}: unclassified constant '{name}'")
+
+
+def scan_constants() -> list[ConstantGroup]:
+    text = CONSTANT_SOURCE.read_text(encoding="utf-8")
+    array_match = CONSTANT_ARRAY_RE.search(text)
+    if not array_match:
+        raise DocumentationError(
+            f"{CONSTANT_SOURCE.relative_to(PROJECT_ROOT).as_posix()}: could not find kConstants registration table"
+        )
+
+    body = array_match.group("body")
+    matches = list(CONSTANT_RE.finditer(body))
+    if body.count('{"') != len(matches):
+        raise DocumentationError(
+            f"{CONSTANT_SOURCE.relative_to(PROJECT_ROOT).as_posix()}: unsupported entry in kConstants registration table"
+        )
+
+    grouped: dict[str, list[ConstantValue]] = {slug: [] for slug in CONSTANT_GROUPS}
+    seen: set[str] = set()
+    lines: dict[str, int] = {}
+    for match in matches:
+        name = match.group("name")
+        if name in seen:
+            raise DocumentationError(
+                f"{CONSTANT_SOURCE.relative_to(PROJECT_ROOT).as_posix()}: duplicate constant '{name}'"
+            )
+        seen.add(name)
+        slug = classify_constant(name)
+        grouped[slug].append(ConstantValue(name=name, value=int(match.group("value"), 0)))
+        lines.setdefault(slug, text.count("\n", 0, array_match.start("body") + match.start()) + 1)
+
+    if not matches:
+        raise DocumentationError(
+            f"{CONSTANT_SOURCE.relative_to(PROJECT_ROOT).as_posix()}: kConstants registration table is empty"
+        )
+
+    source = CONSTANT_SOURCE.relative_to(PROJECT_ROOT).as_posix()
+    groups: list[ConstantGroup] = []
+    for slug, (name, description) in CONSTANT_GROUPS.items():
+        constants = grouped[slug]
+        if not constants:
+            raise DocumentationError(f"{source}: constant group '{name}' is empty")
+        groups.append(
+            ConstantGroup(
+                name=name,
+                slug=slug,
+                description=description,
+                constants=constants,
+                source=source,
+                line=lines[slug],
+            )
+        )
+    return groups
+
+
 def output_path(block: DocumentationBlock) -> Path:
     kind = "functions" if block.kind == "func" else "events"
-    return REFERENCE_ROOT / f"{block.side}-{kind}" / slugify(block.category) / f"{block.name}.md"
+    return REFERENCE_ROOT / kind / slugify(block.category) / f"{block.name}.md"
 
 
-def render(blocks: list[DocumentationBlock]) -> dict[Path, str]:
+def render(blocks: list[DocumentationBlock], constant_groups: list[ConstantGroup]) -> dict[Path, str]:
     environment = Environment(
         loader=FileSystemLoader(str(TEMPLATES_ROOT)),
         undefined=StrictUndefined,
@@ -267,15 +390,20 @@ def render(blocks: list[DocumentationBlock]) -> dict[Path, str]:
         "func": environment.get_template("function.md"),
         "event": environment.get_template("event.md"),
     }
+    constant_template = environment.get_template("constants.md")
     rendered: dict[Path, str] = {}
     for block in blocks:
         content = templates[block.kind].render(**asdict(block)).rstrip() + "\n"
         rendered[output_path(block)] = content
+    for group in constant_groups:
+        content = constant_template.render(**asdict(group)).rstrip() + "\n"
+        rendered[REFERENCE_ROOT / "constants" / f"{group.slug}.md"] = content
 
     api = {
-        "format": 1,
+        "format": 2,
         "functions": [asdict(block) for block in blocks if block.kind == "func"],
         "events": [asdict(block) for block in blocks if block.kind == "event"],
+        "constants": [asdict(group) for group in constant_groups],
     }
     rendered[DOCS_ROOT / "api.json"] = json.dumps(api, indent=2, ensure_ascii=False) + "\n"
     return rendered
@@ -332,17 +460,25 @@ def main() -> int:
     args = parser.parse_args()
     try:
         blocks = scan()
-        rendered = render(blocks)
+        constant_groups = scan_constants()
+        rendered = render(blocks, constant_groups)
+        constant_count = sum(len(group.constants) for group in constant_groups)
         if args.check:
             if not check(rendered):
                 print("Generated scripting documentation is stale.", file=sys.stderr)
                 return 1
-            print(f"Documentation is current: {len(blocks)} blocks.")
+            print(
+                f"Documentation is current: {len(blocks)} blocks and "
+                f"{constant_count} constants in {len(constant_groups)} groups."
+            )
             return 0
         write(rendered)
         function_count = sum(block.kind == "func" for block in blocks)
         event_count = sum(block.kind == "event" for block in blocks)
-        print(f"Generated {function_count} functions and {event_count} events from {len(blocks)} g1odoc blocks.")
+        print(
+            f"Generated {function_count} functions and {event_count} events from {len(blocks)} g1odoc blocks, "
+            f"plus {constant_count} constants in {len(constant_groups)} groups."
+        )
         return 0
     except (DocumentationError, OSError, ValueError) as error:
         print(f"ERROR: {error}", file=sys.stderr)

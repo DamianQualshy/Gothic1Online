@@ -29,16 +29,12 @@
 //Gothic Online headers
 #include "zengin\\ZenginIncludes.h" //ZenGin (silnik gothica)
 #include <GO_SharedIncludes.h> //RakNet, TinyXML, goMath
-#include <hashlib/hashlibpp.h>
-#include "MemLib\\MemLib.h" //MemLib
-#include "Log\\CLog.h" //Logi
+#include "Hooking\\HookManager.h"
+#include "Logging\\Logging.h"
 
 // Keep the standard namespace out of the Windows and ZenGin headers. Their
 // legacy global `byte` type otherwise collides with C++17's std::byte.
 using namespace std;
-//Externy
-extern MemLib* pMemLib;
-extern CLog* pLog;
 //Splash screen
 #include "CSplashScreen.h"
 //Managery

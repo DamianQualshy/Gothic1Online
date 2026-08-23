@@ -122,17 +122,17 @@ int oCNpc::GetProtection(int type)
 
 int oCNpc::_DoDropVob(zCVob* vob)	//0x006A10F0
 {
-	pMemLib->RemoveHook(0x006A10F0);
+	g1o::hooking::GetHookManager().Remove(0x006A10F0);
 	const int result = this->DoDropVob(vob);
-	pMemLib->ImportHook(0x006A10F0, sizeof(int(oCNpc::*)(zCVob*)), &oCNpc::Hook_DoDropVob);
+	g1o::hooking::GetHookManager().Install(0x006A10F0, &oCNpc::Hook_DoDropVob);
 	return result;
 };
 
 int oCNpc::_DoTakeVob(zCVob* vob)	//0x006A0D10
 {
-	pMemLib->RemoveHook(0x006A0D10);
+	g1o::hooking::GetHookManager().Remove(0x006A0D10);
 	const int result = this->DoTakeVob(vob);
-	pMemLib->ImportHook(0x006A0D10, sizeof(int(oCNpc::*)(zCVob*)), &oCNpc::Hook_DoTakeVob);
+	g1o::hooking::GetHookManager().Install(0x006A0D10, &oCNpc::Hook_DoTakeVob);
 	return result;
 };
 
@@ -260,38 +260,38 @@ float oCNpc::GetHeading()
 
 void oCNpc::_SetMovLock(int e)
 {
-	pMemLib->RemoveHook(0x00694C50);
+	g1o::hooking::GetHookManager().Remove(0x00694C50);
 	SetMovLock(e);
-	pMemLib->ImportHook(0x00694C50, sizeof(void(oCNpc::*)(int)), &oCNpc::Hook_SetMovLock);
+	g1o::hooking::GetHookManager().Install(0x00694C50, &oCNpc::Hook_SetMovLock);
 };
 
 void oCNpc::_OpenInventory()
 {
-	pMemLib->RemoveHook(0x006BB0A0);
+	g1o::hooking::GetHookManager().Remove(0x006BB0A0);
 	OpenInventory();
-	pMemLib->ImportHook(0x006BB0A0, sizeof(void(oCNpc::*)(void)), &oCNpc::Hook_OpenInventory);
+	g1o::hooking::GetHookManager().Install(0x006BB0A0, &oCNpc::Hook_OpenInventory);
 };
 
 void oCNpc::_CloseInventory()
 {
-	pMemLib->RemoveHook(0x006BB2F0);
+	g1o::hooking::GetHookManager().Remove(0x006BB2F0);
 	CloseInventory();
-	pMemLib->ImportHook(0x006BB2F0, sizeof(void(oCNpc::*)(void)), &oCNpc::Hook_CloseInventory);
+	g1o::hooking::GetHookManager().Install(0x006BB2F0, &oCNpc::Hook_CloseInventory);
 };
 
 int oCNpc::_ApplyOverlay(zSTRING const& overlay)
 {
-	pMemLib->RemoveHook(0x0068AD40);
+	g1o::hooking::GetHookManager().Remove(0x0068AD40);
 	int returned = ApplyOverlay(overlay);
-	pMemLib->ImportHook(0x0068AD40, sizeof(int(oCNpc::*)(zSTRING const&)), &oCNpc::Hook_ApplyOverlay);
+	g1o::hooking::GetHookManager().Install(0x0068AD40, &oCNpc::Hook_ApplyOverlay);
 
 	return returned;
 };
 
 void oCNpc::_RemoveOverlay(zSTRING const& overlay)
 {
-	pMemLib->RemoveHook(0x0068B040);
+	g1o::hooking::GetHookManager().Remove(0x0068B040);
 	RemoveOverlay(overlay);
-	pMemLib->ImportHook(0x0068B040, sizeof(void(oCNpc::*)(zSTRING const&)), &oCNpc::Hook_RemoveOverlay);
+	g1o::hooking::GetHookManager().Install(0x0068B040, &oCNpc::Hook_RemoveOverlay);
 };
 

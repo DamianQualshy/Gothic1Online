@@ -3,7 +3,7 @@
 CLocalPlayer::CLocalPlayer(int playerID, RakString playerName) 
 : CPlayer(playerID, playerName)
 {
-	DLOG("CLocalPlayer::CLocalPlayer()");
+	SPDLOG_TRACE("CLocalPlayer::CLocalPlayer()");
 
 	posBroadcastTimer = 0;
 	angleBroadcastTimer = 0;
@@ -28,7 +28,7 @@ CLocalPlayer::CLocalPlayer(int playerID, RakString playerName)
 
 CLocalPlayer::~CLocalPlayer()
 {
-	DLOG("CLocalPlayer::~CLocalPlayer()");
+	SPDLOG_TRACE("CLocalPlayer::~CLocalPlayer()");
 };
 
 void CLocalPlayer::SetAdditionalVisuals(zSTRING const& _bodyModel, int _bodyTexture, zSTRING const& _headModel, int _headTexture)
@@ -131,7 +131,7 @@ void CLocalPlayer::SendChangeWeaponMode()
 					item->RemoveVobFromWorld();
 				}
 			}
-			DLOG("CLocalPlayer::SendChangeWeaponMode()");
+			SPDLOG_TRACE("CLocalPlayer::SendChangeWeaponMode()");
 			BitStream stream;
 			stream.Write((MessageID)GO_PLAYER);
 			stream.Write((MessageID)CHANGE_WEAPONMODE);
@@ -299,7 +299,7 @@ void CLocalPlayer::SendInstanceChange()
 			zSTRING instance = hero->GetInstanceName();
 			if( strcmp(instance.ToChar(), this->instance.C_String()) != 0 )
 			{
-				DLOG("CLocalPlayer::SendInstanceChange()");
+				SPDLOG_TRACE("CLocalPlayer::SendInstanceChange()");
 				this->instance = instance.ToChar();
 
 				BitStream stream;
@@ -330,7 +330,7 @@ void CLocalPlayer::SendHand()
 				{
 					this->leftHand = leftHandIt->GetInstanceName().ToChar();
 					//core.GetChat()->AddLine(RakString("L+ %s", this->leftHand.C_String()), zCOLOR(255, 0, 0));
-					DLOG("Left hand: %s",this->leftHand.C_String());
+					SPDLOG_TRACE("Left hand: {}", this->leftHand.C_String());
 					CEvent::UseItem(leftHand.C_String(), leftHandIt->GetAmount(), 0);
 
 					BitStream stream;
@@ -348,7 +348,7 @@ void CLocalPlayer::SendHand()
 				{
 					this->leftHand = "NULL";
 					//core.GetChat()->AddLine(RakString("L- %s", this->leftHand.C_String()), zCOLOR(255, 0, 0));
-					DLOG("Left hand: %s",this->leftHand.C_String());
+					SPDLOG_TRACE("Left hand: {}", this->leftHand.C_String());
 					CEvent::UseItem("", 0, 0);
 
 					BitStream stream;
@@ -366,7 +366,7 @@ void CLocalPlayer::SendHand()
 				{
 					this->rightHand = rightHandIt->GetInstanceName().ToChar();
 					//core.GetChat()->AddLine(RakString("R+ %s", this->rightHand.C_String()), zCOLOR(255, 0, 0));
-					DLOG("Right hand:%s", this->rightHand.C_String());
+					SPDLOG_TRACE("Right hand:{}", this->rightHand.C_String());
 					CEvent::UseItem(rightHand.C_String(), rightHandIt->GetAmount(), 1);
 
 					BitStream stream;
@@ -384,7 +384,7 @@ void CLocalPlayer::SendHand()
 				{
 					this->rightHand = "NULL";
 					//core.GetChat()->AddLine(RakString("R- %s", this->rightHand.C_String()), zCOLOR(255, 0, 0));
-					DLOG("Right hand:%s", this->rightHand.C_String());
+					SPDLOG_TRACE("Right hand:{}", this->rightHand.C_String());
 					CEvent::UseItem("", 0, 1);
 
 					BitStream stream;

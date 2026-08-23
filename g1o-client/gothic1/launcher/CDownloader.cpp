@@ -5,7 +5,7 @@ CDownloader::CDownloader(QWidget *parent) :
     ui(new Ui::CDownloader)
 {
 #ifdef DEBUG_MODE
-    LOG(__FUNCTION__)
+    SPDLOG_TRACE("{}", __FUNCTION__);
 #endif
     Q_UNUSED(parent)
 
@@ -17,7 +17,7 @@ CDownloader::CDownloader(QWidget *parent) :
 CDownloader::~CDownloader()
 {
 #ifdef DEBUG_MODE
-    LOG(__FUNCTION__)
+    SPDLOG_TRACE("{}", __FUNCTION__);
 #endif
     delete ui;
 }

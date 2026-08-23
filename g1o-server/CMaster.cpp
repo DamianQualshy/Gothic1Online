@@ -16,7 +16,7 @@ CMaster::CMaster()
 	isConnected = false;
 	SocketDescriptor sd;
 	if( peer->Startup(1, &sd, 1) == RAKNET_STARTED )
-		LOG("[info] CMaster peer started");
+		SPDLOG_INFO("CMaster peer started");
 };
 
 CMaster::~CMaster()
@@ -31,7 +31,7 @@ void CMaster::Pulse()
 
 	if (!isConnected && timeRefreshMaster < currentTime)
 	{
-		if (!wasAdded) LOG("[master] Adding server to master list");
+		if (!wasAdded) SPDLOG_INFO("[master] Adding server to master list");
 
 		ConnectionAttemptResult result = peer->Connect(
 			G1O_MASTER_SERVER_ADDRESS,
@@ -44,8 +44,7 @@ void CMaster::Pulse()
 			result == CONNECTION_ATTEMPT_ALREADY_IN_PROGRESS;
 
 		if (!isConnected)
-			LOG("[master] Cannot start connection to %s:%d (error %d)",
-				G1O_MASTER_SERVER_ADDRESS, G1O_MASTER_SERVER_PORT, (int)result);
+			SPDLOG_ERROR("[master] Cannot start connection to {}:{} (error {})", G1O_MASTER_SERVER_ADDRESS, G1O_MASTER_SERVER_PORT, (int)result);
 
 		timeRefreshMaster = currentTime + 60000;
 	}
@@ -77,7 +76,7 @@ void CMaster::Pulse()
 				if (peer->Send(&stream, HIGH_PRIORITY, RELIABLE, 0, packet->systemAddress, false) && !wasAdded)
 				{
 					wasAdded = true;
-					LOG("[master] Server registration sent successfully");
+					SPDLOG_INFO("[master] Server registration sent successfully");
 				}
 
 				peer->CloseConnection(packet->systemAddress, true);

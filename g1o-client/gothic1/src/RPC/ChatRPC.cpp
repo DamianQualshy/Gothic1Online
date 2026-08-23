@@ -2,7 +2,7 @@
 
 void ChatRPC::HandleChatRPC(CNetwork* network, Packet* packet)
 {
-	DLOG("ChatRPC::HandleChatRPC()");
+	SPDLOG_TRACE("ChatRPC::HandleChatRPC()");
 	BitStream stream(packet->data,packet->length,false);
 	stream.IgnoreBytes(1);
 	
@@ -18,7 +18,7 @@ void ChatRPC::HandleChatRPC(CNetwork* network, Packet* packet)
 
 void ChatRPC::ServerMessage(CNetwork* network, BitStream& stream)
 {
-	DLOG("ChatRPC::ServerMessage()");
+	SPDLOG_TRACE("ChatRPC::ServerMessage()");
 	RakString message;
 	stream.Read(message);
 
@@ -27,7 +27,7 @@ void ChatRPC::ServerMessage(CNetwork* network, BitStream& stream)
 
 void ChatRPC::MessageRGB(CNetwork* network, BitStream& stream)
 {
-	DLOG("ChatRPC::MessageRGB()");
+	SPDLOG_TRACE("ChatRPC::MessageRGB()");
 	RakString message;
 	int r,g,b;
 	stream.Read(message);

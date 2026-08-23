@@ -14,8 +14,7 @@ The native client targets Gothic 1 Classic. GMPC, GMPA, and G2O are behavioral r
 
 - [Server configuration](server-manual/configuration.md) describes `config.xml`, imports, validation, and startup order.
 - [Server scripting](server-manual/scripting.md) explains runtimes, constants, events, and client-reported input.
-- [Client configuration](client-manual/configuration.md) documents `G1O_Config.xml`.
-- [Scripting reference](scripting-reference/index.md) lists the generated server API.
+- [Client configuration](client-manual/configuration.md) documents `G1O_Config.json`.
 
 ## Useful Links
 

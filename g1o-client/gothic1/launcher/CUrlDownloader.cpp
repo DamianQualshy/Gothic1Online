@@ -6,7 +6,7 @@ CUrlDownloader::CUrlDownloader(QWidget *parent) :
     m_Downloading(false)
 {
 #ifdef DEBUG_MODE
-    LOG(__FUNCTION__)
+    SPDLOG_TRACE("{}", __FUNCTION__);
 #endif
     ui->setupUi(this);
 
@@ -17,7 +17,7 @@ CUrlDownloader::CUrlDownloader(QWidget *parent) :
 CUrlDownloader::~CUrlDownloader()
 {
 #ifdef DEBUG_MODE
-    LOG(__FUNCTION__)
+    SPDLOG_TRACE("{}", __FUNCTION__);
 #endif
     delete ui;
 }

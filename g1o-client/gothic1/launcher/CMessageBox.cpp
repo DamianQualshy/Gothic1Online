@@ -7,7 +7,7 @@ CMessageBox::CMessageBox(bool showButtonOk) :
     ui(new Ui::CMessageBox)
 {
 #ifdef DEBUG_MODE
-    LOG(__FUNCTION__)
+    SPDLOG_TRACE("{}", __FUNCTION__);
 #endif
     ui->setupUi(this);
 
@@ -27,7 +27,7 @@ CMessageBox::CMessageBox(QSize size) :
     ui(new Ui::CMessageBox)
 {
 #ifdef DEBUG_MODE
-    LOG(__FUNCTION__)
+    SPDLOG_TRACE("{}", __FUNCTION__);
 #endif
     ui->setupUi(this);
 
@@ -39,7 +39,7 @@ CMessageBox::CMessageBox(QSize size) :
 CMessageBox::~CMessageBox()
 {
 #ifdef DEBUG_MODE
-    LOG(__FUNCTION__)
+    SPDLOG_TRACE("{}", __FUNCTION__);
 #endif
     delete ui;
 }

@@ -4,14 +4,56 @@
 #include <TlHelp32.h>
 #include <comdef.h>
 
+#include <algorithm>
+#include <cstring>
 #include <string>
+#include <vector>
 
+#include <LaunchSession.h>
 #include "CInject.h"
 
 // Cancel unicode, only way in Qt
 #define Process32First Process32First
 #define Process32Next Process32Next
 #define PROCESSENTRY32 PROCESSENTRY32
+
+namespace
+{
+	bool IsLaunchSessionEntry(const char* entry)
+	{
+		const std::size_t nameLength = std::strlen(g1o::LaunchSessionEnvironment);
+		return _strnicmp(entry, g1o::LaunchSessionEnvironment, nameLength) == 0 && entry[nameLength] == '=';
+	}
+
+	bool BuildChildEnvironment(const std::string& launchSession, std::vector<char>& environment)
+	{
+		LPCH inheritedEnvironment = GetEnvironmentStringsA();
+		if (!inheritedEnvironment)
+			return false;
+
+		std::vector<std::string> entries;
+		for (const char* entry = inheritedEnvironment; *entry; entry += std::strlen(entry) + 1)
+		{
+			if (!IsLaunchSessionEntry(entry))
+				entries.emplace_back(entry);
+		}
+		FreeEnvironmentStringsA(inheritedEnvironment);
+
+		entries.emplace_back(std::string(g1o::LaunchSessionEnvironment) + '=' + launchSession);
+		std::sort(entries.begin(), entries.end(), [](const std::string& left, const std::string& right)
+		{
+			return _stricmp(left.c_str(), right.c_str()) < 0;
+		});
+
+		for (const std::string& entry : entries)
+		{
+			environment.insert(environment.end(), entry.begin(), entry.end());
+			environment.push_back('\0');
+		}
+		environment.push_back('\0');
+		return true;
+	}
+}
 
 CInject::CInject()
 {
@@ -38,18 +80,7 @@ void CInject::ReleaseLaunchedProcess(bool terminate)
 	ZeroMemory(&m_ProcessInfo, sizeof(m_ProcessInfo));
 }
 
-unsigned CInject::GetIndexOfAddress(DWORD oldFunction)
-{
-	for (unsigned i = 0; i < hookList.size(); ++i)
-	{
-		if (hookList.at(i)->address == oldFunction)
-			return i;
-	}
-
-	return 0;
-}
-
-DWORD CInject::RunApplication(const char *path)
+DWORD CInject::RunApplication(const char *path, const std::string& launchSession)
 {
 	ReleaseLaunchedProcess(true);
 
@@ -64,11 +95,15 @@ DWORD CInject::RunApplication(const char *path)
 		(workingDirectory.back() == '\\' || workingDirectory.back() == '/'))
 		workingDirectory.pop_back();
 
+	std::vector<char> environment;
+	if (!BuildChildEnvironment(launchSession, environment))
+		return 0;
+
     STARTUPINFOA startupInfo;
 	ZeroMemory(&startupInfo, sizeof(startupInfo));
 	startupInfo.cb = sizeof(startupInfo);
 
-	if (CreateProcessA(fullPath, NULL, NULL, NULL, FALSE, CREATE_SUSPENDED, NULL,
+	if (CreateProcessA(fullPath, NULL, NULL, NULL, FALSE, CREATE_SUSPENDED, environment.data(),
 		workingDirectory.empty() ? NULL : workingDirectory.c_str(), &startupInfo, &m_ProcessInfo))
 		return m_ProcessInfo.dwProcessId;
 
@@ -173,66 +208,4 @@ bool CInject::InjectDLL(DWORD processID, const char *path)
 	}
 
 	return injected;
-}
-
-bool CInject::IsAddressHooked(DWORD oldFunction)
-{
-	for (unsigned i = 0; i < hookList.size(); i++)
-	{
-		if (hookList.at(i)->address == oldFunction)
-			return true;
-	}
-	return false;
-}
-
-bool CInject::ImportHook(DWORD oldFunction, size_t sizeNewFunction, ...)
-{
-	if (sizeNewFunction == sizeof(void*))
-	{
-		if (IsAddressHooked(oldFunction) == false)
-		{
-			va_list args;
-			va_start(args, sizeNewFunction);
-			DWORD function = (DWORD)va_arg(args, void*);
-			va_end(args);
-
-			Hook* pHook = new Hook;
-			pHook->address = oldFunction;
-
-			BYTE jmp[6] = { 0xE9, //jmp
-							0x00, 0x00, 0x00, 0x00, //address
-							0xC3 }; //retn
-
-			//Read backup
-			ReadProcessMemory(GetCurrentProcess(), (LPVOID)oldFunction, pHook->backup, 6, 0);
-
-			DWORD dwCalc = (function - oldFunction - 5);
-			memcpy(&jmp[1], &dwCalc, 4);
-			WriteProcessMemory(GetCurrentProcess(), (LPVOID)oldFunction, jmp, 6, 0);
-
-			//Add hook to list
-			hookList.push_back(pHook);
-
-			return true;
-		}
-	}
-
-	return false;
-}
-
-bool CInject::RemoveHook(DWORD oldFunction)
-{
-	if (IsAddressHooked(oldFunction))
-	{
-		//Return backup
-		unsigned int index = GetIndexOfAddress(oldFunction);
-		WriteProcessMemory(GetCurrentProcess(), (LPVOID)oldFunction, hookList.at(index)->backup, 6, 0);
-
-		//Remove hook from list
-		hookList.erase(hookList.begin() + index);
-
-		return true;
-	}
-
-	return false;
 }

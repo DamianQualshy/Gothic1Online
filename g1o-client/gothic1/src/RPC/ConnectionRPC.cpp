@@ -2,7 +2,7 @@
 
 void ConnectionRPC::HandleConnectionRPC(CNetwork* network, Packet* packet)
 {
-	DLOG("ConnectionRPC::HandleConnectionRPC()");
+	SPDLOG_TRACE("ConnectionRPC::HandleConnectionRPC()");
 	BitStream stream(packet->data,packet->length,false);
 	stream.IgnoreBytes(1);
 
@@ -21,7 +21,7 @@ void ConnectionRPC::HandleConnectionRPC(CNetwork* network, Packet* packet)
 
 void ConnectionRPC::CatchConnection(CNetwork* network, Packet* packet)
 {
-	DLOG("ConnectionRPC::CatchConnection()");
+	SPDLOG_TRACE("ConnectionRPC::CatchConnection()");
 	network->InitServerAddress(packet->systemAddress);
 	CConfig* cfg = core.GetConfig();
 	zVEC3 pos = oCNpc::GetHero()->GetPosition(); //Hardcoded BITCH
@@ -34,7 +34,7 @@ void ConnectionRPC::CatchConnection(CNetwork* network, Packet* packet)
 	// remain aligned. The server no longer treats a GO.dll hash as identity.
 	stream.Write(RakString(""));
 	stream.Write(cfg->GetPlayerName());
-	stream.Write(cfg->GetStartWorld());
+	stream.Write(RakString(core.GetLaunchSession().startWorld.c_str()));
 	stream.Write(pos[0]);
 	stream.Write(pos[1]);
 	stream.Write(pos[2]);
@@ -50,21 +50,21 @@ void ConnectionRPC::CatchConnection(CNetwork* network, Packet* packet)
 
 void ConnectionRPC::LostConnection(CNetwork* network, Packet* packet)
 {
-	DLOG("ConnectionRPC::LostConnection()");
+	SPDLOG_TRACE("ConnectionRPC::LostConnection()");
 	core.GetChat()->AddLine(RakString(ClientLanguage::Get(EClientText::ConnectionLost, core.GetConfig()->GetLanguage())), zCOLOR(255, 0, 0, 255));
 	network->Disconnect();
 };
 
 void ConnectionRPC::Disconnection(CNetwork* network, Packet* packet)
 {
-	DLOG("ConnectionRPC::Disconnection()");
+	SPDLOG_TRACE("ConnectionRPC::Disconnection()");
 	core.GetChat()->AddLine(RakString(ClientLanguage::Get(EClientText::ServerClosedConnection, core.GetConfig()->GetLanguage())), zCOLOR(255,0,0,255));
 	network->Disconnect();
 };
 
 void ConnectionRPC::AcceptConnection(CNetwork* network, BitStream& stream)
 {
-	DLOG("ConnectionRPC::AcceptConnection()");
+	SPDLOG_TRACE("ConnectionRPC::AcceptConnection()");
 	CMultiplayer* m = core.GetMultiplayer();
 	int hour, minute, day;
 	bool unconscious;
@@ -89,7 +89,7 @@ void ConnectionRPC::AcceptConnection(CNetwork* network, BitStream& stream)
 
 void ConnectionRPC::IncorrectVersion(CNetwork* network)
 {
-	DLOG("ConnectionRPC::IncorrectVersion()");
+	SPDLOG_TRACE("ConnectionRPC::IncorrectVersion()");
 
 	core.GetChat()->AddLine(RakString(ClientLanguage::Get(EClientText::IncorrectVersion, core.GetConfig()->GetLanguage())), zCOLOR(255,0,0,255));
 	network->Disconnect();
@@ -97,7 +97,7 @@ void ConnectionRPC::IncorrectVersion(CNetwork* network)
 
 void ConnectionRPC::ServerFull(CNetwork* network)
 {
-	DLOG("ConnectionRPC::ServerFull()");
+	SPDLOG_TRACE("ConnectionRPC::ServerFull()");
 
 	core.GetChat()->AddLine(RakString(ClientLanguage::Get(EClientText::ServerFull, core.GetConfig()->GetLanguage())), zCOLOR(255,0,0,255));
 	network->Disconnect();
@@ -105,7 +105,7 @@ void ConnectionRPC::ServerFull(CNetwork* network)
 
 void ConnectionRPC::NicknameUsed(CNetwork* network)
 {
-	DLOG("ConnectionRPC::NicknameUsed()");
+	SPDLOG_TRACE("ConnectionRPC::NicknameUsed()");
 
 	core.GetChat()->AddLine(RakString(ClientLanguage::Get(EClientText::NicknameUsed, core.GetConfig()->GetLanguage())), zCOLOR(255,0,0,255));
 	network->Disconnect();
@@ -113,7 +113,7 @@ void ConnectionRPC::NicknameUsed(CNetwork* network)
 
 void ConnectionRPC::Banned(CNetwork* network)
 {
-	DLOG("ConnectionRPC::Banned()");
+	SPDLOG_TRACE("ConnectionRPC::Banned()");
 
 	core.GetChat()->AddLine(RakString(ClientLanguage::Get(EClientText::Banned, core.GetConfig()->GetLanguage())), zCOLOR(255,0,0,255));
 	network->Disconnect();
@@ -121,7 +121,7 @@ void ConnectionRPC::Banned(CNetwork* network)
 
 void ConnectionRPC::DisconnectedWithReason(CNetwork* network, BitStream& stream)
 {
-	DLOG("ConnectionRPC::DisconnectedWithReason()");
+	SPDLOG_TRACE("ConnectionRPC::DisconnectedWithReason()");
 
 	RakString reason;
 	stream.Read(reason);
@@ -132,7 +132,7 @@ void ConnectionRPC::DisconnectedWithReason(CNetwork* network, BitStream& stream)
 
 void ConnectionRPC::ConnectionFailed(CNetwork* network)
 {
-	DLOG("ConnectionRPC::ConnectionFailed()");
+	SPDLOG_TRACE("ConnectionRPC::ConnectionFailed()");
 
 	core.GetChat()->AddLine(RakString(ClientLanguage::Get(EClientText::ConnectionFailed, core.GetConfig()->GetLanguage())), zCOLOR(255,0,0,255));
 	network->Disconnect();

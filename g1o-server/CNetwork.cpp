@@ -4,14 +4,14 @@
 
 CNetwork::CNetwork()
 {
-	//DLOG("CNetwork::CNetwork()\n");
+	//SPDLOG_TRACE("CNetwork::CNetwork()");
 	peer = NULL;
 	pReceiver = new CReceiver();
 };
 
 CNetwork::~CNetwork()
 {
-	//DLOG("CNetwork::~CNetwork()\n");
+	//SPDLOG_TRACE("CNetwork::~CNetwork()");
 	//RakPeerInterface::DestroyInstance(peer);
 	//peer->Shutdown(300);
 	delete pReceiver;
@@ -19,7 +19,7 @@ CNetwork::~CNetwork()
 
 bool CNetwork::InitNetwork()
 {
-	//LOG("CNetwork::InitNetwork()\n");
+	//SPDLOG_INFO("CNetwork::InitNetwork()");
 	this->peer = RakPeerInterface::GetInstance();
 	if( this->peer != NULL )
 	{
@@ -34,18 +34,18 @@ bool CNetwork::InitNetwork()
 			this->peer->SetMaximumIncomingConnections((unsigned short)atoi(config->GetMaxSlots().C_String())+20);
 
 			for(unsigned int i = 0; i < uiAddr; ++i)
-				LOG("[info] Listening for connections on %s:%s...", this->peer->GetLocalIP(i), config->GetServerPort().C_String());
+				SPDLOG_INFO("Listening for connections on {}:{}...", this->peer->GetLocalIP(i), config->GetServerPort().C_String());
 			return true;
 		}
 		else
 		{
 			for(unsigned int i = 0; i < uiAddr; ++i)
-				LOG("[error] Couldn't listen on %s:%s", this->peer->GetLocalIP(i), config->GetServerPort().C_String());
+				SPDLOG_ERROR("Couldn't listen on {}:{}", this->peer->GetLocalIP(i), config->GetServerPort().C_String());
 			CNetworkError::DisplayDetails(result);
 		}
 	}
 	else
-		LOG("[error] Couldn't start new instance of RakPeer");
+		SPDLOG_ERROR("Couldn't start new instance of RakPeer");
 
 	return false;
 };

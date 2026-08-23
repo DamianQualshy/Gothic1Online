@@ -5,7 +5,8 @@
 #include <QSaveFile>
 #include <QSettings>
 #include <QXmlStreamReader>
-#include <QXmlStreamWriter>
+
+#include <nlohmann/json.hpp>
 
 #include "PCH.h"
 
@@ -14,14 +15,10 @@ CSettings::CSettings() :
     m_Language("en"),
     m_WindowX(-1),
     m_WindowY(-1),
-    m_ServerIp("127.0.0.1"),
-    m_ServerPort(QString::number(DEFAULT_PORT)),
-    m_StartWorld("WORLD.ZEN"),
-    m_PlayerInstance("PC_HERO"),
     m_Loaded(false)
 {
 #ifdef DEBUG_MODE
-    LOG(__FUNCTION__)
+    SPDLOG_TRACE("{}", __FUNCTION__);
 #endif
     qApp->setApplicationName(APP_NAME);
 }
@@ -42,26 +39,12 @@ void CSettings::loadLauncherSettings()
     LAUNCHER.getLanguage().setCurrentLang(m_Language);
 }
 
-void CSettings::saveLauncherSettings()
+bool CSettings::saveLauncherSettings()
 {
     m_Nickname = LAUNCHER.getUI()->editNickname->text().isEmpty() ? SettingUnknow::NAME : LAUNCHER.getUI()->editNickname->text();
     m_WindowX = LAUNCHER.x();
     m_WindowY = LAUNCHER.y();
     m_Language = LAUNCHER.getLanguage().getCurrentLang().isEmpty() ? "en" : LAUNCHER.getLanguage().getCurrentLang();
-    saveConfig();
-}
-
-bool CSettings::saveConnectionSettings(const QString &ipAddress,
-                                       const QString &port,
-                                       const QString &world,
-                                       const QString &playerInstance)
-{
-    m_Nickname = LAUNCHER.getUI()->editNickname->text().isEmpty() ? SettingUnknow::NAME : LAUNCHER.getUI()->editNickname->text();
-    m_Language = LAUNCHER.getLanguage().getCurrentLang().isEmpty() ? "en" : LAUNCHER.getLanguage().getCurrentLang();
-    m_ServerIp = ipAddress;
-    m_ServerPort = port;
-    m_StartWorld = world;
-    m_PlayerInstance = playerInstance;
     return saveConfig();
 }
 
@@ -92,67 +75,120 @@ bool CSettings::loadConfig()
     QFile file(CONFIG_PATH);
     if (file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-        QXmlStreamReader xml(&file);
-        QString section;
-        bool hasConfigRoot = false;
-
-        while (!xml.atEnd())
+        try
         {
-            xml.readNext();
-            if (xml.isStartElement())
+            const nlohmann::json config = nlohmann::json::parse(file.readAll().toStdString());
+            if (config.is_object())
             {
-                const QString name = xml.name().toString();
-                if (name == "GO_Config")
-                {
-                    hasConfigRoot = true;
-                }
-                else if (name == "favorites")
-                {
-                    section = name;
-                    hasFavoritesSection = true;
-                }
-                else if (name == "server" && section == "favorites")
-                {
-                    const QString ip = xml.attributes().value("ip").toString();
-                    const QString port = xml.attributes().value("port").toString();
-                    if (!ip.isEmpty() && !port.isEmpty())
-                        m_FavoriteServers.append(FavoriteServer(ip, port));
-                }
-                else if (name == "playerName")
-                {
-                    m_Nickname = xml.readElementText();
-                    hasNickname = true;
-                }
-                else if (name == "lang")
-                {
-                    m_Language = xml.readElementText().toLower();
-                    hasLanguage = true;
-                }
-                else if (name == "launcherPosX")
-                {
-                    m_WindowX = xml.readElementText().toInt();
-                    hasWindowX = true;
-                }
-                else if (name == "launcherPosY")
-                {
-                    m_WindowY = xml.readElementText().toInt();
-                    hasWindowY = true;
-                }
-                else if (name == "serverIp")
-                    m_ServerIp = xml.readElementText();
-                else if (name == "serverPort")
-                    m_ServerPort = xml.readElementText();
-                else if (name == "startWorld")
-                    m_StartWorld = xml.readElementText();
-                else if (name == "playerInstance")
-                    m_PlayerInstance = xml.readElementText();
-            }
-            else if (xml.isEndElement() && xml.name().toString() == section)
-                section.clear();
-        }
+                loadedUnifiedConfig = true;
 
-        loadedUnifiedConfig = hasConfigRoot && !xml.hasError();
+                const auto readString = [&config](const char* name, QString& value)
+                {
+                    const auto field = config.find(name);
+                    if (field == config.end() || !field->is_string())
+                        return false;
+                    value = QString::fromUtf8(field->get_ref<const std::string&>().c_str());
+                    return true;
+                };
+                const auto readInteger = [&config](const char* name, int& value)
+                {
+                    const auto field = config.find(name);
+                    if (field == config.end() || !field->is_number_integer())
+                        return false;
+                    value = field->get<int>();
+                    return true;
+                };
+
+                hasNickname = readString("playerName", m_Nickname);
+                hasLanguage = readString("lang", m_Language);
+                m_Language = m_Language.toLower();
+                hasWindowX = readInteger("launcherPosX", m_WindowX);
+                hasWindowY = readInteger("launcherPosY", m_WindowY);
+                const auto favorites = config.find("favorites");
+                if (favorites != config.end() && favorites->is_array())
+                {
+                    hasFavoritesSection = true;
+                    for (const auto& server : *favorites)
+                    {
+                        if (!server.is_object())
+                            continue;
+                        const auto ip = server.find("ip");
+                        const auto port = server.find("port");
+                        if (ip == server.end() || port == server.end() || !ip->is_string() || !port->is_string())
+                            continue;
+                        const QString ipValue = QString::fromUtf8(ip->get_ref<const std::string&>().c_str());
+                        const QString portValue = QString::fromUtf8(port->get_ref<const std::string&>().c_str());
+                        if (!ipValue.isEmpty() && !portValue.isEmpty())
+                            m_FavoriteServers.append(FavoriteServer(ipValue, portValue));
+                    }
+                }
+            }
+        }
+        catch (const nlohmann::json::exception& exception)
+        {
+            SPDLOG_WARN("Could not parse {}: {}", CONFIG_PATH, exception.what());
+        }
         file.close();
+    }
+
+    bool migratedLegacyXml = false;
+    if (!loadedUnifiedConfig)
+    {
+        QFile legacyFile(LEGACY_CONFIG_PATH);
+        if (legacyFile.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+            QXmlStreamReader xml(&legacyFile);
+            QString section;
+            bool hasConfigRoot = false;
+
+            while (!xml.atEnd())
+            {
+                xml.readNext();
+                if (xml.isStartElement())
+                {
+                    const QString name = xml.name().toString();
+                    if (name == "GO_Config")
+                        hasConfigRoot = true;
+                    else if (name == "favorites")
+                    {
+                        section = name;
+                        hasFavoritesSection = true;
+                    }
+                    else if (name == "server" && section == "favorites")
+                    {
+                        const QString ip = xml.attributes().value("ip").toString();
+                        const QString port = xml.attributes().value("port").toString();
+                        if (!ip.isEmpty() && !port.isEmpty())
+                            m_FavoriteServers.append(FavoriteServer(ip, port));
+                    }
+                    else if (name == "playerName")
+                    {
+                        m_Nickname = xml.readElementText();
+                        hasNickname = true;
+                    }
+                    else if (name == "lang")
+                    {
+                        m_Language = xml.readElementText().toLower();
+                        hasLanguage = true;
+                    }
+                    else if (name == "launcherPosX")
+                    {
+                        m_WindowX = xml.readElementText().toInt();
+                        hasWindowX = true;
+                    }
+                    else if (name == "launcherPosY")
+                    {
+                        m_WindowY = xml.readElementText().toInt();
+                        hasWindowY = true;
+                    }
+                }
+                else if (xml.isEndElement() && xml.name().toString() == section)
+                    section.clear();
+            }
+
+            loadedUnifiedConfig = hasConfigRoot && !xml.hasError();
+            migratedLegacyXml = loadedUnifiedConfig;
+        }
     }
 
     const bool hasLauncherData = hasNickname && hasLanguage && hasWindowX && hasWindowY;
@@ -161,7 +197,7 @@ bool CSettings::loadConfig()
     if (!loadedUnifiedConfig || !hasFavoritesSection)
         loadLegacyFavorites();
 
-    if (!loadedUnifiedConfig || !hasLauncherData || !hasFavoritesSection)
+    if (migratedLegacyXml || !loadedUnifiedConfig || !hasLauncherData || !hasFavoritesSection)
         saveConfig();
 
     return loadedUnifiedConfig;
@@ -175,35 +211,24 @@ bool CSettings::saveConfig() const
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
         return false;
 
-    QXmlStreamWriter xml(&file);
-    xml.setAutoFormatting(true);
-    xml.writeStartDocument();
-    xml.writeComment(" Gothic Online client configuration. All available client and launcher options are listed below. ");
-    xml.writeStartElement("GO_Config");
-
-    // Keep G2O's flat GO_Config field layout. Favorites are the only grouped
-    // collection because they contain a variable number of server entries.
-    xml.writeTextElement("playerName", m_Nickname);
-    xml.writeTextElement("serverIp", m_ServerIp);
-    xml.writeTextElement("serverPort", m_ServerPort);
-    xml.writeTextElement("startWorld", m_StartWorld);
-    xml.writeTextElement("playerInstance", m_PlayerInstance);
-    xml.writeTextElement("lang", m_Language);
-    xml.writeTextElement("launcherPosX", QString::number(m_WindowX));
-    xml.writeTextElement("launcherPosY", QString::number(m_WindowY));
-
-    xml.writeStartElement("favorites");
-    for (const FavoriteServer &server : m_FavoriteServers)
+    const auto toUtf8 = [](const QString& value)
     {
-        xml.writeStartElement("server");
-        xml.writeAttribute("ip", server.first);
-        xml.writeAttribute("port", server.second);
-        xml.writeEndElement();
-    }
-    xml.writeEndElement();
+        const QByteArray bytes = value.toUtf8();
+        return std::string(bytes.constData(), static_cast<std::size_t>(bytes.size()));
+    };
 
-    xml.writeEndElement();
-    xml.writeEndDocument();
+    nlohmann::ordered_json config;
+    config["playerName"] = toUtf8(m_Nickname);
+    config["lang"] = toUtf8(m_Language);
+    config["launcherPosX"] = m_WindowX;
+    config["launcherPosY"] = m_WindowY;
+    config["favorites"] = nlohmann::ordered_json::array();
+    for (const FavoriteServer &server : m_FavoriteServers)
+        config["favorites"].push_back({{"ip", toUtf8(server.first)}, {"port", toUtf8(server.second)}});
+
+    const std::string output = config.dump(2) + '\n';
+    if (file.write(output.data(), static_cast<qint64>(output.size())) != static_cast<qint64>(output.size()))
+        return false;
     return file.commit();
 }
 

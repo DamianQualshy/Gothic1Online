@@ -4,7 +4,7 @@
 
 void ScriptRPC::HandleScriptRPC(CNetwork* network, Packet* packet)
 {
-	//LOG("ScriptRPC::HandleScriptRPC()");
+	//SPDLOG_TRACE("ScriptRPC::HandleScriptRPC()");
 	BitStream stream(packet->data,packet->length,false);
 	stream.IgnoreBytes(1);
 
@@ -124,7 +124,7 @@ void ScriptRPC::ClientEvent(CNetwork* network, BitStream& stream, Packet* packet
 		break;
 	}
 	default:
-		LOG("[script] Rejected unknown client event %u from player %d", static_cast<unsigned>(rawEvent), playerID);
+		SPDLOG_INFO("[script] Rejected unknown client event {} from player {}", static_cast<unsigned>(rawEvent), playerID);
 		break;
 	}
 }

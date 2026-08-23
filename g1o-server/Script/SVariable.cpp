@@ -61,7 +61,6 @@ namespace
 		{"WEAPON_1H", 1}, {"WEAPON_2H", 2}, {"WEAPON_BOW", 3}, {"WEAPON_CBOW", 4},
 		{"SKILL_LOW", 0}, {"SKILL_MEDIUM", 1}, {"SKILL_MASTER", 2},
 		{"PROT_WEAPON", 0}, {"PROT_ARROW", 1}, {"PROT_FIRE", 2}, {"PROT_MAGIC", 3},
-		{"UNRELIABLE", 0}, {"RELIABLE", 1}, {"RELIABLE_ORDERED", 2},
 		{"MOB_BED", 0}, {"MOB_CONTAINER", 1}, {"MOB_DOOR", 2}, {"MOB_INTER", 3},
 		{"MOB_LADDER", 4}, {"MOB_SWITCH", 5}, {"MOB_WHEEL", 6},
 		{"HAND_LEFT", 0}, {"HAND_RIGHT", 1}

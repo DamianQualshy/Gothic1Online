@@ -2,12 +2,12 @@
 
 CNpc::CNpc()
 {
-	//DLOG("CNpc::CNpc()\n");
+	//SPDLOG_TRACE("CNpc::CNpc()");
 	streamedPlayers.Clear();
 };
 
 CNpc::~CNpc()
 {
-	//DLOG("CNpc::~CNpc()\n");
+	//SPDLOG_TRACE("CNpc::~CNpc()");
 	streamedPlayers.Clear();
 };

@@ -2,7 +2,7 @@
 
 CRender::CRender()
 {
-	DLOG("CRender::CRender()");
+	SPDLOG_TRACE("CRender::CRender()");
 };
 
 void CRender::Render()
@@ -12,10 +12,10 @@ void CRender::Render()
 	CGothicGame* gothicGame = core.GetGothicGame();
 	if( gothicGame->bIsFirstFrame == true )
 	{
-		CConfig* config = core.GetConfig();
+		const g1o::LaunchSession& session = core.GetLaunchSession();
 
 		if( net -> IsInitiated() == true && net -> IsConnected() == false)
-			net -> Connect(config->GetServerIp(), atoi(config->GetServerPort().C_String())); //Nawiązywanie połączenia
+			net -> Connect(RakString(session.serverAddress.c_str()), session.serverPort); //Nawiązywanie połączenia
 		gothicGame->bIsFirstFrame = false;
 	}
 	//Render chat

@@ -6,9 +6,9 @@ void oCSpawnManager::Fake_DeleteNpc(oCNpc* npc)
 		return;
 	else
 	{
-		pMemLib->RemoveHook(0x006D0DE0);
+		g1o::hooking::GetHookManager().Remove(0x006D0DE0);
 		this->DeleteNpc(npc);
-		pMemLib->ImportHook(0x006D0DE0, sizeof(void(oCSpawnManager::*)(oCNpc*)), &oCSpawnManager::Fake_DeleteNpc);
+		g1o::hooking::GetHookManager().Install(0x006D0DE0, &oCSpawnManager::Fake_DeleteNpc);
 	}*/
 
 	return;
@@ -24,9 +24,9 @@ int oCSpawnManager::Fake_CheckRemoveNpc(oCNpc* npc)
 		result = false;
 	else
 	{
-		pMemLib->RemoveHook(0x006D0A80);
+		g1o::hooking::GetHookManager().Remove(0x006D0A80);
 		result = this->CheckRemoveNpc(npc);
-		pMemLib->ImportHook(0x006D0A80, sizeof(int(oCSpawnManager::*)(oCNpc*)), &oCSpawnManager::Fake_CheckRemoveNpc);
+		g1o::hooking::GetHookManager().Install(0x006D0A80, &oCSpawnManager::Fake_CheckRemoveNpc);
 	}
 	return result;*/
 	return false;

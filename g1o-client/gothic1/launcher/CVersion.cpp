@@ -9,7 +9,7 @@ CVersion::CVersion()
       m_Showed(false)
 {
 #ifdef DEBUG_MODE
-    LOG(__FUNCTION__)
+    SPDLOG_TRACE("{}", __FUNCTION__);
 #endif
 }
 

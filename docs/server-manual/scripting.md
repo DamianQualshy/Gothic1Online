@@ -6,7 +6,7 @@ G1O creates one scripting VM on the game server and loads every configured file 
 config.xml
   -> inline imported declarations
   -> validate one ordered language list
-  -> register server functions, constants, and events
+  -> register functions, constants, and events
   -> load each source file in order
   -> dispatch onInit
 ```
@@ -35,13 +35,13 @@ Keyboard constants use Gothic's actual DirectInput scan codes, including gaps an
 
 | Constant | Value |
 | --- | --- |
-| `KEY_F5` | `0x3F` |
-| `KEY_F11` | `0x57` |
-| `KEY_NUMPADENTER` | `0x9C` |
-| `KEY_RCONTROL` | `0x9D` |
-| `KEY_HOME` | `0xC7` |
+| `KEY_F5` | `63` |
+| `KEY_F11` | `87` |
+| `KEY_NUMPADENTER` | `156` |
+| `KEY_RCONTROL` | `157` |
+| `KEY_HOME` | `199` |
 
-The server also registers the existing weapon-mode, weapon-skill, skill-level, protection, reliability, mob-type, and hand constants.
+The server also registers the existing weapon-mode, weapon-skill, skill-level, protection, mob-type, and hand constants. Their generated tables are listed under **Constants** in the **Scripting Reference**.
 
 ## Events
 
@@ -95,4 +95,4 @@ The server derives `playerId` from the authenticated RakNet connection; it never
 
 Timers run in the server loop. A handler error is logged with its runtime prefix and does not move execution to the client. A file load error stops server startup so the game mode cannot run partially initialized.
 
-The generated [Scripting Reference](../scripting-reference/index.md) contains the current server functions and events.
+The generated **Scripting Reference** contains the current functions, events, and constants.

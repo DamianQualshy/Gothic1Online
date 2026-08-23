@@ -2,10 +2,10 @@
 
 CNpc::CNpc()
 {
-	DLOG("CNpc::CNpc()");
+	SPDLOG_TRACE("CNpc::CNpc()");
 };
 
 CNpc::~CNpc()
 {
-	DLOG("CNpc::~CNpc()");
+	SPDLOG_TRACE("CNpc::~CNpc()");
 };

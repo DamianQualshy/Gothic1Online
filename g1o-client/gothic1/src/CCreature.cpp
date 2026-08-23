@@ -2,7 +2,7 @@
 
 CCreature::CCreature()
 {
-	DLOG("CCreature::CCreature()");
+	SPDLOG_TRACE("CCreature::CCreature()");
 	id = -1;
 	npc = NULL;
 	instance = "PC_HERO";
@@ -41,7 +41,7 @@ CCreature::CCreature()
 
 CCreature::~CCreature()
 {
-	DLOG("CCreature::~CCreature() ID = %d", this->id);
+	SPDLOG_TRACE("CCreature::~CCreature() ID = {}", this->id);
 	instance.FreeMemory();
 	world.FreeMemory();
 	armorInstance.FreeMemory();

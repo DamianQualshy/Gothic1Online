@@ -7,6 +7,7 @@
 
 int main()
 {
+	g1o::logging::InitializeServer();
 	core.Start();
 	return 0;
 }

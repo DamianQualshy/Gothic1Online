@@ -20,15 +20,15 @@ namespace
 
 CSplashScreen::CSplashScreen()
 {
-	DLOG("CSplashScreen::CSplashScreen()");
+	SPDLOG_TRACE("CSplashScreen::CSplashScreen()");
 
 	//Paczowanie splash screena
-	pMemLib->WriteJMP(0x4257A0, (unsigned long)CSplashScreen::InitializeSplashScreen);
+	g1o::hooking::GetHookManager().Install(0x4257A0, &CSplashScreen::InitializeSplashScreen);
 };
 
 CSplashScreen::~CSplashScreen()
 {
-	DLOG("CSplashScreen::~CSplashScreen()");
+	SPDLOG_TRACE("CSplashScreen::~CSplashScreen()");
 };
 
 LRESULT CALLBACK CSplashScreen::SplashWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -62,8 +62,8 @@ LRESULT CALLBACK CSplashScreen::SplashWndProc(HWND hWnd, UINT message, WPARAM wP
 
 DWORD __stdcall CSplashScreen::InitializeSplashScreen(void * param)
 {
-	LOG("[startup] Gothic splash thread started");
-	DLOG("CSplashScreen::InitializeSplashScreen()");
+	SPDLOG_INFO("[startup] Gothic splash thread started");
+	SPDLOG_TRACE("CSplashScreen::InitializeSplashScreen()");
 
 	hInst = GetModuleHandleA(NULL);
 	WNDCLASSEXA wc;
@@ -98,6 +98,6 @@ DWORD __stdcall CSplashScreen::InitializeSplashScreen(void * param)
 		DispatchMessage(&msg); 
 		RakSleep(3);
 	}
-	LOG("[startup] Gothic splash thread stopped");
+	SPDLOG_INFO("[startup] Gothic splash thread stopped");
 	return NULL;
 };

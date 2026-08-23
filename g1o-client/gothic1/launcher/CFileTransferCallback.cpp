@@ -11,7 +11,7 @@ CFileTransferCallback::CFileTransferCallback() :
     m_partTotal(0)
 {
 #ifdef DEBUG_MODE
-    LOG(__FUNCTION__)
+    SPDLOG_TRACE("{}", __FUNCTION__);
 #endif
 }
 

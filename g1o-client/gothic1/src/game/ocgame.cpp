@@ -21,6 +21,6 @@ oCNpc* oCGame::CreateNPC(zSTRING const& instance, float x, float y, float z)
 		return npc;
 		}
 	}
-	DLOG("Cannot create npc");
+	SPDLOG_TRACE("Cannot create npc");
 	return NULL;
 };

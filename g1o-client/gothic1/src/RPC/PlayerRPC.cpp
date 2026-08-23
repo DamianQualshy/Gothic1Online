@@ -2,7 +2,7 @@
 
 void PlayerRPC::HandlePlayerRPC(CNetwork* network, Packet* packet)
 {
-	//DLOG("PlayerRPC::HandlePlayerRPC()");
+	//SPDLOG_TRACE("PlayerRPC::HandlePlayerRPC()");
 
 	BitStream stream(packet->data, packet->length, false);
 	stream.IgnoreBytes(1);
@@ -67,7 +67,7 @@ void PlayerRPC::HandlePlayerRPC(CNetwork* network, Packet* packet)
 
 void PlayerRPC::CreatePlayer(CNetwork* network, BitStream& stream)
 {
-	DLOG("PlayerRPC::CreatePlayer()");
+	SPDLOG_TRACE("PlayerRPC::CreatePlayer()");
 	int playerID;
 	RakString playerName;
 
@@ -80,7 +80,7 @@ void PlayerRPC::CreatePlayer(CNetwork* network, BitStream& stream)
 
 void PlayerRPC::CreateAndSpawnPlayer(BitStream& stream)
 {
-	DLOG("PlayerRPC::CreateAndSpawnPlayer()");
+	SPDLOG_TRACE("PlayerRPC::CreateAndSpawnPlayer()");
 	int playerID;
 	RakString playerName;
 	RakString instanceName;
@@ -161,7 +161,7 @@ void PlayerRPC::CreateAndSpawnPlayer(BitStream& stream)
 
 void PlayerRPC::DestroyPlayer(CNetwork* network, BitStream& stream)
 {
-	DLOG("PlayerRPC::DestroyPlayer()");
+	SPDLOG_TRACE("PlayerRPC::DestroyPlayer()");
 
 	int playerID;
 	
@@ -176,7 +176,7 @@ void PlayerRPC::DestroyPlayer(CNetwork* network, BitStream& stream)
 
 void PlayerRPC::SetPosition(BitStream& stream)
 {
-	DLOG("PlayerRPC::SetPosition()");
+	SPDLOG_TRACE("PlayerRPC::SetPosition()");
 	int playerID;
 	stream.Read(playerID);
 
@@ -185,7 +185,7 @@ void PlayerRPC::SetPosition(BitStream& stream)
 		CPlayer* player = playerManager.GetPlayer(playerID);
 		if( player )
 		{
-			//LOG("got pos packet from %s", player->name.C_String());
+			//SPDLOG_TRACE("got pos packet from {}", player->name.C_String());
 			stream.Read(player->pos[0]);
 			stream.Read(player->pos[1]);
 			stream.Read(player->pos[2]);
@@ -198,7 +198,7 @@ void PlayerRPC::SetPosition(BitStream& stream)
 
 void PlayerRPC::SetAngle(BitStream& stream)
 {
-	DLOG("PlayerRPC::SetAngle()");
+	SPDLOG_TRACE("PlayerRPC::SetAngle()");
 	int playerID;
 	stream.Read(playerID);
 
@@ -219,7 +219,7 @@ void PlayerRPC::SetAngle(BitStream& stream)
 
 void PlayerRPC::ChangeWeaponMode(BitStream& stream)
 {
-	DLOG("Change weaponmode");
+	SPDLOG_TRACE("Change weaponmode");
 	int playerID;
 
 	stream.Read(playerID);
@@ -281,7 +281,7 @@ void PlayerRPC::ChangeWeaponMode(BitStream& stream)
 
 void PlayerRPC::PlayAnimation(BitStream& stream)
 {
-	DLOG("PlayerRPC::PlayAnimation()");
+	SPDLOG_TRACE("PlayerRPC::PlayAnimation()");
 	int playerID;
 
 	stream.Read(playerID);
@@ -292,7 +292,7 @@ void PlayerRPC::PlayAnimation(BitStream& stream)
 		{
 			int oldAni = player->animationId;
 			stream.Read(player->animationId);
-			//DLOG("Ani %d SM %d", player->animationId, startMode);
+			//SPDLOG_TRACE("Ani {} SM {}", player->animationId, startMode);
 
 			if (player->npc->GetAttribute(NPC_ATR_HITPOINTS) > 0 && !player->npc->IsUnconscious())
 			{
@@ -304,7 +304,7 @@ void PlayerRPC::PlayAnimation(BitStream& stream)
 				}
 				else
 				{
-					//DLOG("ANI: 341!!");
+					//SPDLOG_TRACE("ANI: 341!!");
 					if( player->npc->IsHuman() ) //W innych przypadkach jest crash
 					{
 						zCModel* model = player->npc->GetModel();
@@ -322,7 +322,7 @@ void PlayerRPC::PlayAnimation(BitStream& stream)
 
 void PlayerRPC::WearArmor(BitStream& stream)
 {
-	DLOG("PlayerRPC::WearArmor()");
+	SPDLOG_TRACE("PlayerRPC::WearArmor()");
 	int playerID;
 	stream.Read(playerID);
 	if( core.GetMultiplayer()->GetMyID() != playerID )
@@ -340,14 +340,14 @@ void PlayerRPC::WearArmor(BitStream& stream)
 					{
 						if(strcmp(player->armorInstance.C_String(), "NULL") == 0)
 						{
-							DLOG("Remove armor");
+							SPDLOG_TRACE("Remove armor");
 							player->npc->UnequipItem(armor);
 							player->npc->_DoDropVob(armor);
 							armor->RemoveVobFromWorld();
 						}
 						else
 						{
-							DLOG("Equip armor");
+							SPDLOG_TRACE("Equip armor");
 							player->npc->UnequipItem(armor);
 							player->npc->_DoDropVob(armor);
 							armor->RemoveVobFromWorld();
@@ -361,7 +361,7 @@ void PlayerRPC::WearArmor(BitStream& stream)
 				{
 					if(strcmp(player->armorInstance.C_String(), "NULL") != 0)
 					{
-						DLOG("Equip armor");
+						SPDLOG_TRACE("Equip armor");
 						armor = player->npc->CreateItem(zSTRING(player->armorInstance.C_String()), 1);
 						if(armor)
 							player->npc->Equip(armor);
@@ -373,7 +373,7 @@ void PlayerRPC::WearArmor(BitStream& stream)
 };
 void PlayerRPC::EquipWeapon(BitStream& stream)
 {
-	DLOG("PlayerRPC::EquipWeapon()");
+	SPDLOG_TRACE("PlayerRPC::EquipWeapon()");
 	int playerID;
 	int weaponType;
 	RakString instance;
@@ -385,34 +385,34 @@ void PlayerRPC::EquipWeapon(BitStream& stream)
 	{
 		if( !instance.IsEmpty() )
 		{
-			DLOG("instance isnt empty");
+			SPDLOG_TRACE("instance isnt empty");
 			const char* weaponInstance = instance.C_String();
 			if( player->npc )
 			{
-				DLOG("npc is exist");
+				SPDLOG_TRACE("npc is exist");
 				if( player->npc->IsHuman() )
 				{
-					DLOG("npc is already human");
+					SPDLOG_TRACE("npc is already human");
 					player->npc->SetAttribute(NPC_ATR_DEXTERITY, 1000);
 					player->npc->SetAttribute(NPC_ATR_STRENGTH, 1000);
 					if( weaponType == 1 )
 					{
-						DLOG("melee");
+						SPDLOG_TRACE("melee");
 						player->meleeWeaponInstance = weaponInstance;
 						//Melee
 						if( strcmp("NULL", weaponInstance) == 0 )
 						{
-							DLOG("isnull");
+							SPDLOG_TRACE("isnull");
 							oCItem* melee = player->npc->GetEquippedMeleeWeapon();
 							if( melee )
 							{
-								DLOG("w exists");
+								SPDLOG_TRACE("w exists");
 								player->npc->UnequipItem(melee);
 							}
 						}
 						else
 						{
-							DLOG("isntnull");
+							SPDLOG_TRACE("isntnull");
 							oCItem* new_melee = player->npc->CreateItem(zSTRING(weaponInstance),1);
 							if (new_melee)
 							{
@@ -423,22 +423,22 @@ void PlayerRPC::EquipWeapon(BitStream& stream)
 					}
 					else if( weaponType == 2 )
 					{
-						DLOG("ranged");
+						SPDLOG_TRACE("ranged");
 						player->rangedWeaponInstance = weaponInstance;
 						//Ranged
 						if( strcmp("NULL", weaponInstance) == 0 )
 						{
-							DLOG("isnull");
+							SPDLOG_TRACE("isnull");
 							oCItem* ranged = player->npc->GetEquippedRangedWeapon();
 							if( ranged )
 							{
-								DLOG("w exist");
+								SPDLOG_TRACE("w exist");
 								player->npc->UnequipItem(ranged);
 							}
 						}
 						else
 						{
-							DLOG("isntnull");
+							SPDLOG_TRACE("isntnull");
 							oCItem* new_ranged = player->npc->CreateItem(zSTRING(weaponInstance),1);
 							if (new_ranged)
 							{
@@ -454,7 +454,7 @@ void PlayerRPC::EquipWeapon(BitStream& stream)
 
 void PlayerRPC::ChangeInstance(BitStream& stream)
 {
-	DLOG("PlayerRPC::ChangeInstance()");
+	SPDLOG_TRACE("PlayerRPC::ChangeInstance()");
 	int playerID;
 	stream.Read(playerID);
 
@@ -485,7 +485,7 @@ void PlayerRPC::ChangeInstance(BitStream& stream)
 
 void PlayerRPC::ItemHand(BitStream& stream)
 {
-	DLOG("PlayerRPC::ItemHand()");
+	SPDLOG_TRACE("PlayerRPC::ItemHand()");
 	int playerID;
 	int hand;
 	RakString handInstance;
@@ -564,7 +564,7 @@ void PlayerRPC::ItemHand(BitStream& stream)
 
 void PlayerRPC::SetHealth(BitStream& stream)
 {
-	DLOG("PlayerRPC::SetHealth()");
+	SPDLOG_TRACE("PlayerRPC::SetHealth()");
 	int playerID;
 	int hp;
 	stream.Read(playerID);
@@ -622,7 +622,7 @@ void PlayerRPC::SetHealth(BitStream& stream)
 
 void PlayerRPC::SetHealthMax(BitStream& stream)
 {
-	DLOG("PlayerRPC::SetHealthMax()");
+	SPDLOG_TRACE("PlayerRPC::SetHealthMax()");
 	int playerID;
 	stream.Read(playerID);
 
@@ -666,7 +666,7 @@ void PlayerRPC::SetHealthMax(BitStream& stream)
 
 void PlayerRPC::AttackHit(BitStream& stream)
 {
-	DLOG("PlayerRPC::AttackHit()");
+	SPDLOG_TRACE("PlayerRPC::AttackHit()");
 	//Tylko w wypadku funkcji "Attack" playerID to zawsze id atakującego
 	int attackID;
 	int minushp;
@@ -701,7 +701,7 @@ void PlayerRPC::AttackHit(BitStream& stream)
 
 void PlayerRPC::AttackDead(BitStream& stream)
 {
-	DLOG("PlayerRPC::AttackDead()");
+	SPDLOG_TRACE("PlayerRPC::AttackDead()");
 
 	oCNpc* hero = oCNpc::GetHero();
 
@@ -729,7 +729,7 @@ void PlayerRPC::AttackDead(BitStream& stream)
 
 void PlayerRPC::AttackUnconscious(BitStream& stream)
 {
-	DLOG("PlayerRPC::AttackUnconscious()");
+	SPDLOG_TRACE("PlayerRPC::AttackUnconscious()");
 	int playerID;
 	int attackID;
 	stream.Read(playerID);
@@ -768,7 +768,7 @@ void PlayerRPC::AttackUnconscious(BitStream& stream)
 
 void PlayerRPC::StandUp(BitStream& stream)
 {
-	DLOG("PlayerRPC::StandUp()");
+	SPDLOG_TRACE("PlayerRPC::StandUp()");
 	int playerID;
 	bool unconscious;
 	stream.Read(playerID);
@@ -791,7 +791,7 @@ void PlayerRPC::StandUp(BitStream& stream)
 
 void PlayerRPC::MagicSetup(BitStream& stream)
 {
-	DLOG("PlayerRPC::MagicSetup()");
+	SPDLOG_TRACE("PlayerRPC::MagicSetup()");
 
 	int playerID;
 	RakString spellInstance;
@@ -805,7 +805,7 @@ void PlayerRPC::MagicSetup(BitStream& stream)
 		{
 			if( strcmp(spellInstance.C_String(), "NULL") != 0 )
 			{
-				DLOG("Spellinstance %s", spellInstance.C_String());
+				SPDLOG_TRACE("Spellinstance {}", spellInstance.C_String());
 				if( player->spellItem )
 				{
 					oCMag_Book* book = player->npc->GetSpellBook();
@@ -849,7 +849,7 @@ void PlayerRPC::MagicSetup(BitStream& stream)
 
 void PlayerRPC::MagicAttack(BitStream& stream)
 {
-	DLOG("PlayerRPC::MagicAttack()");
+	SPDLOG_TRACE("PlayerRPC::MagicAttack()");
 	int playerID;
 	int targetID;
 	stream.Read(playerID);

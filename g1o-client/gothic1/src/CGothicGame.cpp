@@ -1,8 +1,13 @@
 #include "stdafx.h"
 
+namespace
+{
+	constexpr char PlayerInstance[] = "PC_HERO";
+}
+
 CGothicGame::CGothicGame()
 {
-	DLOG("CGothicGame::CGothicGame()");
+	SPDLOG_TRACE("CGothicGame::CGothicGame()");
 	bIsFirstFrame = true; //Po użyciu tego, w renderze wysłać pakiet o gotowości clienta
 };
 
@@ -12,15 +17,16 @@ void CGothicGame::InitGame() //Uruchamianie z hooka na pokazanie menu :)
 	//Uruchamianie świata z wyłączonymi npc'ami
 	//Nawiązanie połączenia z serwerem i wysłanie pakietu autoryzacyjnego
 	//Zmiana czasu na godzine 8:00
-	DLOG("CGothicGame::InitGame()");
+	SPDLOG_TRACE("CGothicGame::InitGame()");
 	oCGame* game = oCGame::GetGame();
 	CChat* chat = core.GetChat();
 	CConfig* config = core.GetConfig();
 	CNetwork* net = core.GetNetwork();
+	const g1o::LaunchSession& session = core.GetLaunchSession();
 
 	if( game )
 	{
-		game -> LoadWorldStartup(zSTRING(core.GetConfig()->GetStartWorld().C_String()));
+		game -> LoadWorldStartup(zSTRING(session.startWorld.c_str()));
 		static const zSTRING& emptyString = *reinterpret_cast<const zSTRING*>(0x00869978);
 		game -> EnterWorld(0, 1, emptyString);
 		oCSpawnManager* spawnManager = game -> GetSpawnManager();
@@ -55,11 +61,10 @@ void CGothicGame::InitGame() //Uruchamianie z hooka na pokazanie menu :)
 		oCNpc* hero = oCNpc::GetHero();
 		if( hero )
 		{
-			const char* playerInstance = core.GetConfig()->GetPlayerInstance().C_String();
-			if( strcmp(playerInstance, hero->GetInstanceName().ToChar()) != 0 )
+			if( strcmp(PlayerInstance, hero->GetInstanceName().ToChar()) != 0 )
 			{
 				zVEC3 pos = hero->GetPosition();
-				oCNpc* new_npc = oCGame::GetGame()->CreateNPC(zSTRING(playerInstance), pos[0], pos[1], pos[2]);
+				oCNpc* new_npc = oCGame::GetGame()->CreateNPC(zSTRING(PlayerInstance), pos[0], pos[1], pos[2]);
 				if( new_npc )
 				{
 					new_npc->SetAsPlayer();
@@ -75,17 +80,11 @@ void CGothicGame::InitGame() //Uruchamianie z hooka na pokazanie menu :)
 		chat -> InitChat();
 		chat -> Show(true);
 		chat->AddLine(RakString("Gothic Online %s", versionString), zCOLOR(255, 196, 0, 255));
-		/*//test hashlib
-		wrapperfactory wf;
-		hashwrapper* hl = wf.create(HL_MD5);
-		std::string hash = hl->getHashFromFile(std::string("Multiplayer//GO_HS.exe"));
-		delete hl;
-
-		chat -> AddLine(RakString("GO_HS.exe: %s", hash.c_str()), zCOLOR(0,255,255,255));*/
 		//Nawiązywanie połączenia z serwerem
 		if( net->InitNetwork() == true ) //Inicjacja sieci
 		{
-			chat -> AddLine(RakString(ClientLanguage::Get(EClientText::EstablishingConnection, config->GetLanguage()), config->GetServerIp().C_String(), config->GetServerPort().C_String()), zCOLOR(255, 196, 0, 255));
+			const std::string serverPort = std::to_string(session.serverPort);
+			chat -> AddLine(RakString(ClientLanguage::Get(EClientText::EstablishingConnection, config->GetLanguage()), session.serverAddress.c_str(), serverPort.c_str()), zCOLOR(255, 196, 0, 255));
 			//net -> Connect() przeniesione do pierwszej klatki rendera
 		}	
 	}

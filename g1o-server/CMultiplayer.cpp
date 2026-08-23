@@ -2,14 +2,14 @@
 
 CMultiplayer::CMultiplayer()
 {
-	//DLOG("CMultiplayer::CMultiplayer()\n");
+	//SPDLOG_TRACE("CMultiplayer::CMultiplayer()");
 	//tworzenie playermanager i worldmanager
 	playerManager; //Zainicjowanie managera
 };
 
 CMultiplayer::~CMultiplayer()
 {
-	//DLOG("CMultiplayer::~CMultiplayer()\n");
+	//SPDLOG_TRACE("CMultiplayer::~CMultiplayer()");
 	//usuwanie playermanager i worldmanager
 };
 

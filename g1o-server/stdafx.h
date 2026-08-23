@@ -20,11 +20,10 @@
 #endif
 #define versionString G1O_VERSION
 
-#include "Log/Log.h"
+#include "Logging/Logging.h"
 
 //Gothic Online headers
 #include "../Shared/GO_SharedIncludes.h"
-#include "../Shared/hashlib/hashlibpp.h"
 #include "../Shared/Scripting/NativeApi.h"
 #include "../Shared/Scripting/ScriptEngine.h"
 

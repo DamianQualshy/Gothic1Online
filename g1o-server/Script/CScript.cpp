@@ -20,7 +20,7 @@ const std::vector<std::string> kServerEvents = {
 CScript::CScript()
 {
 	engine = std::make_unique<g1o::script::ScriptEngine>(ScriptClock, [](const std::string& message) {
-		std::fprintf(stderr, "%s\n", message.c_str());
+		SPDLOG_INFO("[script] {}", message);
 	});
 	SVariable::RegisterConstants(engine->Natives());
 	SFunction::Register(engine->Natives());
@@ -33,7 +33,7 @@ bool CScript::StartScripts(const std::vector<std::string>& paths)
 {
 	if (!engine->StartFiles(paths))
 	{
-		std::fprintf(stderr, "Cannot load the configured server scripts.\n");
+		SPDLOG_ERROR("Cannot load the configured server scripts.");
 		return false;
 	}
 

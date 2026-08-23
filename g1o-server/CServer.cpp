@@ -2,8 +2,8 @@
 
 CServer::CServer()
 {
-	LOG("-== Gothic Online Server %s ==-", versionString);
-	//DLOG("CServer::CServer()\n");
+	SPDLOG_INFO("-== Gothic Online Server {} ==-", versionString);
+	//SPDLOG_TRACE("CServer::CServer()");
 	//Inicjacja wszystkich elementów serwer'a
 	pConfig = new CConfig();
 	pNetwork = new CNetwork();
@@ -21,7 +21,7 @@ CServer::CServer()
 
 CServer::~CServer()
 {
-	//DLOG("CServer::~CServer()\n");
+	//SPDLOG_TRACE("CServer::~CServer()");
 
 	delete pConfig;
 	delete pNetwork;
@@ -36,24 +36,24 @@ void CServer::Start()
 {
 	if (!pConfig->IsValid())
 	{
-		LOG("[error] Server startup stopped because config.xml is invalid");
+		SPDLOG_ERROR("Server startup stopped because config.xml is invalid");
 		return;
 	}
 
-	//DLOG("CServer::Start()\n");
+	//SPDLOG_TRACE("CServer::Start()");
 	//Informacje o konfiguracji servera
-	LOG("[config] Server name: %s", GetConfig()->GetServerName().C_String());
-	LOG("[config] Server port: %s", GetConfig()->GetServerPort().C_String());
-	LOG("[config] Max slots: %s", GetConfig()->GetMaxSlots().C_String());
-	LOG("[config] Public server: %s", GetConfig()->GetServerPublic() ? "yes" : "no");
+	SPDLOG_INFO("[config] Server name: {}", GetConfig()->GetServerName().C_String());
+	SPDLOG_INFO("[config] Server port: {}", GetConfig()->GetServerPort().C_String());
+	SPDLOG_INFO("[config] Max slots: {}", GetConfig()->GetMaxSlots().C_String());
+	SPDLOG_INFO("[config] Public server: {}", GetConfig()->GetServerPublic() ? "yes" : "no");
 	for (const std::string& script : GetConfig()->GetScripts())
-		LOG("[config] Script: %s", script.c_str());
-	LOG("[info] Loading scripts...");
+		SPDLOG_INFO("[config] Script: {}", script.c_str());
+	SPDLOG_INFO("Loading scripts...");
 	if (scr.StartScripts(pConfig->GetScripts()))
-		LOG("[script] Scripts loaded on the server");
+		SPDLOG_INFO("[script] Scripts loaded on the server");
 	else
 		return;
-	LOG("[info] Starting network...");
+	SPDLOG_INFO("Starting network...");
 
 	//Inicjacja sieci
 	if( (this->pNetwork->InitNetwork()) == true )
@@ -66,7 +66,7 @@ void CServer::Start()
 		this->MainThread(); //Główny wątek odbierający pakiety
 	}
 	else
-		LOG("[error] Failed to start network");
+		SPDLOG_ERROR("Failed to start network");
 };
 
 void CServer::SynchronizeTime()
@@ -108,7 +108,7 @@ void CServer::SlaveThread(void *arg)
 
 void CServer::MainThread()
 {
-	//DLOG("CServer::Loop()\n");
+	//SPDLOG_TRACE("CServer::Loop()");
 	while( true )
 	{
 		playerManager.BroadcastPlayerList();

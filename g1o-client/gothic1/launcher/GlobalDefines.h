@@ -4,7 +4,8 @@
 #define APP_NAME                    "Gothic Online"
 
 #define DATA_PATH                   "../../Data/"
-#define CONFIG_PATH                 "../G1O_Config.xml"
+#define CONFIG_PATH                 "../G1O_Config.json"
+#define LEGACY_CONFIG_PATH          "../G1O_Config.xml"
 #define LEGACY_FAVORITE_PATH        "../favorite.bin"
 #define LEGACY_SETTINGS_PATH        "../go_conf.ini"
 #define CLIENT_VERSIONS_PATH        "../versions"

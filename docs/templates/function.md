@@ -2,7 +2,7 @@
 title: '{{ name }}'
 ---
 
-# `function` {{ name }} <font size="4">({{ side }}-side)</font>
+# `function` {{ name }}
 
 {% if deprecated %}
 !!! danger "Deprecated since version: {{ deprecated }}"

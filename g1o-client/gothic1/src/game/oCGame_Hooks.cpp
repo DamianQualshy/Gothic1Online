@@ -2,17 +2,17 @@
 
 void oCGame::Hook_Render()
 {
-	pMemLib->RemoveHook(0x0063DBE0);
+	g1o::hooking::GetHookManager().Remove(0x0063DBE0);
 		this->Render(); //Wywołanie oryginalnej funkcji
 		this->Unpause(); //Zapobieganie pauzowaniu gry
 		//Wywołanie rendera od Gothic Online
 		core.GetRender() -> Render();
-	pMemLib->ImportHook(0x0063DBE0, sizeof(void(oCGame::*)(void)), &oCGame::Hook_Render);
+	g1o::hooking::GetHookManager().Install(0x0063DBE0, &oCGame::Hook_Render);
 };
 
 int oCGame::Hook_HandleEvent(int key)
 {
-	pMemLib->RemoveHook(0x0065EEE0);
+	g1o::hooking::GetHookManager().Remove(0x0065EEE0);
 	int result = 1;
 
 	if (core.GetNetwork()->IsConnected())
@@ -42,7 +42,7 @@ int oCGame::Hook_HandleEvent(int key)
 	else
 		result = this->HandleEvent(key);
 	
-	pMemLib->ImportHook(0x0065EEE0, sizeof(int(oCGame::*)(int)), &oCGame::Hook_HandleEvent);
+	g1o::hooking::GetHookManager().Install(0x0065EEE0, &oCGame::Hook_HandleEvent);
 
 	return result;
 };
@@ -50,8 +50,8 @@ int oCGame::Hook_HandleEvent(int key)
 
 void oCGame::Hook_ChangeLevel(zSTRING const & map1, const zSTRING & map2)
 {
-	pMemLib->RemoveHook(0x0063CD60);
-	DLOG("oCGame::Hook_ChangeLevel(%s, %s)", zSTRING(map1).ToChar(), zSTRING(map2).ToChar());
+	g1o::hooking::GetHookManager().Remove(0x0063CD60);
+	SPDLOG_TRACE("oCGame::Hook_ChangeLevel({}, {})", zSTRING(map1).ToChar(), zSTRING(map2).ToChar());
 		if( core.IsLateHooksInitiated() == true)
 			core.DeInitializeLateHooks();	
 		CNetwork* net = core.GetNetwork();
@@ -61,13 +61,13 @@ void oCGame::Hook_ChangeLevel(zSTRING const & map1, const zSTRING & map2)
 			playerManager.GetLocalPlayer()->SendChangeLevel(RakString(zSTRING(map1).ToChar()));
 		}
 		this->ChangeLevel(map1, map2);
-	pMemLib->ImportHook(0x0063CD60, sizeof(void(oCGame::*)(const zSTRING&, const zSTRING&)), &oCGame::Hook_ChangeLevel);
+	g1o::hooking::GetHookManager().Install(0x0063CD60, &oCGame::Hook_ChangeLevel);
 };
 
 void oCGame::Hook_EnterWorld(oCNpc *npc, int i, const zSTRING & str)
 {
-	pMemLib->RemoveHook(0x0063EAD0);
-	DLOG("oCGame::Hook_EnterWorld(npc, %d, %s)", i, zSTRING(str).ToChar());
+	g1o::hooking::GetHookManager().Remove(0x0063EAD0);
+	SPDLOG_TRACE("oCGame::Hook_EnterWorld(npc, {}, {})", i, zSTRING(str).ToChar());
 	this->EnterWorld(npc,i,str);
 	if( core.IsLateHooksInitiated() == false )
 		core.InitializeLateHooks();
@@ -79,7 +79,7 @@ void oCGame::Hook_EnterWorld(oCNpc *npc, int i, const zSTRING & str)
 	}
 	zSTRING out;
 	ConsoleEval(zSTRING("ZFOGZONE"), out); //Wyłączenie "mgły" - poprawa grafiki
-	pMemLib->ImportHook(0x0063EAD0, sizeof(void(oCGame::*)(oCNpc*,int,const zSTRING&)), &oCGame::Hook_EnterWorld);
+	g1o::hooking::GetHookManager().Install(0x0063EAD0, &oCGame::Hook_EnterWorld);
 };
 
 void oCGame::Fake_LoadSavegame(int a, int b)
@@ -87,7 +87,7 @@ void oCGame::Fake_LoadSavegame(int a, int b)
 #ifdef COOP
 	if (scr.GetScriptVars()->isSavingActive)
 	{
-		pMemLib->RemoveHook(0x0063C2A0);
+		g1o::hooking::GetHookManager().Remove(0x0063C2A0);
 		if( core.IsLateHooksInitiated() == true)
 			core.DeInitializeLateHooks();
 
@@ -97,7 +97,7 @@ void oCGame::Fake_LoadSavegame(int a, int b)
 
 		if( core.IsLateHooksInitiated() == false )
 			core.InitializeLateHooks();
-		pMemLib->ImportHook(0x0063C2A0, sizeof(void(oCGame::*)(int,int)), &oCGame::Fake_LoadSavegame); 
+		g1o::hooking::GetHookManager().Install(0x0063C2A0, &oCGame::Fake_LoadSavegame);
 	}
 #endif //COOP
 };
@@ -107,7 +107,7 @@ void oCGame::Fake_WriteSavegame(int a, int b)
 #ifdef COOP
 	if (scr.GetScriptVars()->isSavingActive)
 	{
-		pMemLib->RemoveHook(0x0063AD80);
+		g1o::hooking::GetHookManager().Remove(0x0063AD80);
 		if( core.IsLateHooksInitiated() == true)
 			core.DeInitializeLateHooks();	
 		playerManager.DestroyAllNpcs();
@@ -115,7 +115,7 @@ void oCGame::Fake_WriteSavegame(int a, int b)
 		playerManager.CreateAllNpcs();
 		if( core.IsLateHooksInitiated() == false )
 			core.InitializeLateHooks();
-		pMemLib->ImportHook(0x0063AD80, sizeof(void(oCGame::*)(int,int)), &oCGame::Fake_WriteSavegame);
+		g1o::hooking::GetHookManager().Install(0x0063AD80, &oCGame::Fake_WriteSavegame);
 	}
 #endif //COOP
 };

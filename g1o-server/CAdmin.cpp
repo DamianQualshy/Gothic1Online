@@ -16,7 +16,7 @@ void CAdmin::HandleAdminCommand(CPlayer* player, RakString command)
 		size_t pos = -1;
 		if( (pos = command.Find(" ")) != (size_t)-1 )
 		{
-			LOG("[admin] param found!");
+			SPDLOG_INFO("[admin] param found!");
 			RakString cmd = command;
 			cmd.Erase(pos, cmd.GetLength()-pos);
 			RakString params = command;

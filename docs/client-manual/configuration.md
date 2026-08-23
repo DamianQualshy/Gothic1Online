@@ -1,40 +1,39 @@
 # Client Configuration
 
-The launcher and injected Gothic client share `Multiplayer/G1O_Config.xml`. The launcher updates connection and preference values; the client reads the same flat XML fields when it starts.
+The launcher and injected Gothic client share `Multiplayer/G1O_Config.json` for persistent user preferences. On first launch, an existing `G1O_Config.xml` is imported and the JSON file is written without changing the server's XML configuration format.
 
-```xml
-<GO_Config>
-  <playerName>Nickname</playerName>
-  <serverIp>127.0.0.1</serverIp>
-  <serverPort>28970</serverPort>
-  <startWorld>WORLD.ZEN</startWorld>
-  <playerInstance>PC_HERO</playerInstance>
-  <lang>en</lang>
-  <launcherPosX>-1</launcherPosX>
-  <launcherPosY>-1</launcherPosY>
-  <favorites />
-</GO_Config>
+```json
+{
+  "playerName": "Nickname",
+  "lang": "en",
+  "launcherPosX": -1,
+  "launcherPosY": -1,
+  "favorites": []
+}
 ```
 
-## Player And Connection
+## Player Preferences
 
-| Element | Default | Runtime behavior |
+| Field | Default | Runtime behavior |
 | --- | --- | --- |
 | `playerName` | `Nickname` | Nickname sent during connection. |
-| `serverIp` | `127.0.0.1` | Address selected by the launcher. |
-| `serverPort` | `28970` | Game and download port. |
-| `startWorld` | `WORLD.ZEN` | Initial Gothic world expected by the connection flow. |
-| `playerInstance` | `PC_HERO` | Local player instance name. |
 | `lang` | `en` | Launcher/client language. Shipped launcher values are `en`, `pl`, and `ru`; unsupported in-game text falls back to English. |
+
+## Launch Session
+
+The selected server address, port, and start world are transient session data. The launcher validates them, serializes them as JSON into the child-only `G1O_LAUNCH_SESSION` environment variable, creates Gothic suspended, and injects the matching client DLL. The injected client consumes and removes that variable before starting multiplayer. These values are never written to the persistent configuration.
+
+The local player instance is an internal `PC_HERO` invariant rather than a configurable setting.
 
 ## Launcher State
 
-`launcherPosX` and `launcherPosY` store the launcher window position. `-1` centers it on first start. The `favorites` element contains zero or more entries in this form:
+`launcherPosX` and `launcherPosY` store the launcher window position. `-1` centers it on first start. The `favorites` array contains zero or more entries in this form:
 
-```xml
-<favorites>
-  <server ip="127.0.0.1" port="28970" />
-</favorites>
+```json
+{
+  "ip": "127.0.0.1",
+  "port": "28970"
+}
 ```
 
 ## Script Behavior

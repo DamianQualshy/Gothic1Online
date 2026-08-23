@@ -2,7 +2,7 @@
 
 CPlayer::CPlayer()
 {
-	DLOG("CPlayer::CPlayer()");
+	SPDLOG_TRACE("CPlayer::CPlayer()");
 
 	isSlideAllowed = false;
 	timerSlide = 0;
@@ -13,7 +13,7 @@ CPlayer::CPlayer()
 
 CPlayer::CPlayer(int playerID, RakString playerName)
 {
-	DLOG("CPlayer::CPlayer(%d, %s)",playerID,playerName.C_String());
+	SPDLOG_TRACE("CPlayer::CPlayer({}, {})", playerID,playerName.C_String());
 
 	id = playerID;
 	name = playerName;
@@ -27,7 +27,7 @@ CPlayer::CPlayer(int playerID, RakString playerName)
 
 CPlayer::~CPlayer()
 {
-	DLOG("CPlayer::~CPlayer() ID = %d",this->id);
+	SPDLOG_TRACE("CPlayer::~CPlayer() ID = {}", this->id);
 
 	if( this->npc )
 	{
@@ -38,7 +38,7 @@ CPlayer::~CPlayer()
 
 void CPlayer::Spawn(float x, float y, float z, RakString instance)
 {
-	DLOG("CPlayer::Spawn(%f, %f, %f)", x, y, z);
+	SPDLOG_TRACE("CPlayer::Spawn({:f}, {:f}, {:f})", x, y, z);
 
 	if( this->npc == NULL )
 	{
@@ -54,7 +54,7 @@ void CPlayer::Spawn(float x, float y, float z, RakString instance)
 
 void CPlayer::Respawn()
 {
-	DLOG("CPlayer::Respawn()");
+	SPDLOG_TRACE("CPlayer::Respawn()");
 	if( this->npc )
 	{
 		// Old creating new NPC :)
@@ -84,7 +84,7 @@ void CPlayer::Respawn()
 
 void CPlayer::UnSpawn()
 {
-	DLOG("CPlayer::UnSpawn() ID = %d", this->GetID());
+	SPDLOG_TRACE("CPlayer::UnSpawn() ID = {}", this->GetID());
 	if( this->npc )
 	{
 		this->npc->DestroyNpc();
@@ -203,14 +203,14 @@ void CPlayer::RefreshArmor()
 				{
 					if(strcmp(armorInstance.C_String(), "NULL") == 0)
 					{
-						DLOG("Remove armor");
+						SPDLOG_TRACE("Remove armor");
 						npc->UnequipItem(armor);
 						npc->_DoDropVob(armor);
 						armor->RemoveVobFromWorld();
 					}
 					else
 					{
-						DLOG("Equip armor");
+						SPDLOG_TRACE("Equip armor");
 						npc->UnequipItem(armor);
 						npc->_DoDropVob(armor);
 						armor->RemoveVobFromWorld();
@@ -224,7 +224,7 @@ void CPlayer::RefreshArmor()
 			{
 				if(strcmp(armorInstance.C_String(), "NULL") != 0)
 				{
-					DLOG("Equip armor");
+					SPDLOG_TRACE("Equip armor");
 					armor = npc->CreateItem(zSTRING(armorInstance.C_String()), 1);
 					if(armor)
 						npc->Equip(armor);

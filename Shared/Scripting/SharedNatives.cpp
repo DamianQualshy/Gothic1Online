@@ -2,13 +2,9 @@
 
 #include "NativeApi.h"
 
+#include <Crypto/Hash.h>
 #include <Utility/utility.h>
 #include <goMath/goMath.h>
-#include <hashlib/hl_md5wrapper.h>
-#include <hashlib/hl_sha1wrapper.h>
-#include <hashlib/hl_sha256wrapper.h>
-#include <hashlib/hl_sha384wrapper.h>
-#include <hashlib/hl_sha512wrapper.h>
 
 #include <cstdio>
 #include <cstring>
@@ -196,13 +192,12 @@ int HexToRgb(CallContext& context)
 	return 1;
 }
 
-#define G1O_HASH_NATIVE(functionName, wrapperType) \
+#define G1O_HASH_NATIVE(functionName, algorithm) \
 	int functionName(CallContext& context) \
 	{ \
 		SCRIPT_CHECK_PARAM_COUNT(context, 1); \
 		SCRIPT_CHECK_PARAM_STRING(context, text, 0); \
-		wrapperType hash; \
-		context.Push(hash.getHashFromString(text)); \
+		context.Push(g1o::crypto::Hash(text, g1o::crypto::HashAlgorithm::algorithm)); \
 		return 1; \
 	}
 
@@ -216,7 +211,7 @@ int HexToRgb(CallContext& context)
  * @param (string) text Input text.
  * @return (string) Lowercase hexadecimal digest.
  */
-G1O_HASH_NATIVE(Md5, md5wrapper)
+G1O_HASH_NATIVE(Md5, Md5)
 
 /* g1odoc (func)
  *
@@ -228,7 +223,7 @@ G1O_HASH_NATIVE(Md5, md5wrapper)
  * @param (string) text Input text.
  * @return (string) Lowercase hexadecimal digest.
  */
-G1O_HASH_NATIVE(Sha1, sha1wrapper)
+G1O_HASH_NATIVE(Sha1, Sha1)
 
 /* g1odoc (func)
  *
@@ -240,7 +235,7 @@ G1O_HASH_NATIVE(Sha1, sha1wrapper)
  * @param (string) text Input text.
  * @return (string) Lowercase hexadecimal digest.
  */
-G1O_HASH_NATIVE(Sha256, sha256wrapper)
+G1O_HASH_NATIVE(Sha256, Sha256)
 
 /* g1odoc (func)
  *
@@ -252,7 +247,7 @@ G1O_HASH_NATIVE(Sha256, sha256wrapper)
  * @param (string) text Input text.
  * @return (string) Lowercase hexadecimal digest.
  */
-G1O_HASH_NATIVE(Sha384, sha384wrapper)
+G1O_HASH_NATIVE(Sha384, Sha384)
 
 /* g1odoc (func)
  *
@@ -264,7 +259,19 @@ G1O_HASH_NATIVE(Sha384, sha384wrapper)
  * @param (string) text Input text.
  * @return (string) Lowercase hexadecimal digest.
  */
-G1O_HASH_NATIVE(Sha512, sha512wrapper)
+G1O_HASH_NATIVE(Sha512, Sha512)
+
+/* g1odoc (func)
+ *
+ * This function calculates a BLAKE2b digest using libsodium.
+ * @name blake2b
+ * @side server
+ * @category Hash
+ * @version 0.5.0
+ * @param (string) text Input text.
+ * @return (string) Lowercase hexadecimal digest.
+ */
+G1O_HASH_NATIVE(Blake2b, Blake2b)
 
 #undef G1O_HASH_NATIVE
 
@@ -283,6 +290,7 @@ void RegisterSharedNatives(NativeRegistry& registry, TimerManager::Clock clock)
 	registry.Add("sha256", Sha256);
 	registry.Add("sha384", Sha384);
 	registry.Add("sha512", Sha512);
+	registry.Add("blake2b", Blake2b);
 }
 
 } // namespace g1o::script

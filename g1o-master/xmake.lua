@@ -5,7 +5,12 @@ target("G1O.Master")
     add_files("*.cpp")
     add_includedirs(".")
     add_deps("G1O.Shared")
-    add_defines("_CONSOLE", "_CRT_SECURE_NO_WARNINGS")
+    add_packages("fmt", "spdlog")
+    add_defines(
+        "_CONSOLE",
+        "_CRT_SECURE_NO_WARNINGS",
+        "SPDLOG_FMT_EXTERNAL",
+        "SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_TRACE")
     add_syslinks("ws2_32", "winmm")
 
     local master_server_port = tonumber(get_config("master_server_port") or "1200") or 1200

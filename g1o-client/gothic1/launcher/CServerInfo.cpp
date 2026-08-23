@@ -17,6 +17,6 @@ CServerInfo::CServerInfo(QString ipAdress, QString port, QString hostName, QStri
     m_Exist(false)
 {
 #ifdef DEBUG_MODE
-    LOG(__FUNCTION__)
+    SPDLOG_TRACE("{}", __FUNCTION__);
 #endif
 }

@@ -2,14 +2,14 @@
 
 CMultiplayer::CMultiplayer()
 {
-	DLOG("CMultiplayer::CMultiplayer()");
+	SPDLOG_TRACE("CMultiplayer::CMultiplayer()");
 	//Zainicjowanie managera
 	playerManager;
 };
 
 CMultiplayer::~CMultiplayer()
 {
-	DLOG("CMultiplayer::~CMultiplayer()");
+	SPDLOG_TRACE("CMultiplayer::~CMultiplayer()");
 };
 
 bool CMultiplayer::InitMultiplayer(RakString hostname, int myid)

@@ -9,7 +9,7 @@ CAddons::CAddons(QWidget *parent) :
     ui(new Ui::CAddons)
 {
 #ifdef DEBUG_MODE
-    LOG(__FUNCTION__)
+    SPDLOG_TRACE("{}", __FUNCTION__);
 #endif
     ui->setupUi(this);
 
@@ -20,7 +20,7 @@ CAddons::CAddons(QWidget *parent) :
 CAddons::~CAddons()
 {
 #ifdef DEBUG_MODE
-    LOG(__FUNCTION__)
+    SPDLOG_TRACE("{}", __FUNCTION__);
 #endif
     delete ui;
 }
@@ -46,11 +46,11 @@ void CAddons::loadAddonsList()
 
     int index = 0;
 
-    LOG("[info] Loading addons list")
+    SPDLOG_INFO("Loading addons list");
 
     for (QString &addon : addonDirectory.entryList())
     {
-        LOG("[addon] %s", addon.toStdString().c_str())
+        SPDLOG_INFO("[addon] {}", addon.toStdString().c_str());
 
         int posExt = addon.lastIndexOf(".");
         QString fileExt = addon.mid(posExt).toLower();
@@ -79,7 +79,7 @@ void CAddons::loadAddonsList()
         }
     }
 
-    LOG("[info] Addons loaded!")
+    SPDLOG_INFO("Addons loaded!");
 }
 
 void CAddons::initConnections()

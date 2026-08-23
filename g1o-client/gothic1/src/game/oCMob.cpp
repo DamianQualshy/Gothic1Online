@@ -73,7 +73,7 @@ bool MobType::IsInter(zSTRING& visual)
 
 void oCMobInter::Hook_OnTrigger(zCVob *target, zCVob *sender)
 {
-	pMemLib->RemoveHook(0x0067D300);
+	g1o::hooking::GetHookManager().Remove(0x0067D300);
 	if (this->GetS1() && !this->GetS2())
 	{
 		if (oCNpc::GetHero() == (oCNpc*)sender)
@@ -99,12 +99,12 @@ void oCMobInter::Hook_OnTrigger(zCVob *target, zCVob *sender)
 		}
 		this->OnTrigger(target, sender);
 	}
-	pMemLib->ImportHook(0x0067D300, sizeof(void(oCMobInter::*)(zCVob*, zCVob*)), &oCMobInter::Hook_OnTrigger);
+	g1o::hooking::GetHookManager().Install(0x0067D300, &oCMobInter::Hook_OnTrigger);
 }
 
 void oCMobInter::Hook_OnUntrigger(zCVob *target, zCVob *sender)
 {
-	pMemLib->RemoveHook(0x0067D5F0);
+	g1o::hooking::GetHookManager().Remove(0x0067D5F0);
 	if (!this->GetS1() && this->GetS2())
 	{
 		if (oCNpc::GetHero() == (oCNpc*)sender)
@@ -130,5 +130,5 @@ void oCMobInter::Hook_OnUntrigger(zCVob *target, zCVob *sender)
 		}
 		this->OnUntrigger(target, sender);
 	}
-	pMemLib->ImportHook(0x0067D5F0, sizeof(void(oCMobInter::*)(zCVob*, zCVob*)), &oCMobInter::Hook_OnUntrigger);
+	g1o::hooking::GetHookManager().Install(0x0067D5F0, &oCMobInter::Hook_OnUntrigger);
 }

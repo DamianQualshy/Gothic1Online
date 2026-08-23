@@ -4,7 +4,7 @@
 
 zFILE* oCObjectFactory::Hook_CreateZFile(zSTRING const& fileName)
 {
-	pMemLib->RemoveHook(0x0058BD60);
+	g1o::hooking::GetHookManager().Remove(0x0058BD60);
 	std::string s = fileName.ToChar();
 	zFILE* result = NULL;
 	if( s.find(".sav") != std::string::npos )
@@ -16,6 +16,6 @@ zFILE* oCObjectFactory::Hook_CreateZFile(zSTRING const& fileName)
 	}
 	else
 		result = CreateZFile(fileName);
-	pMemLib->ImportHook(0x0058BD60, sizeof(zFILE*(oCObjectFactory::*)(zSTRING const&)), &oCObjectFactory::Hook_CreateZFile);
+	g1o::hooking::GetHookManager().Install(0x0058BD60, &oCObjectFactory::Hook_CreateZFile);
 	return result;
 };

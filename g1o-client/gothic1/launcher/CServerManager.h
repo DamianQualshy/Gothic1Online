@@ -44,7 +44,6 @@ public:
 private:
     void initConnections();
     void updateInfo(QString ipAdress, QString port);
-    bool updateXmlClient(CServerInfo serverInfo);
 
     QVector<CServerInfo> m_ServerList;
     QTreeWidget *m_TreeWidget;

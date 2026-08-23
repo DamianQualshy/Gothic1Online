@@ -15,7 +15,11 @@ add_moduledirs("xmake/modules")
 
 add_rules("mode.debug", "mode.release", "mode.releasedbg")
 
+add_requires("fmt 11.0.2", {configs = {header_only = true}})
 add_requires("lua 5.4.7", "sol2 3.3.*")
+add_requires("libsodium 1.0.*", "nlohmann_json 3.12.*")
+add_requires("polyhook2", "asmjit")
+add_requires("spdlog 1.15.1", {configs = {fmt_external = true, header_only = true}})
 
 option("master_server_address")
     set_showmenu(true)

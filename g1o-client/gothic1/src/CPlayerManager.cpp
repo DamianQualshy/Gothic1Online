@@ -2,26 +2,26 @@
 
 CPlayerManager::CPlayerManager() : pLocalPlayer(nullptr)
 {
-	DLOG("CPlayerManager::CPlayerManager()");
+	SPDLOG_TRACE("CPlayerManager::CPlayerManager()");
 
 	CAnimation::GetInstance(); //Inicjacja CAnimation
 };
 
 CPlayerManager::~CPlayerManager()
 {
-	DLOG("CPlayerManager::~CPlayerManager()");
+	SPDLOG_TRACE("CPlayerManager::~CPlayerManager()");
 };
 
 CLocalPlayer* CPlayerManager::CreateLocalPlayer(int playerID, RakString playerName)
 {
-	DLOG("CPlayerManager::CreateLocalPlayer(%d, %s)",playerID,playerName.C_String());
+	SPDLOG_TRACE("CPlayerManager::CreateLocalPlayer({}, {})", playerID,playerName.C_String());
 
 	if(playerName.GetLength() <= 30)
 	{
 		CLocalPlayer* player = new CLocalPlayer(playerID, playerName);
 		this->playerList.PushBack(player);
 		this->pLocalPlayer = player;
-		this->pLocalPlayer->world = core.GetConfig()->GetStartWorld();
+		this->pLocalPlayer->world = core.GetLaunchSession().startWorld.c_str();
 
 		return player;
 	}
@@ -30,7 +30,7 @@ CLocalPlayer* CPlayerManager::CreateLocalPlayer(int playerID, RakString playerNa
 
 CPlayer* CPlayerManager::CreatePlayer(int playerID, RakString playerName)
 {
-	DLOG("CPlayerManager::CreatePlayer(%d, %s)",playerID,playerName.C_String());
+	SPDLOG_TRACE("CPlayerManager::CreatePlayer({}, {})", playerID,playerName.C_String());
 	if(playerName.GetLength() <= 30)
 	{
 		CPlayer* player = new CPlayer(playerID, playerName);
@@ -42,7 +42,7 @@ CPlayer* CPlayerManager::CreatePlayer(int playerID, RakString playerName)
 
 bool CPlayerManager::DestroyPlayer(CPlayer *player)
 {
-	DLOG("CPlayerManager::DestroyPlayer()");
+	SPDLOG_TRACE("CPlayerManager::DestroyPlayer()");
 	
 	if(player != NULL)
 	{

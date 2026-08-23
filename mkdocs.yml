@@ -10,8 +10,6 @@ theme:
   name: material
   features:
     - navigation.footer
-    - navigation.indexes
-    - navigation.sections
     - navigation.top
     - search.highlight
     - search.suggest

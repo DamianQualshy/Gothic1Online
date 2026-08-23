@@ -2,19 +2,19 @@
 
 CReceiver::CReceiver()
 {
-	DLOG("CReceiver::CReceiver()");
+	SPDLOG_TRACE("CReceiver::CReceiver()");
 };
 
 CReceiver::~CReceiver()
 {
-	DLOG("CReceiver::~CReceiver()");
+	SPDLOG_TRACE("CReceiver::~CReceiver()");
 };
 
 void CReceiver::ReceivePackets(CNetwork *network)
 {
 	for(Packet* packet = network->GetPeer()->Receive(); packet; network->GetPeer()->DeallocatePacket(packet), packet = network->GetPeer()->Receive() ) //Pakiety na klatkę
 	{
-		//printf("Packet catched!\n");
+		//SPDLOG_TRACE("Packet caught!");
 		//Dodanie liczby odebranych pakietów
 		CNetInterface::GetInstance().PushOnePacketCnt();
 		switch(packet->data[0])

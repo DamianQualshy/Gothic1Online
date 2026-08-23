@@ -20,7 +20,7 @@ CMaster::~CMaster()
 
 void CMaster::StartUp()
 {
-	printf("[info] Gothic Online Master Server is starting up!\n");
+	SPDLOG_INFO("Gothic Online Master Server is starting up!");
 	if( GetNetwork()->Init() == true )
 		ReceivePackets();
 };
@@ -39,7 +39,7 @@ void CMaster::CreateListFile()
 			}
 			fclose(file);
 		}
-		else printf("[error] Cannot create list.txt in the master server working directory\n");
+		else SPDLOG_ERROR("Cannot create list.txt in the master server working directory");
 		listFileTime = GetTimeMS() + 10000;
 	}
 };
@@ -82,7 +82,7 @@ void CMaster::ClearUnactive()
             CServer* srv = serverList[i];
             if( srv->lastUpdated < GetTimeMS() )
             {
-                printf("[info] Server %s:%d has been removed from list for unactivity\n", srv->address.C_String(), srv->port);
+                SPDLOG_INFO("Server {}:{} has been removed from list for inactivity", srv->address.C_String(), srv->port);
                 serverList.erase(serverList.begin() + i);
                 delete srv;
             }
@@ -93,7 +93,7 @@ void CMaster::ClearUnactive()
 
 void CMaster::ReceivePackets()
 {
-	printf("[info] Waiting for servers..\n");
+	SPDLOG_INFO("Waiting for servers...");
 	RakPeerInterface* peer = GetNetwork()->GetPeer();
 	while( peer )
 	{
@@ -102,7 +102,7 @@ void CMaster::ReceivePackets()
 			char address[30];
 			memset(&address, 0, 30);
 			packet->systemAddress.ToString_Old(false,&address[0]);
-			printf("[info] Data received from %s\n", address);
+			SPDLOG_DEBUG("Data received from {}", address);
 			if( packet->data[0] == GO_MASTER )
 			{
 				BitStream s(packet->data, packet->length, false);
@@ -128,7 +128,7 @@ void CMaster::ReceivePackets()
 						break;
 					}
 				}
-				printf("[info] Server has been added/updated to the list\n");
+				SPDLOG_INFO("Server has been added or updated in the list");
 				serverList.push_back(srv);
 				peer->CloseConnection(packet->systemAddress,false);
 			}

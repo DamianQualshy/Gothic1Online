@@ -2,7 +2,7 @@
 
 int oCNpc::Hook_DoDropVob(zCVob *vob)
 {
-	pMemLib->RemoveHook(0x006A10F0);
+	g1o::hooking::GetHookManager().Remove(0x006A10F0);
 	oCItem* item = reinterpret_cast<oCItem*>(vob);
 	if( strcmp(item->GetInstanceName().ToChar(), "ITLSTORCHBURNING") != 0 )	//Jebane pochodnie
 	{
@@ -15,13 +15,13 @@ int oCNpc::Hook_DoDropVob(zCVob *vob)
 		else
 			this->_DoDropVob(vob);
 	}
-	pMemLib->ImportHook(0x006A10F0, sizeof(int(oCNpc::*)(zCVob*)), &oCNpc::Hook_DoDropVob);
+	g1o::hooking::GetHookManager().Install(0x006A10F0, &oCNpc::Hook_DoDropVob);
 	return 0;
 };               
 
 int oCNpc::Hook_DoTakeVob(zCVob *vob)
 {
-	pMemLib->RemoveHook(0x006A0D10);
+	g1o::hooking::GetHookManager().Remove(0x006A0D10);
 	//core.GetChat()->AddLine(RakString("Take item"), zCOLOR(255,0,0,255));
 	if( this == oCNpc::GetHero() )
 	{
@@ -32,21 +32,21 @@ int oCNpc::Hook_DoTakeVob(zCVob *vob)
 	}
 	else
 		this->_DoTakeVob(vob);
-	pMemLib->ImportHook(0x006A0D10, sizeof(int(oCNpc::*)(zCVob*)), &oCNpc::Hook_DoTakeVob);
+	g1o::hooking::GetHookManager().Install(0x006A0D10, &oCNpc::Hook_DoTakeVob);
 	//Wysyłanie podniesienia itemu
 	return 0;
 };
 
 void oCNpc::Hook_SetMovLock(int e)
 {
-	pMemLib->RemoveHook(0x00694C50);
+	g1o::hooking::GetHookManager().Remove(0x00694C50);
 	SetMovLock(scr.GetScriptVars()->isFrozen ? true : e);
-	pMemLib->ImportHook(0x00694C50, sizeof(void(oCNpc::*)(int)), &oCNpc::Hook_SetMovLock);
+	g1o::hooking::GetHookManager().Install(0x00694C50, &oCNpc::Hook_SetMovLock);
 };
 
 void oCNpc::Hook_OpenInventory()
 {
-	pMemLib->RemoveHook(0x006BB0A0);
+	g1o::hooking::GetHookManager().Remove(0x006BB0A0);
 
 	if (scr.GetScriptVars()->isEqEnabled && !scr.GetScriptVars()->isFrozen)
 	{
@@ -54,12 +54,12 @@ void oCNpc::Hook_OpenInventory()
 		if (IsInvOpen()) CEvent::OpenInventory();
 	}
 		
-	pMemLib->ImportHook(0x006BB0A0, sizeof(void(oCNpc::*)(void)), &oCNpc::Hook_OpenInventory);
+	g1o::hooking::GetHookManager().Install(0x006BB0A0, &oCNpc::Hook_OpenInventory);
 };
 
 void oCNpc::Hook_CloseInventory()
 {
-	pMemLib->RemoveHook(0x006BB2F0);
+	g1o::hooking::GetHookManager().Remove(0x006BB2F0);
 
 	if (IsInvOpen())
 	{
@@ -67,75 +67,75 @@ void oCNpc::Hook_CloseInventory()
 		CEvent::CloseInventory();
 	}
 
-	pMemLib->ImportHook(0x006BB2F0, sizeof(void(oCNpc::*)(void)), &oCNpc::Hook_CloseInventory);
+	g1o::hooking::GetHookManager().Install(0x006BB2F0, &oCNpc::Hook_CloseInventory);
 }; 
 
 int oCNpc::Hook_ApplyOverlay(zSTRING const& overlay)
 {
-	pMemLib->RemoveHook(0x0068AD40);
+	g1o::hooking::GetHookManager().Remove(0x0068AD40);
 
 	int result = ApplyOverlay(overlay);
 	if (this == oCNpc::GetHero() && result)
 		playerManager.GetLocalPlayer()->SendOverlay(true, overlay.ToChar());
 
-	pMemLib->ImportHook(0x0068AD40, sizeof(int(oCNpc::*)(zSTRING const&)), &oCNpc::Hook_ApplyOverlay);
+	g1o::hooking::GetHookManager().Install(0x0068AD40, &oCNpc::Hook_ApplyOverlay);
 	return result;
 };
 
 void oCNpc::Hook_RemoveOverlay(zSTRING const& overlay)
 {
-	pMemLib->RemoveHook(0x0068B040);
+	g1o::hooking::GetHookManager().Remove(0x0068B040);
 	RemoveOverlay(overlay);
 	if (this == oCNpc::GetHero())
 		playerManager.GetLocalPlayer()->SendOverlay(false, overlay.ToChar());
-	pMemLib->ImportHook(0x0068B040, sizeof(void(oCNpc::*)(zSTRING const&)), &oCNpc::Hook_RemoveOverlay);
+	g1o::hooking::GetHookManager().Install(0x0068B040, &oCNpc::Hook_RemoveOverlay);
 };
 
 int oCNpc::Hook_ApplyTimedOverlayMds(zSTRING const& overlay, float time)
 {
-	pMemLib->RemoveHook(0x006B0C60);
+	g1o::hooking::GetHookManager().Remove(0x006B0C60);
 
 	int result = ApplyTimedOverlayMds(overlay, time);
 	if (this == oCNpc::GetHero() && result)
 		playerManager.GetLocalPlayer()->SendTimedOverlay(time, overlay.ToChar());
 
-	pMemLib->ImportHook(0x006B0C60, sizeof(int(oCNpc::*)(zSTRING const&, float)), &oCNpc::Hook_ApplyTimedOverlayMds);
+	g1o::hooking::GetHookManager().Install(0x006B0C60, &oCNpc::Hook_ApplyTimedOverlayMds);
 	return result;
 }
 
 void oCNpc::Hook_DropUnconscious(float time, oCNpc* npc)
 {
-	pMemLib->RemoveHook(0x00692C10);
+	g1o::hooking::GetHookManager().Remove(0x00692C10);
 	if (scr.GetScriptVars()->isUnconsciousEnabled)
 		this->DropUnconscious(time, npc);
-	pMemLib->ImportHook(0x00692C10, sizeof(void(oCNpc::*)(float, oCNpc*)), &oCNpc::Hook_DropUnconscious);
+	g1o::hooking::GetHookManager().Install(0x00692C10, &oCNpc::Hook_DropUnconscious);
 }
 
 int oCNpc::Hook_DoShootArrow(int p)
 {
-	pMemLib->RemoveHook(0x006A09F0);
+	g1o::hooking::GetHookManager().Remove(0x006A09F0);
 	if (this == oCNpc::GetHero())
 		playerManager.GetLocalPlayer()->SendArrow();
 	const int result = this->DoShootArrow(p);
-	pMemLib->ImportHook(0x006A09F0, sizeof(int(oCNpc::*)(int)), &oCNpc::Hook_DoShootArrow);
+	g1o::hooking::GetHookManager().Install(0x006A09F0, &oCNpc::Hook_DoShootArrow);
 	return result;
 }
 
 void oCNpc::Hook_OnDamage_Anim(oSDamageDescriptor &dmgDes)
 {
-	//pMemLib->RemoveHook(0x00741990);
-	//pMemLib->ImportHook(0x00741990, sizeof(void(oCNpc::*)(oSDamageDescriptor&)), &oCNpc::Hook_OnDamage);
+	//g1o::hooking::GetHookManager().Remove(0x00741990);
+	//g1o::hooking::GetHookManager().Install(0x00741990, &oCNpc::Hook_OnDamage);
 }
 
 void oCNpc::Hook_OnDamage_Script(oSDamageDescriptor &dmgDes) //0x00738E40
 {
-	pMemLib->RemoveHook(0x00738E40);
+	g1o::hooking::GetHookManager().Remove(0x00738E40);
 	if (scr.GetScriptVars()->isSpawningEnabled)
 		this->OnDamage_Script(dmgDes);
 
 	if (this != oCNpc::GetHero() && dmgDes.pNpcAttacker == oCNpc::GetHero())
 		playerManager.GetLocalPlayer()->SendHitFocus(this);
-	pMemLib->ImportHook(0x00738E40, sizeof(void(oCNpc::*)(oSDamageDescriptor&)), &oCNpc::Hook_OnDamage_Script);
+	g1o::hooking::GetHookManager().Install(0x00738E40, &oCNpc::Hook_OnDamage_Script);
 }
 
 void oCNpc::Fake_DropAllInHand()
@@ -150,9 +150,9 @@ void oCNpc::Fake_Disable()
 		return;
 	else
 	{
-		pMemLib->RemoveHook(0x006A1D20);
+		g1o::hooking::GetHookManager().Remove(0x006A1D20);
 		this->Disable();
-		pMemLib->ImportHook(0x006A1D20, sizeof(void(oCNpc::*)()), &oCNpc::Fake_Disable);
+		g1o::hooking::GetHookManager().Install(0x006A1D20, &oCNpc::Fake_Disable);
 	}*/
 	return;
 };

@@ -16,7 +16,7 @@ void ChatRPC::HandleChatRPC(CNetwork* network, Packet* packet)
 void ChatRPC::PlayerMessage(CNetwork* network, BitStream& stream)
 {
 #ifdef DEBUG_MODE
-	LOG("ChatRPC::PlayerMessage");
+	SPDLOG_INFO("ChatRPC::PlayerMessage");
 #endif
 	int playerID;
 	RakString playerMessage;
@@ -24,7 +24,7 @@ void ChatRPC::PlayerMessage(CNetwork* network, BitStream& stream)
 	stream.Read(playerID);
 	stream.Read(playerMessage);
 #ifdef DEBUG_MODE
-	LOG("ChatRPC::PlayerMessage(%s)", playerMessage.C_String());
+	SPDLOG_INFO("ChatRPC::PlayerMessage({})", playerMessage.C_String());
 #endif
 
 	if(playerMessage.GetLength() <= 255)
@@ -57,7 +57,7 @@ void ChatRPC::PlayerMessage(CNetwork* network, BitStream& stream)
 						chatStream.Write(RakString("%s: %s", player->name.C_String(), playerMessage.C_String()));
 	
 						network->SendToAll(chatStream,HIGH_PRIORITY,RELIABLE);
-						LOG("[chat] %s: %s", player->name.C_String(), playerMessage.C_String());
+						SPDLOG_INFO("[chat] {}: {}", player->name.C_String(), playerMessage.C_String());
 					}
 				}
 			}
@@ -71,7 +71,7 @@ void ChatRPC::PlayerMessage(CNetwork* network, BitStream& stream)
 					chatStream.Write(RakString("%s: %s", player->name.C_String(), playerMessage.C_String()));
 	
 					network->SendToAll(chatStream,HIGH_PRIORITY,RELIABLE);
-					LOG("[chat] %s: %s", player->name.C_String(), playerMessage.C_String());
+					SPDLOG_INFO("[chat] {}: {}", player->name.C_String(), playerMessage.C_String());
 				}
 			}
 		}

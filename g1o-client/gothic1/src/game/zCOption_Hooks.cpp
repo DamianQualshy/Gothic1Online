@@ -3,7 +3,7 @@
 //Blokowanie opcji nowa gra, wczytaj grę i zapisz grę
 zSTRING zCOption::Hook_ReadString(const zSTRING& p1, const char* p2, const char* p3)
 {
-	pMemLib->RemoveHook(0x0045D080);
+	g1o::hooking::GetHookManager().Remove(0x0045D080);
 
 	zSTRING result;	
 	if(strcmp(p2, "menuAction") == 0)
@@ -20,7 +20,7 @@ zSTRING zCOption::Hook_ReadString(const zSTRING& p1, const char* p2, const char*
 	else
 		result = this->ReadString(p1, p2, p3);
 
-	pMemLib->ImportHook(0x0045D080, sizeof(zSTRING(zCOption::*)(const zSTRING&, const char*, const char*)), &zCOption::Hook_ReadString);
+	g1o::hooking::GetHookManager().Install(0x0045D080, &zCOption::Hook_ReadString);
 
 	return result;
 };

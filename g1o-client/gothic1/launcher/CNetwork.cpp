@@ -1,5 +1,7 @@
 #include "PCH.h"
 
+#include <LaunchSessionJson.h>
+
 CNetwork::CNetwork() :
     m_Peer(RakNet::RakPeerInterface::GetInstance()),
     m_ServerList(NULL),
@@ -9,7 +11,7 @@ CNetwork::CNetwork() :
     m_MsgBoxConnectionFailed(true)
 {
 #ifdef DEBUG_MODE
-    LOG(__FUNCTION__)
+    SPDLOG_TRACE("{}", __FUNCTION__);
 #endif
     initConnections();
     NETWORK.start(m_Thread, m_Peer);
@@ -24,7 +26,7 @@ CNetwork::CNetwork() :
 CNetwork::~CNetwork()
 {
 #ifdef DEBUG_MODE
-    LOG(__FUNCTION__)
+    SPDLOG_TRACE("{}", __FUNCTION__);
 #endif
     NETWORK.setRunning(false);
 
@@ -74,8 +76,28 @@ void CNetwork::sendRequest(QString ipAdress, int port, int index)
         NETWORK.getFavoriteRPC()->enableRefreshTimer(true);
 }
 
-bool CNetwork::downloadServerFiles(QString hostName, QString ipAdress, int port, QString version)
+bool CNetwork::downloadServerFiles(QString hostName, QString ipAdress, int port, QString version, QString world)
 {
+    if (port < 1 || port > 65535)
+    {
+        SPDLOG_ERROR("[game] Refusing launch session with invalid port {}", port);
+        return false;
+    }
+
+    const QByteArray addressUtf8 = ipAdress.toUtf8();
+    const QByteArray worldUtf8 = world.toUtf8();
+    m_LaunchSession = {
+        std::string(addressUtf8.constData(), static_cast<std::size_t>(addressUtf8.size())),
+        static_cast<std::uint16_t>(port),
+        std::string(worldUtf8.constData(), static_cast<std::size_t>(worldUtf8.size()))
+    };
+    std::string sessionError;
+    if (!g1o::ValidateLaunchSession(m_LaunchSession, &sessionError))
+    {
+        SPDLOG_ERROR("[game] Refusing invalid launch session: {}", sessionError);
+        return false;
+    }
+
     m_TempServerName = hostName;
 	m_TempServerVersion = version;
 	const bool connected = NETWORK.connectToServer(ipAdress, port);
@@ -229,7 +251,7 @@ void CNetwork::onDownloaderFileSaved(unsigned fileIndex, unsigned filesAmount, Q
 
 void CNetwork::onDownloaderComplete()
 {
-	LOG("[game] Resource synchronization completed");
+	SPDLOG_INFO("[game] Resource synchronization completed");
     LAUNCHER.enable();
 
     NETWORK.disconnectFromCurrent();
@@ -240,29 +262,30 @@ void CNetwork::onDownloaderComplete()
     const QString clientDll = CVersion::findClientDll(m_TempServerVersion);
     if (clientDll.isEmpty())
     {
-        LOG("[game] Client DLL for server version %s is no longer available", m_TempServerVersion.toStdString().c_str());
+        SPDLOG_WARN("[game] Client DLL for server version {} is no longer available", m_TempServerVersion.toStdString().c_str());
         CMessageBox::warrning(APP_NAME, QString(TRANSLATE("SM_MISSING_VERSION")).arg(m_TempServerVersion).arg(CVersion::expectedClientDllPath(m_TempServerVersion)));
         return;
     }
 
-    int gothicProcessID = LAUNCHER.getInjector().RunApplication(INJECT_APP_NAME);
+    const std::string launchSession = g1o::SerializeLaunchSession(m_LaunchSession);
+    int gothicProcessID = LAUNCHER.getInjector().RunApplication(INJECT_APP_NAME, launchSession);
     if (gothicProcessID)
     {
-		LOG("[game] Created suspended %s process (PID %d)", INJECT_APP_NAME, gothicProcessID);
+		SPDLOG_INFO("[game] Created suspended {} process (PID {})", INJECT_APP_NAME, gothicProcessID);
 		const std::string dllPath = clientDll.toStdString();
         if (!LAUNCHER.getInjector().InjectDLL(gothicProcessID, dllPath.c_str()))
 		{
-			LOG("[game] Injection failed; the suspended game process was terminated");
+			SPDLOG_ERROR("[game] Injection failed; the suspended game process was terminated");
             CMessageBox::warrning(APP_NAME, QString(TRANSLATE("IR_ERR_01")).arg(clientDll));
 		}
 		else
 		{
-			LOG("[game] Injected %s and resumed the game process", dllPath.c_str());
+			SPDLOG_INFO("[game] Injected {} and resumed the game process", dllPath.c_str());
 		}
     }
     else
 	{
-		LOG("[game] Could not create %s", INJECT_APP_NAME);
+		SPDLOG_ERROR("[game] Could not create {}", INJECT_APP_NAME);
         CMessageBox::warrning(APP_NAME, QString(TRANSLATE("IR_ERR_02")).arg(INJECT_APP_NAME));
 	}
 }

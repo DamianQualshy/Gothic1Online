@@ -7,7 +7,7 @@ CInternetManager::CInternetManager() :
     m_MasterServer(m_SplitThread)
 {
 #ifdef DEBUG_MODE
-    LOG(__FUNCTION__)
+    SPDLOG_TRACE("{}", __FUNCTION__);
 #endif
     initConnections();
 }
@@ -15,7 +15,7 @@ CInternetManager::CInternetManager() :
 CInternetManager::~CInternetManager()
 {
 #ifdef DEBUG_MODE
-    LOG(__FUNCTION__)
+    SPDLOG_TRACE("{}", __FUNCTION__);
 #endif
     clear();
     m_SplitThread.deleteLater();

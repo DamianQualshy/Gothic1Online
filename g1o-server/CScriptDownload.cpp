@@ -27,7 +27,7 @@ void CScriptDownload::StartUp()
 {
 	deltaTransfer->SetApplicationDirectory("resources");
 	deltaTransfer->AddUploadsFromSubdirectory("download");
-	LOG("[Downloader] Number of files to download: %d", deltaTransfer->GetNumberOfFilesForUpload());
+	SPDLOG_INFO("[Downloader] Number of files to download: {}", deltaTransfer->GetNumberOfFilesForUpload());
 
 	thread downloaderThread(CScriptDownload::Thread,(void*)this);
 	downloaderThread.detach();
@@ -36,7 +36,7 @@ void CScriptDownload::StartUp()
 void CScriptDownload::Thread(void* pThis)
 {
 	CScriptDownload* pScriptDownload = (CScriptDownload*)pThis;
-	LOG("[Downloader] Thread started, waiting for peers..");
+	SPDLOG_INFO("[Downloader] Thread started, waiting for peers..");
 	if( pScriptDownload->tcp->Start(atoi(core.GetConfig()->GetServerPort().C_String()), atoi(core.GetConfig()->GetMaxSlots().C_String())+10) )
 	{
 		Packet* packet;
@@ -45,13 +45,13 @@ void CScriptDownload::Thread(void* pThis)
 			for(packet = pScriptDownload->tcp->Receive(); packet; pScriptDownload->tcp->DeallocatePacket(packet), packet = pScriptDownload->tcp->Receive());
 			SystemAddress sa;
 			if(pScriptDownload->tcp->HasNewIncomingConnection() != UNASSIGNED_SYSTEM_ADDRESS )
-				LOG("[Downloader] New connection!");
+				SPDLOG_INFO("[Downloader] New connection!");
 			if(pScriptDownload->tcp->HasLostConnection() != UNASSIGNED_SYSTEM_ADDRESS)
-				LOG("[Downloader] Peer disconnected.");
+				SPDLOG_INFO("[Downloader] Peer disconnected.");
 			if(pScriptDownload->tcp->HasFailedConnectionAttempt() != UNASSIGNED_SYSTEM_ADDRESS)
-				LOG("[Downloader] Connection to server failure.");
+				SPDLOG_WARN("[Downloader] Connection to server failure.");
 			if(pScriptDownload->tcp->HasCompletedConnectionAttempt() != UNASSIGNED_SYSTEM_ADDRESS)
-				LOG("[Downloader] Connection complete.");
+				SPDLOG_INFO("[Downloader] Connection complete.");
 			RakSleep(5);
 		}
 	}

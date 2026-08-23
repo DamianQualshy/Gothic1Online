@@ -6,7 +6,7 @@ COptions::COptions(QWidget *parent) :
     ui(new Ui::COptions)
 {
 #ifdef DEBUG_MODE
-    LOG(__FUNCTION__)
+    SPDLOG_TRACE("{}", __FUNCTION__);
 #endif
     ui->setupUi(this);
 
@@ -20,7 +20,7 @@ COptions::COptions(QWidget *parent) :
 COptions::~COptions()
 {
 #ifdef DEBUG_MODE
-    LOG(__FUNCTION__)
+    SPDLOG_TRACE("{}", __FUNCTION__);
 #endif
     delete ui;
 }

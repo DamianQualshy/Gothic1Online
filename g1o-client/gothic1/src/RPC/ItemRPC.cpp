@@ -16,7 +16,7 @@ void ItemRPC::HandleItemRPC(CNetwork* network, Packet* packet)
 
 void ItemRPC::CreateItem(BitStream& stream)
 {
-	DLOG("ItemRPC::CreateItem()");
+	SPDLOG_TRACE("ItemRPC::CreateItem()");
 	size_t itemID;
 	RakString itemInstance;
 	size_t amount;
@@ -34,7 +34,7 @@ void ItemRPC::CreateItem(BitStream& stream)
 
 void ItemRPC::DestroyItem(BitStream& stream)
 {
-	DLOG("ItemRPC::DestroyItem()");
+	SPDLOG_TRACE("ItemRPC::DestroyItem()");
 	size_t itemID;
 	stream.Read(itemID);
 

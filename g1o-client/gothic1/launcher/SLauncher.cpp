@@ -17,10 +17,10 @@ SLauncher::SLauncher(QWidget *parent) :
     ui(new Ui::SLauncher)
 {
 #ifdef DEBUG_MODE
-    LOG(__FUNCTION__)
+    SPDLOG_TRACE("{}", __FUNCTION__);
 #endif
 
-    LOG("[info] Opening Launcher");
+    SPDLOG_INFO("Opening Launcher");
 
     initWidgets();
     initConnections();
@@ -30,10 +30,10 @@ SLauncher::SLauncher(QWidget *parent) :
 SLauncher::~SLauncher()
 {
 #ifdef DEBUG_MODE
-    LOG(__FUNCTION__)
+    SPDLOG_TRACE("{}", __FUNCTION__);
 #endif
 
-    LOG("[info] Closing Launcher");
+    SPDLOG_INFO("Closing Launcher");
 
     // Save setting
     m_Settings.saveLauncherSettings();
@@ -47,7 +47,7 @@ SLauncher::~SLauncher()
 
     delete ui;
 
-    LOG("[info] Allocated memory has been removed");
+    SPDLOG_INFO("Allocated memory has been removed");
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------
@@ -129,7 +129,7 @@ void SLauncher::disable()
 
 void SLauncher::translate()
 {
-    LOG("[info] Translate to %s", m_Language.getCurrentLang().toStdString().c_str());
+    SPDLOG_INFO("Translate to {}", m_Language.getCurrentLang().toStdString().c_str());
 
     ui->tabServerList->setTabText(0, TRANSLATE("L_INTERNET"));
     ui->tabServerList->setTabText(1, TRANSLATE("L_FAVORITE"));
@@ -159,7 +159,7 @@ void SLauncher::translate()
 
     CServerManager::fillServerInfo();
 
-    LOG("[info] Translate DONE");
+    SPDLOG_INFO("Translate DONE");
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------

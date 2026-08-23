@@ -5,6 +5,7 @@
 
 #include "../Shared/RaknetIncludes.h"
 #include "../Shared/Network/GOMessages.h"
+#include "Logging.h"
 
 using namespace std;
 

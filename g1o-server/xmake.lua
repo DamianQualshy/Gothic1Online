@@ -12,7 +12,12 @@ target("G1O.Server")
     add_files("**.cpp")
     add_includedirs(".")
     add_deps("G1O.Shared")
-    add_defines("_CONSOLE", "_CRT_SECURE_NO_WARNINGS")
+    add_packages("fmt", "spdlog")
+    add_defines(
+        "_CONSOLE",
+        "_CRT_SECURE_NO_WARNINGS",
+        "SPDLOG_FMT_EXTERNAL",
+        "SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_TRACE")
     add_syslinks("ws2_32", "winmm")
 
     after_install(function (target)

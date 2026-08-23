@@ -7,7 +7,7 @@ CFavorite::CFavorite(QWidget *parent) :
     ui(new Ui::CFavorite)
 {
 #ifdef DEBUG_MODE
-    LOG(__FUNCTION__)
+    SPDLOG_TRACE("{}", __FUNCTION__);
 #endif
     ui->setupUi(this);
 
@@ -17,7 +17,7 @@ CFavorite::CFavorite(QWidget *parent) :
 CFavorite::~CFavorite()
 {
 #ifdef DEBUG_MODE
-    LOG(__FUNCTION__)
+    SPDLOG_TRACE("{}", __FUNCTION__);
 #endif
     delete ui;
 }

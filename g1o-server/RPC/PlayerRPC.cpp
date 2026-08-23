@@ -102,7 +102,7 @@ void PlayerRPC::SetAngle(Packet* packet, BitStream& stream)
 
 void PlayerRPC::ChangeWeaponMode(Packet* packet, BitStream& stream)
 {
-	//LOG("PlayerRPC::ChangeWeaponMode");
+	//SPDLOG_TRACE("PlayerRPC::ChangeWeaponMode");
 	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
 
 	if( player && player->bConnected == true && player->spawned == true )
@@ -139,7 +139,7 @@ void PlayerRPC::PlayAnimation(Packet* packet, BitStream& stream)
 
 void PlayerRPC::WearArmor(Packet* packet, BitStream& stream)
 {
-	//LOG("PlayerRPC::WearArmor");
+	//SPDLOG_TRACE("PlayerRPC::WearArmor");
 	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
 	if( player && player->bConnected == true && player->spawned == true )
 	{
@@ -157,7 +157,7 @@ void PlayerRPC::WearArmor(Packet* packet, BitStream& stream)
 
 void PlayerRPC::EquipWeapon(Packet* packet, BitStream& stream)
 {
-	//LOG("PlayerRPC::EquipWeapon");
+	//SPDLOG_TRACE("PlayerRPC::EquipWeapon");
 	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
 	if( player && player->bConnected == true && player->spawned == true )
 	{
@@ -172,13 +172,13 @@ void PlayerRPC::EquipWeapon(Packet* packet, BitStream& stream)
 		{
 			stream.Read(player->meleeWeaponInstance);
 			wStream.Write(player->meleeWeaponInstance);
-			//LOG("%s Equip %s", player->name.C_String(), player->meleeWeaponInstance.C_String());
+			//SPDLOG_TRACE("{} Equip {}", player->name.C_String(), player->meleeWeaponInstance.C_String());
 		}
 		else if( weaponType == 2 )
 		{
 			stream.Read(player->rangedWeaponInstance);
 			wStream.Write(player->rangedWeaponInstance);
-			//LOG("%s Equip %s", player->name.C_String(), player->rangedWeaponInstance.C_String());
+			//SPDLOG_TRACE("{} Equip {}", player->name.C_String(), player->rangedWeaponInstance.C_String());
 		}
 		
 		core.GetNetwork()->SendToPlayersOnList(wStream,LOW_PRIORITY,RELIABLE_ORDERED, &player->streamedPlayers);
@@ -188,7 +188,7 @@ void PlayerRPC::EquipWeapon(Packet* packet, BitStream& stream)
 
 void PlayerRPC::ChangeInstance(Packet* packet, BitStream& stream)
 {
-	//LOG("PlayerRPC::ChangeInstance");
+	//SPDLOG_TRACE("PlayerRPC::ChangeInstance");
 	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
 	if( player && player->bConnected == true && player->spawned == true )
 	{
@@ -219,12 +219,12 @@ void PlayerRPC::ItemHand(Packet* packet, BitStream& stream)
 		if( hand == 1 )
 		{
 			player->leftHand = handItem;
-			//LOG("Player %s changed his left hand to %s", player->name.C_String(), player->leftHand.C_String());
+			//SPDLOG_TRACE("Player {} changed his left hand to {}", player->name.C_String(), player->leftHand.C_String());
 		}
 		else if( hand == 2 )
 		{
 			player->rightHand = handItem;
-			//LOG("Player %s changed his right hand to %s", player->name.C_String(), player->rightHand.C_String());
+			//SPDLOG_TRACE("Player {} changed his right hand to {}", player->name.C_String(), player->rightHand.C_String());
 		}
 
 		BitStream wStream;
@@ -242,7 +242,7 @@ void PlayerRPC::ItemHand(Packet* packet, BitStream& stream)
 void PlayerRPC::ChangeLevel(Packet* packet, BitStream& stream)
 {
 
-	//LOG("PlayerRPC::ChangeLevel");
+	//SPDLOG_TRACE("PlayerRPC::ChangeLevel");
 	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
 
 	if( player && player->bConnected == true && player->spawned == true )
@@ -265,7 +265,7 @@ void PlayerRPC::ChangeLevel(Packet* packet, BitStream& stream)
 
 void PlayerRPC::EnterWorld(Packet* packet)
 {
-	//LOG("PlayerRPC::EnterWorld");
+	//SPDLOG_TRACE("PlayerRPC::EnterWorld");
 	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
 	if( player && player->bConnected == true && player->spawned == false )
 	{
@@ -465,7 +465,7 @@ void PlayerRPC::AttackUnconscious(Packet* packet, BitStream& stream)
 
 void PlayerRPC::StandUp(Packet* packet, BitStream& stream)
 {
-	//LOG("PlayerRPC::StandUp");
+	//SPDLOG_TRACE("PlayerRPC::StandUp");
 	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
 
 	if (player && player->bConnected == true && player->spawned == true && !player->isDead)
@@ -488,7 +488,7 @@ void PlayerRPC::StandUp(Packet* packet, BitStream& stream)
 
 void PlayerRPC::MagicSetup(Packet* packet, BitStream& stream)
 {
-	//LOG("PlayerRPC::MagicSetup");
+	//SPDLOG_TRACE("PlayerRPC::MagicSetup");
 	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
 	if( player && player->bConnected == true && player->spawned == true )
 	{
@@ -506,7 +506,7 @@ void PlayerRPC::MagicSetup(Packet* packet, BitStream& stream)
 
 void PlayerRPC::MagicAttack(Packet* packet, BitStream& stream)
 {
-	//LOG("PlayerRPC::MagicAttack");
+	//SPDLOG_TRACE("PlayerRPC::MagicAttack");
 	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
 	if( player && player->bConnected == true && player->spawned == true )
 	{

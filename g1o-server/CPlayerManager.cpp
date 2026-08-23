@@ -2,14 +2,14 @@
 
 CPlayerManager::CPlayerManager()
 {
-	//DLOG("CPlayerManager::CPlayerManager()\n");
+	//SPDLOG_TRACE("CPlayerManager::CPlayerManager()");
 	timerBroadcastList = 0;
 	playerList.clear();
 };
 
 CPlayerManager::~CPlayerManager()
 {
-	//DLOG("CPlayerManager::~CPlayerManager()\n");
+	//SPDLOG_TRACE("CPlayerManager::~CPlayerManager()");
 	playerList.clear(); //Można dać pentelkę co usunie wszystkich graczy
 };							  //delete player. ale to nie ma sensu w tym kontekscie
 
@@ -35,7 +35,7 @@ bool CPlayerManager::IsPlayerInManager(CPlayer* player)
 
 CPlayer* CPlayerManager::CreatePlayer(SystemAddress address, RakString playerName)
 {
-	//DLOG("CPlayerManager::CreatePlayer( ,%s)", playerName.C_String());
+	//SPDLOG_TRACE("CPlayerManager::CreatePlayer(, {})", playerName.C_String());
 	if(playerName.GetLength() <= 30)
 	{
 		int playerId = (int)address.systemIndex;
@@ -50,12 +50,12 @@ CPlayer* CPlayerManager::CreatePlayer(SystemAddress address, RakString playerNam
 
 void CPlayerManager::CreatePlayerForOtherPlayer(CPlayer* player, CPlayer* receiver)
 {	
-	//DLOG("CPlayerManager, Creating player %s for player %s\n", player->name.C_String(), receiver->name.C_String());
+	//SPDLOG_TRACE("CPlayerManager, Creating player {} for player {}", player->name.C_String(), receiver->name.C_String());
 
 	CNetwork* network = core.GetNetwork();
 	if(player->spawned)
 	{
-		std::cout << player->name.C_String() << " armor " << player->armorInstance.C_String() << std::endl;
+		SPDLOG_DEBUG("Player {} armor {}", player->name.C_String(), player->armorInstance.C_String());
 
 		BitStream stream;
 		stream.Write((MessageID)GO_PLAYER);

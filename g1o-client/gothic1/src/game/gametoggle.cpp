@@ -6,15 +6,15 @@ void Fake_HandleResultString(zSTRING str)
 
 int Hook_Apply_Options_Video()
 {
-	LOG("[startup] Applying Gothic video options");
-	pMemLib->RemoveHook(0x0042A310);
+	SPDLOG_INFO("[startup] Applying Gothic video options");
+	g1o::hooking::GetHookManager().Remove(0x0042A310);
 	if( core.IsLateHooksInitiated() == true )
 		core.DeInitializeLateHooks();
 	int result = Apply_Options_Video();
 	if( core.IsLateHooksInitiated() == false )
 		core.InitializeLateHooks();
-	pMemLib->ImportHook(0x0042A310, sizeof(int(*)()), &Hook_Apply_Options_Video);
-	LOG("[startup] Gothic video options applied");
+	g1o::hooking::GetHookManager().Install(0x0042A310, &Hook_Apply_Options_Video);
+	SPDLOG_INFO("[startup] Gothic video options applied");
 	return result;
 };
 
