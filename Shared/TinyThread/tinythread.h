@@ -94,7 +94,7 @@ freely, subject to the following restrictions:
 #define TINYTHREAD_VERSION (TINYTHREAD_VERSION_MAJOR * 100 + TINYTHREAD_VERSION_MINOR)
 
 // Do we have a fully featured C++11 compiler?
-#if (__cplusplus > 199711L) || (defined(__STDCXX_VERSION__) && (__STDCXX_VERSION__ >= 201001L))
+#if (__cplusplus > 199711L) || (defined(__STDCXX_VERSION__) && (__STDCXX_VERSION__ >= 201001L)) || (defined(_MSC_VER) && (_MSC_VER >= 1900))
   #define _TTHREAD_CPP11_
 #endif
 

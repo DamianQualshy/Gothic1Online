@@ -49,11 +49,13 @@ private:
     QString m_TempServerName, m_TempServerVersion;
     g1o::LaunchSession m_LaunchSession;
 
-    int m_CurrServers, m_MaxServers, m_DownloadIndex;
+    int m_CurrServers, m_MaxServers;
 
 private slots:
     // Internet
     void onInternetServerReached(QString ipAdress, int port, int ping);
+    void onInternetServerInformation(QString ipAdress, QString port, QString hostName, QString script, QString version,
+                                     QString world, QString description, int onlinePlayers, int maxPlayers, int ping);
 
     // Favorite slots
     void onFavoriteFillUnknownServers();
@@ -70,8 +72,8 @@ private slots:
     void onDownloaderComplete();
 
     // Url slots
-    void onUrlDownloadComplete(QString param);
-    void onUrlError();
+    void onUrlDownloadComplete(QString param, int requestIndex);
+    void onUrlError(int requestIndex);
 };
 
 #endif // CNETWORK_H

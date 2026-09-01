@@ -6,7 +6,13 @@
 		host_name="Gothic Online Server"
 		port="28970"
 		max_slots="32"
-		rcon_pass="change-me" />
+		rcon_pass="change-me"
+		server_identity_seed="" />
+	<description>
+	<![CDATA[
+		<font color=orange><b>G</b></font>othic Online <font color=lightgreen><b>S</b></font>erver
+	]]>
+	</description>
 
 	<!-- Enable exactly one language resource. Loading both is rejected as a mixed runtime. -->
 	<import src="resources/squirrel-scripts/scripts.xml" />

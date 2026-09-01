@@ -1,5 +1,13 @@
 #include "PCH.h"
 
+namespace
+{
+    QString FormatPing(uint ping)
+    {
+        return ping == ServerUnknow::PING ? QStringLiteral("-") : QString::number(ping);
+    }
+}
+
 CServerManager::CServerManager(QTreeWidget *treeWidget) :
     QObject(),
     m_TreeWidget(treeWidget),
@@ -19,15 +27,6 @@ CServerManager::CServerManager(QTreeWidget *treeWidget) :
 
 void CServerManager::fillServerInfo()
 {
-    LAUNCHER.getUI()->labelDescription->setText(TRANSLATE("SM_DESCRIPTION"));
-
-    LAUNCHER.getUI()->viewHostname->setText(TRANSLATE("SM_HOSTNAME") + ServerUnknow::HOSTNAME);
-    LAUNCHER.getUI()->viewIP->setText(TRANSLATE("SM_IP") + ServerUnknow::IP_ADRESS);
-    LAUNCHER.getUI()->viewPort->setText(TRANSLATE("SM_PORT") + ServerUnknow::PORT);
-    LAUNCHER.getUI()->viewWorld->setText(TRANSLATE("SM_WORLD") + ServerUnknow::WORLD);
-    LAUNCHER.getUI()->viewVersion->setText(TRANSLATE("SM_VERSION") + ServerUnknow::VERSION);
-    LAUNCHER.getUI()->viewOnlinePlayers->setText(TRANSLATE("SM_PLAYERS") + TOSTRING(ServerUnknow::ONLINE_PLAYERS) + "/" + TOSTRING(ServerUnknow::MAX_PLAYERS));
-    LAUNCHER.getUI()->viewPing->setText(TRANSLATE("SM_PING") + TOSTRING(ServerUnknow::PING));
     LAUNCHER.getUI()->viewDescription->setText(ServerUnknow::DESCRIPTION);
 }
 
@@ -52,21 +51,72 @@ void CServerManager::addServer(CServerInfo serverInfo, bool show)
 
         if (show)
         {
+            const bool firstServer = m_TreeWidget->topLevelItemCount() == 0;
             QTreeWidgetItem *itemServer = new QTreeWidgetItem;
             itemServer->setText(0, serverInfo.getHostName());
             itemServer->setText(1, serverInfo.getIpAdress());
             itemServer->setText(2, serverInfo.getPort());
             itemServer->setText(3, serverInfo.getVersion());
             itemServer->setText(4, TOSTRING(serverInfo.getOnlinePlayers()) + "/" + TOSTRING(serverInfo.getMaxPlayers()));
-            itemServer->setText(5, TOSTRING(serverInfo.getPing()));
+            itemServer->setText(5, FormatPing(serverInfo.getPing()));
 
             m_TreeWidget->addTopLevelItem(itemServer);
             serverInfo.m_ptrItem = itemServer;
+
+            if (firstServer)
+            {
+                m_TreeWidget->setCurrentItem(itemServer);
+                LAUNCHER.getUI()->viewDescription->setText(serverInfo.getDescription());
+            }
         }
 
         serverInfo.m_Exist = true;
         serverInfo.m_IsShowed = show;
         m_ServerList.append(serverInfo);
+    }
+}
+
+void CServerManager::updatePing(const QString& ipAdress, const QString& port, uint ping)
+{
+    for (CServerInfo& info : m_ServerList)
+    {
+        if (info.getIpAdress() != ipAdress || info.getPort() != port)
+            continue;
+
+        info.m_Ping = ping;
+        if (info.m_ptrItem)
+            info.m_ptrItem->setText(5, FormatPing(ping));
+        return;
+    }
+}
+
+void CServerManager::updateServer(const CServerInfo& serverInfo)
+{
+    for (CServerInfo& info : m_ServerList)
+    {
+        if (info.getIpAdress() != serverInfo.getIpAdress() || info.getPort() != serverInfo.getPort())
+            continue;
+
+        info.m_HostName = serverInfo.getHostName();
+        info.m_Description = serverInfo.getDescription();
+        info.m_Version = serverInfo.getVersion();
+        info.m_World = serverInfo.getWorld();
+        info.m_Script = serverInfo.getScript();
+        info.m_OnlinePlayers = serverInfo.getOnlinePlayers();
+        info.m_MaxPlayers = serverInfo.getMaxPlayers();
+        info.m_Ping = serverInfo.getPing();
+
+        if (info.m_ptrItem)
+        {
+            info.m_ptrItem->setText(0, info.getHostName());
+            info.m_ptrItem->setText(3, info.getVersion());
+            info.m_ptrItem->setText(4, TOSTRING(info.getOnlinePlayers()) + "/" + TOSTRING(info.getMaxPlayers()));
+            info.m_ptrItem->setText(5, FormatPing(info.getPing()));
+
+            if (m_TreeWidget->currentItem() == info.m_ptrItem)
+                LAUNCHER.getUI()->viewDescription->setText(info.getDescription());
+        }
+        return;
     }
 }
 
@@ -119,7 +169,7 @@ void CServerManager::insertServer(QString ipAdress, QString port, QString hostNa
         itemServer->setText(2, info.getPort());
         itemServer->setText(3, info.getVersion());
         itemServer->setText(4, TOSTRING(info.getOnlinePlayers()) + "/" + TOSTRING(info.getMaxPlayers()));
-        itemServer->setText(5, TOSTRING(info.getPing()));
+        itemServer->setText(5, FormatPing(info.getPing()));
 
         m_TreeWidget->addTopLevelItem(itemServer);
         info.m_ptrItem = itemServer;
@@ -143,7 +193,7 @@ void CServerManager::insertServer(QString ipAdress, QString port)
         itemServer->setText(2, info.getPort());
         itemServer->setText(3, info.getVersion());
         itemServer->setText(4, TOSTRING(info.getOnlinePlayers()) + "/" + TOSTRING(info.getMaxPlayers()));
-        itemServer->setText(5, TOSTRING(info.getPing()));
+        itemServer->setText(5, FormatPing(info.getPing()));
 
         m_TreeWidget->addTopLevelItem(itemServer);
         info.m_ptrItem = itemServer;
@@ -243,13 +293,6 @@ void CServerManager::updateInfo(QString ipAdress, QString port)
 
     if (info.exists())
     {
-        LAUNCHER.getUI()->viewHostname->setText(TRANSLATE("SM_HOSTNAME") + info.getHostName());
-        LAUNCHER.getUI()->viewIP->setText(TRANSLATE("SM_IP") + info.getIpAdress());
-        LAUNCHER.getUI()->viewPort->setText(TRANSLATE("SM_PORT") + info.getPort());
-        LAUNCHER.getUI()->viewWorld->setText(TRANSLATE("SM_WORLD") + info.getWorld());
-        LAUNCHER.getUI()->viewVersion->setText(TRANSLATE("SM_VERSION") + info.getVersion());
-        LAUNCHER.getUI()->viewOnlinePlayers->setText(TRANSLATE("SM_PLAYERS") + TOSTRING(info.getOnlinePlayers()) + "/" + TOSTRING(info.getMaxPlayers()));
-        LAUNCHER.getUI()->viewPing->setText(TRANSLATE("SM_PING") + TOSTRING(info.getPing()));
         LAUNCHER.getUI()->viewDescription->setText(info.getDescription());
     }
     else
@@ -293,7 +336,7 @@ void CServerManager::onHeaderItemClicked(int index)
             itemServer->setText(2, info.getPort());
             itemServer->setText(3, info.getVersion());
             itemServer->setText(4, TOSTRING(info.getOnlinePlayers()) + "/" + TOSTRING(info.getMaxPlayers()));
-            itemServer->setText(5, TOSTRING(info.getPing()));
+            itemServer->setText(5, FormatPing(info.getPing()));
 
             m_TreeWidget->addTopLevelItem(itemServer);
             info.m_ptrItem = itemServer;

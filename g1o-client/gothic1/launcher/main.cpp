@@ -3,6 +3,7 @@
 #include <QMessageBox>
 #include <QtGlobal>
 
+#include "Logging.h"
 #include "SLauncher.h"
 
 int main(int argc, char *argv[]) try

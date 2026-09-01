@@ -15,7 +15,6 @@
 //Wątki
 #include "TinyThread/tinythread.h"
 #include "TinyThread/fast_mutex.h"
-using namespace tthread;
 //identyfikatory messagesow
 #include "Network/GOMessages.h"
 //Squirrel

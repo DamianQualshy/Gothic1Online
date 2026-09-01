@@ -29,7 +29,7 @@ void CScriptDownload::StartUp()
 	deltaTransfer->AddUploadsFromSubdirectory("download");
 	SPDLOG_INFO("[Downloader] Number of files to download: {}", deltaTransfer->GetNumberOfFilesForUpload());
 
-	thread downloaderThread(CScriptDownload::Thread,(void*)this);
+	tthread::thread downloaderThread(CScriptDownload::Thread,(void*)this);
 	downloaderThread.detach();
 };
 

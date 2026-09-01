@@ -16,37 +16,26 @@ add_moduledirs("xmake/modules")
 add_rules("mode.debug", "mode.release", "mode.releasedbg")
 
 add_requires("fmt 11.0.2", {configs = {header_only = true}})
+add_requires("cpp-httplib 0.22.0", {configs = {ssl = true}})
 add_requires("lua 5.4.7", "sol2 3.3.*")
 add_requires("libsodium 1.0.*", "nlohmann_json 3.12.*")
 add_requires("polyhook2", "asmjit")
 add_requires("spdlog 1.15.1", {configs = {fmt_external = true, header_only = true}})
 
-option("master_server_address")
+option("master_server_endpoint")
     set_showmenu(true)
-    set_description("Host or IP used by game servers to register with the master server")
-    set_default("127.0.0.1")
-option_end()
-
-option("master_server_port")
-    set_showmenu(true)
-    set_description("RakNet port used for game-server registration")
-    set_default("1200")
-option_end()
-
-option("master_server_list_url")
-    set_showmenu(true)
-    set_description("HTTP(S) URL used by the launcher to download the server list")
-    set_default("http://localhost/g1o/list.txt")
+    set_description("HTTP endpoint used by game servers to register and by the launcher to retrieve the server list")
+    set_default("")
 option_end()
 
 option("launcher_version_url")
     set_showmenu(true)
     set_description("HTTP(S) URL used by the launcher to check for updates")
-    set_default("http://localhost/g1o/version.txt")
+    set_default("http://localhost:8080/g1o/version.txt")
 option_end()
 
 if is_plat("windows") then
-    add_defines("WIN32")
+    add_defines("WIN32", "FMT_UNICODE=0")
     add_cxflags("/source-charset:utf-8", "/execution-charset:.1250", {tools = "cl"})
     add_requires("qt5widgets")
 end
@@ -54,4 +43,3 @@ end
 includes("Shared")
 includes("g1o-client")
 includes("g1o-server")
-includes("g1o-master")

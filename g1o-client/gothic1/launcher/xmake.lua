@@ -23,7 +23,8 @@ target("G1O.Launcher")
         "RakNet/VitaIncludes.cpp",
         "RakNet/PS4Includes.cpp")
     add_includedirs(".", "RakNet", "../../../Shared")
-    add_packages("fmt", "nlohmann_json", "qt5widgets", "spdlog")
+    add_packages("nlohmann_json", "qt5widgets")
+    add_packages("fmt", "spdlog", {cxxflags = {}})
     add_frameworks("QtCore", "QtGui", "QtNetwork", "QtWidgets")
     set_values("qt.deploy.flags",
                "--release",
@@ -34,16 +35,14 @@ target("G1O.Launcher")
     add_defines(
         "_CRT_SECURE_NO_WARNINGS",
         "NOMINMAX",
-        "_ATL_XP_TARGETING",
-        "D_ATL_XP_TARGETING",
         "SPDLOG_FMT_EXTERNAL",
         "SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_TRACE")
     add_syslinks("ws2_32", "shell32", "advapi32")
 
-    local master_server_list_url = get_config("master_server_list_url")
-    if master_server_list_url and #master_server_list_url > 0 then
-        master_server_list_url = master_server_list_url:gsub("\\", "\\\\"):gsub("\"", "\\\"")
-        add_defines(string.format("G1O_MASTER_SERVER_LIST_URL=\"%s\"", master_server_list_url))
+    local master_server_endpoint = get_config("master_server_endpoint")
+    if master_server_endpoint and #master_server_endpoint > 0 then
+        master_server_endpoint = master_server_endpoint:gsub("\\", "\\\\"):gsub("\"", "\\\"")
+        add_defines(string.format("MASTER_SERVER_ENDPOINT=\"%s\"", master_server_endpoint))
     end
 
     local launcher_version_url = get_config("launcher_version_url")

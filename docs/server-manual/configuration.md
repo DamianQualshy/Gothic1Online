@@ -8,7 +8,10 @@ The server reads `config.xml` from its working directory. A missing file is crea
           host_name="Gothic Online Server"
           port="28970"
           max_slots="32"
-          rcon_pass="change-me" />
+          rcon_pass="change-me"
+          server_identity_seed="" />
+
+  <description><![CDATA[<font color=orange><b>G</b></font>othic Online <font color=lightgreen><b>S</b></font>erver]]></description>
 
   <import src="resources/squirrel-scripts/scripts.xml" />
   <!-- <import src="resources/lua-scripts/scripts.xml" /> -->
@@ -24,6 +27,17 @@ The server reads `config.xml` from its working directory. A missing file is crea
 | `port` | `28970` | RakNet game port and TCP download port. |
 | `max_slots` | `32` | Maximum number of accepted players. |
 | `rcon_pass` | `change-me` | Administrator password. Change it before public hosting. |
+| `server_identity_seed` | generated | Persistent base64-encoded server identity sent with HTTP master-server heartbeats. Leave it empty on first startup, keep it secret, and back it up when moving the server. |
+
+## Description
+
+The optional `<description>` element is the server-supplied content shown in the launcher's Information panel. It may contain up to 400 UTF-8 bytes, matching G2O's wire limit. Put rich text in an XML CDATA section so the markup remains readable and is passed to the launcher unchanged:
+
+```xml
+<description><![CDATA[<b>Welcome to the Colony</b><br>Discord: example.org]]></description>
+```
+
+If the element is omitted, the compiled default description is used. An empty element intentionally clears the description. Server scripts can still replace it at runtime with `setServerDescription`.
 
 ## Script Startup
 

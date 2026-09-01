@@ -1,10 +1,10 @@
 #ifndef CMASTERSERVERLIST_H
 #define CMASTERSERVERLIST_H
 
+#include <atomic>
+
 #include <QObject>
-#include <QStringList>
 #include <QThread>
-#include <QMap>
 
 #include "CServerInfo.h"
 
@@ -14,6 +14,7 @@ class CMasterServerList : public QObject
 
 signals:
     void signalAddServer(CServerInfo serversInfo);
+    void signalParseError();
 
 public:
     CMasterServerList(QThread &thread);
@@ -27,10 +28,10 @@ private:
     void initConnections(QThread &thread);
 
     QString m_List;
-    bool m_ThreadRunning;
+    std::atomic_bool m_ThreadRunning;
 
 private slots:
-    void onSplitServersList();
+    void onParseServerList();
 };
 
 #endif // CMASTERSERVERLIST_H

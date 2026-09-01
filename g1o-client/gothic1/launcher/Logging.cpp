@@ -1,13 +1,16 @@
+#include "Logging.h"
+
 #include <QDate>
 #include <QDir>
 
 #include <memory>
 #include <utility>
 
+#include <spdlog/spdlog.h>
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 
-#include "PCH.h"
+#include "GlobalDefines.h"
 
 namespace g1o::logging
 {

@@ -10,7 +10,8 @@ target("G1O.Client")
 
     add_includedirs("src")
     add_deps("G1O.Shared", "gothic_api")
-    add_packages("asmjit", "fmt", "nlohmann_json", "polyhook2", "spdlog")
+    add_packages("asmjit", "nlohmann_json", "polyhook2")
+    add_packages("fmt", "spdlog", {cxxflags = {}})
     add_defines(
         "WIN32_LEAN_AND_MEAN",
         "NOMINMAX",

@@ -21,3 +21,14 @@ this order: constants, helpers, main, player-events, commands.
 
 Clients do not download or execute scripts. Files placed in download are still
 synchronized into the client's Gothic Data directory.
+
+Server list metadata
+====================
+
+The optional <description>...</description> element supplies the rich-text
+description displayed in the launcher's Information panel (maximum 400 UTF-8
+bytes). Put rich text inside <![CDATA[...]]> so the markup remains readable.
+
+The server_identity_seed config attribute is generated automatically on first
+startup. Keep it private and preserve it when migrating the server; the HTTP
+master endpoint uses it as the server's stable identity.

@@ -26,6 +26,8 @@ private:
     void showServers(QString list);
     void downloadError();
     void addServer(QString ipAdress, int port, int ping);
+    void updateServer(QString ipAdress, QString port, QString hostName, QString script, QString version,
+                      QString world, QString description, int onlinePlayers, int maxPlayers, int ping);
 
     QString m_MasterServerList;
     CMessageBox m_MsgBoxConnectionFailed, m_MsgBoxMasterServer;
@@ -35,6 +37,7 @@ private:
 
 private slots:
     void onShowServer(CServerInfo serverInfo);
+    void onMasterServerParseError();
 
 friend class CNetwork;
 };

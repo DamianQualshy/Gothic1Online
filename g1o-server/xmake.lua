@@ -12,7 +12,8 @@ target("G1O.Server")
     add_files("**.cpp")
     add_includedirs(".")
     add_deps("G1O.Shared")
-    add_packages("fmt", "spdlog")
+    add_packages("cpp-httplib", "nlohmann_json")
+    add_packages("fmt", "spdlog", {cxxflags = {}})
     add_defines(
         "_CONSOLE",
         "_CRT_SECURE_NO_WARNINGS",
@@ -24,14 +25,8 @@ target("G1O.Server")
         os.mkdir(path.join(target:installdir(), "resources", "download"))
     end)
 
-    local master_server_address = get_config("master_server_address")
-    if master_server_address and #master_server_address > 0 then
-        master_server_address = master_server_address:gsub("\\", "\\\\"):gsub("\"", "\\\"")
-        add_defines(string.format("G1O_MASTER_SERVER_ADDRESS=\"%s\"", master_server_address))
+    local master_server_endpoint = get_config("master_server_endpoint")
+    if master_server_endpoint and #master_server_endpoint > 0 then
+        master_server_endpoint = master_server_endpoint:gsub("\\", "\\\\"):gsub("\"", "\\\"")
+        add_defines(string.format("MASTER_SERVER_ENDPOINT=\"%s\"", master_server_endpoint))
     end
-
-    local master_server_port = tonumber(get_config("master_server_port") or "1200") or 1200
-    if master_server_port < 1 or master_server_port > 65535 or master_server_port % 1 ~= 0 then
-        master_server_port = 1200
-    end
-    add_defines(string.format("G1O_MASTER_SERVER_PORT=%d", master_server_port))

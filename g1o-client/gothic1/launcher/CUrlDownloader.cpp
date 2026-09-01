@@ -2,8 +2,7 @@
 
 CUrlDownloader::CUrlDownloader(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::CUrlDownloader),
-    m_Downloading(false)
+    ui(new Ui::CUrlDownloader)
 {
 #ifdef DEBUG_MODE
     SPDLOG_TRACE("{}", __FUNCTION__);
@@ -22,57 +21,28 @@ CUrlDownloader::~CUrlDownloader()
     delete ui;
 }
 
-void CUrlDownloader::downloadFile(QString url)
+void CUrlDownloader::downloadFile(const QString& url, int requestIndex)
 {
-    if (!m_Downloading)
-    {
-        const QNetworkRequest networkRequest(QUrl(url.toStdString().c_str()));
-
-        m_NetworkReply = m_NetworkManager.get(networkRequest);
-
-        connect(m_NetworkReply, SIGNAL(downloadProgress(qint64, qint64)),
-                this, SLOT(onDownloadProgress(qint64,qint64)));
-
-        connect(m_NetworkReply, SIGNAL(error(QNetworkReply::NetworkError)),
-                this, SLOT(onError(QNetworkReply::NetworkError)));
-
-        connect(m_NetworkReply, SIGNAL(finished()),
-                this, SLOT(onReplyDelete()));
-
-        m_Downloading = true;
-    }
-}
-
-
-void CUrlDownloader::onReplyDelete()
-{
-    disconnect(m_NetworkReply, SIGNAL(downloadProgress(qint64, qint64)),
-               this, SLOT(onDownloadProgress(qint64,qint64)));
-
-    disconnect(m_NetworkReply, SIGNAL(error(QNetworkReply::NetworkError)),
-              this, SLOT(onError(QNetworkReply::NetworkError)));
-
-    disconnect(m_NetworkReply, SIGNAL(finished()),
-               this, SLOT(onReplyDelete()));
-
-    m_NetworkReply->deleteLater();
-    m_Downloading = false;
+    QNetworkRequest networkRequest{QUrl(url)};
+    networkRequest.setAttribute(QNetworkRequest::RedirectPolicyAttribute,
+                                QNetworkRequest::NoLessSafeRedirectPolicy);
+    networkRequest.setAttribute(QNetworkRequest::CacheLoadControlAttribute,
+                                QNetworkRequest::AlwaysNetwork);
+    QNetworkReply* reply = m_NetworkManager.get(networkRequest);
+    reply->setProperty("g1o_request_index", requestIndex);
 }
 
 void CUrlDownloader::onDownloadFinished(QNetworkReply *data)
 {
-    m_Cache = QString(data->readAll());
-    emit signalDownloadCompleteCache(m_Cache);
-}
+    const int requestIndex = data->property("g1o_request_index").toInt();
+    if (data->error() != QNetworkReply::NoError)
+    {
+        SPDLOG_ERROR("HTTP request to {} failed: {}",
+                     data->url().toString().toStdString(), data->errorString().toStdString());
+        emit signalError(requestIndex);
+    }
+    else
+        emit signalDownloadCompleteCache(QString::fromUtf8(data->readAll()), requestIndex);
 
-void CUrlDownloader::onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal)
-{
-    Q_UNUSED(bytesReceived)
-    Q_UNUSED(bytesTotal)
-}
-
-void CUrlDownloader::onError(QNetworkReply::NetworkError error)
-{
-    Q_UNUSED(error)
-    emit signalError();
+    data->deleteLater();
 }

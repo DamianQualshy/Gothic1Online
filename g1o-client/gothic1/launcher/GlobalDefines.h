@@ -25,8 +25,8 @@
 #endif
 #define VERSION_NAME                G1O_VERSION
 
-#ifndef G1O_MASTER_SERVER_LIST_URL
-#define G1O_MASTER_SERVER_LIST_URL  "http://gothic-online.com.pl/list/list.txt"
+#ifndef MASTER_SERVER_ENDPOINT
+#define MASTER_SERVER_ENDPOINT       ""
 #endif
 
 #ifndef G1O_LAUNCHER_VERSION_URL

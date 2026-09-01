@@ -32,6 +32,8 @@ public:
 
     CServerInfo& getServerInfo(QString ipAdress, QString port);
     void 		 addServer(CServerInfo serverInfo, bool show = true);
+	void         updateServer(const CServerInfo& serverInfo);
+	void         updatePing(const QString& ipAdress, const QString& port, uint ping);
     void 		 removeServer(QString ipAdress, QString port);
     void		 editServer(QString ipAdress, QString port, QString newIpAdress, QString newPort);
     void         insertServer(QString ipAdress, QString port, QString hostName, QString description, QString script, QString world, QString version,

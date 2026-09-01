@@ -108,8 +108,7 @@ bool CNetwork::downloadServerFiles(QString hostName, QString ipAdress, int port,
 
 void CNetwork::downloadFileFromUrl(QString url, int index)
 {
-    m_DownloadIndex = index;
-    m_UrlDownloader.downloadFile(url);
+    m_UrlDownloader.downloadFile(url, index);
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------
@@ -133,6 +132,9 @@ void CNetwork::initConnections()
     // Internet
     connect(NETWORK.getInternetRCP(), SIGNAL(signalServerPing(QString,int,int)),
             this, SLOT(onInternetServerReached(QString,int,int)));
+
+    connect(NETWORK.getInternetRCP(), SIGNAL(signalServerInformation(QString,QString,QString,QString,QString,QString,QString,int,int,int)),
+            this, SLOT(onInternetServerInformation(QString,QString,QString,QString,QString,QString,QString,int,int,int)));
 
     // Favorite
     connect(NETWORK.getFavoriteRPC(), SIGNAL(signalFillUnknownServers()),
@@ -167,11 +169,11 @@ void CNetwork::initConnections()
             this, SLOT(onDownloaderComplete()));
 
     // Url
-    connect(&m_UrlDownloader, SIGNAL(signalDownloadCompleteCache(QString)),
-            this, SLOT(onUrlDownloadComplete(QString)));
+    connect(&m_UrlDownloader, SIGNAL(signalDownloadCompleteCache(QString,int)),
+            this, SLOT(onUrlDownloadComplete(QString,int)));
 
-    connect(&m_UrlDownloader, SIGNAL(signalError()),
-            this, SLOT(onUrlError()));
+    connect(&m_UrlDownloader, SIGNAL(signalError(int)),
+            this, SLOT(onUrlError(int)));
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------
@@ -182,6 +184,13 @@ void CNetwork::initConnections()
 void CNetwork::onInternetServerReached(QString ipAdress, int port, int ping)
 {
     LAUNCHER.getInternetManager().addServer(ipAdress, port, ping);
+}
+
+void CNetwork::onInternetServerInformation(QString ipAdress, QString port, QString hostName, QString script, QString version,
+                                           QString world, QString description, int onlinePlayers, int maxPlayers, int ping)
+{
+    LAUNCHER.getInternetManager().updateServer(ipAdress, port, hostName, script, version, world, description,
+                                               onlinePlayers, maxPlayers, ping);
 }
 
 // Favorite
@@ -291,9 +300,9 @@ void CNetwork::onDownloaderComplete()
 }
 
 // Url Downloader
-void CNetwork::onUrlDownloadComplete(QString param)
+void CNetwork::onUrlDownloadComplete(QString param, int requestIndex)
 {
-    switch (m_DownloadIndex)
+    switch (requestIndex)
     {
     case FILE_URL_MASTER_LIST:
         LAUNCHER.getInternetManager().splitList(param);
@@ -305,14 +314,13 @@ void CNetwork::onUrlDownloadComplete(QString param)
     }
 }
 
-void CNetwork::onUrlError()
+void CNetwork::onUrlError(int requestIndex)
 {
-    switch (m_DownloadIndex)
+    switch (requestIndex)
     {
     case FILE_URL_MASTER_LIST:
         LAUNCHER.getInternetManager().downloadError();
         break;
     }
 
-    m_DownloadIndex = -1; // Restart index
 }

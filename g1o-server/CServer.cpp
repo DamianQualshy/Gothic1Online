@@ -12,7 +12,7 @@ CServer::CServer()
 	pBan = new CBan();
 	pScriptDownload = new CScriptDownload();
 
-	serverDescription = "<font color=orange><b>G</b></font>othic Online <font color=lightgreen><b>S</b></font>erver";
+	serverDescription = pConfig->GetServerDescription();
 	serverWorld = "WORLD.ZEN";
 	serverHour = 8; serverMinute = 0; serverDay = 0;
 	serverUnconscious = true;
@@ -61,7 +61,7 @@ void CServer::Start()
 		//Downloader
 		pScriptDownload->StartUp();
 		//Wątek niewolniczy (streamer, lista graczy)
-		thread slave(CServer::SlaveThread, (void*)NULL);
+		tthread::thread slave(CServer::SlaveThread, (void*)NULL);
 		slave.detach();
 		this->MainThread(); //Główny wątek odbierający pakiety
 	}

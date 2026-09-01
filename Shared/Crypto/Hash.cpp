@@ -30,7 +30,7 @@ void CheckStatus(NTSTATUS status, const char* operation)
 
 std::vector<unsigned char> LegacyHash(std::string_view input, LPCWSTR algorithm)
 {
-	if (input.size() > std::numeric_limits<ULONG>::max())
+	if (input.size() > (std::numeric_limits<ULONG>::max)())
 		throw std::length_error("Hash input exceeds the Windows CNG size limit");
 
 	BCRYPT_ALG_HANDLE provider = nullptr;

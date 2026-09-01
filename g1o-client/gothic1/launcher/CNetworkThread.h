@@ -58,6 +58,7 @@ private slots:
     void handleNetwork();
 
 friend class CRPCFavorite;
+friend class CRPCInternet;
 friend class CRPCDownloader;
 friend class CFileTransferCallback;
 friend class CNetwork;

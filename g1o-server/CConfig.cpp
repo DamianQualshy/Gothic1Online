@@ -1,10 +1,14 @@
 #include "stdafx.h"
 
 #include <algorithm>
+#include <array>
 #include <cctype>
+#include <cstring>
 #include <filesystem>
 #include <stdexcept>
 #include <unordered_set>
+
+#include <sodium.h>
 
 namespace
 {
@@ -132,10 +136,59 @@ namespace
 			if (ScriptLanguage(path) != language)
 				throw std::runtime_error("script resource mixes Squirrel and Lua files");
 	}
+
+	bool IsValidServerIdentitySeed(const RakString& encodedSeed)
+	{
+		if (encodedSeed.IsEmpty())
+			return false;
+
+		std::array<unsigned char, crypto_sign_SEEDBYTES> decodedSeed{};
+		std::size_t decodedLength = 0;
+		return sodium_base642bin(
+			decodedSeed.data(), decodedSeed.size(), encodedSeed.C_String(), encodedSeed.GetLength(),
+			nullptr, &decodedLength, nullptr, sodium_base64_VARIANT_ORIGINAL) == 0 &&
+			decodedLength == decodedSeed.size();
+	}
+
+	RakString GenerateServerIdentitySeed()
+	{
+		std::array<unsigned char, crypto_sign_SEEDBYTES> seed{};
+		randombytes_buf(seed.data(), seed.size());
+
+		const std::size_t encodedLength = sodium_base64_ENCODED_LEN(seed.size(), sodium_base64_VARIANT_ORIGINAL);
+		std::string encoded(encodedLength, '\0');
+		sodium_bin2base64(encoded.data(), encoded.size(), seed.data(), seed.size(), sodium_base64_VARIANT_ORIGINAL);
+		encoded.resize(std::strlen(encoded.c_str()));
+		return RakString(encoded.c_str());
+	}
+
+	bool SaveServerIdentitySeed(const fs::path& configPath, const RakString& seed)
+	{
+		TiXmlDocument document(configPath.string().c_str());
+		if (!document.LoadFile())
+			return false;
+
+		TiXmlElement* root = document.FirstChildElement("server");
+		if (!root)
+			return false;
+
+		TiXmlElement* config = root->FirstChildElement("config");
+		if (!config)
+		{
+			config = new TiXmlElement("config");
+			root->LinkEndChild(config);
+		}
+
+		config->SetAttribute("server_identity_seed", seed.C_String());
+		return document.SaveFile(configPath.string().c_str());
+	}
 }
 
 CConfig::CConfig()
 {
+	if (sodium_init() < 0)
+		throw std::runtime_error("failed to initialize libsodium");
+
 	valid = false;
 	SetDefault();
 	if (!fs::is_regular_file("config.xml"))
@@ -167,6 +220,8 @@ bool CConfig::LoadConfigFromFile(RakString fileName)
 
 		bool parsedPublic = serverPublic;
 		RakString parsedName = serverName;
+		RakString parsedDescription = serverDescription;
+		RakString parsedIdentitySeed = serverIdentitySeed;
 		RakString parsedPort = serverPort;
 		RakString parsedSlots = maxSlots;
 		RakString parsedPassword = adminPassword;
@@ -178,6 +233,13 @@ bool CConfig::LoadConfigFromFile(RakString fileName)
 			if (const char* value = config->Attribute("port")) parsedPort = value;
 			if (const char* value = config->Attribute("max_slots")) parsedSlots = value;
 			if (const char* value = config->Attribute("rcon_pass")) parsedPassword = value;
+			if (const char* value = config->Attribute("server_identity_seed")) parsedIdentitySeed = value;
+		}
+		if (TiXmlElement* description = root->FirstChildElement("description"))
+		{
+			parsedDescription = description->GetText() ? description->GetText() : "";
+			if (parsedDescription.GetLength() > CConfig::MAX_DESCRIPTION_LENGTH)
+				throw std::runtime_error("description is longer than 400 bytes");
 		}
 
 		ParsedScripts parsed;
@@ -186,10 +248,22 @@ bool CConfig::LoadConfigFromFile(RakString fileName)
 
 		serverPublic = parsedPublic;
 		serverName = parsedName;
+		serverDescription = parsedDescription;
+		serverIdentitySeed = parsedIdentitySeed;
 		serverPort = parsedPort;
 		maxSlots = parsedSlots;
 		adminPassword = parsedPassword;
 		scripts = std::move(parsed.scripts);
+		if (!IsValidServerIdentitySeed(serverIdentitySeed))
+		{
+			if (!serverIdentitySeed.IsEmpty())
+				SPDLOG_WARN("Configured server identity seed is invalid; generating a replacement");
+			serverIdentitySeed = GenerateServerIdentitySeed();
+			if (!SaveServerIdentitySeed(configPath, serverIdentitySeed))
+				SPDLOG_WARN("Could not persist the generated server identity seed to {}", configPath.string().c_str());
+			else
+				SPDLOG_INFO("Generated and saved a new server identity seed");
+		}
 		valid = true;
 		SPDLOG_INFO("Config file found: {} server script(s)", static_cast<unsigned>(scripts.size()));
 		return true;
@@ -214,7 +288,13 @@ void CConfig::SaveConfigToFile(RakString fileName)
 	config->SetAttribute("port", serverPort.C_String());
 	config->SetAttribute("max_slots", maxSlots.C_String());
 	config->SetAttribute("rcon_pass", adminPassword.C_String());
+	config->SetAttribute("server_identity_seed", serverIdentitySeed.C_String());
 	root->LinkEndChild(config);
+	auto* description = new TiXmlElement("description");
+	auto* descriptionText = new TiXmlText(serverDescription.C_String());
+	descriptionText->SetCDATA(true);
+	description->LinkEndChild(descriptionText);
+	root->LinkEndChild(description);
 	for (const std::string& script : scripts)
 	{
 		auto* element = new TiXmlElement("script");
@@ -229,6 +309,8 @@ void CConfig::SetDefault()
 {
 	serverPublic = false;
 	serverName = "Gothic Online Server";
+	serverDescription = "<font color=orange><b>G</b></font>othic Online <font color=lightgreen><b>S</b></font>erver";
+	serverIdentitySeed = "";
 	serverPort = "28970";
 	maxSlots = "32";
 	adminPassword = "change-me";

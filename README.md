@@ -1,6 +1,6 @@
 # Gothic 1 Online
 
-This repository contains the Gothic 1 client DLL, external Qt launcher, game server, master server, and their shared networking and scripting infrastructure.
+This repository contains the Gothic 1 client DLL, external Qt launcher, game server, and their shared networking and scripting infrastructure.
 
 ## Layout
 
@@ -8,7 +8,6 @@ This repository contains the Gothic 1 client DLL, external Qt launcher, game ser
 - `g1o-client/gothic1/launcher` — external launcher
 - `g1o-client/gothic1/lib/gothic-api` — maintained Union Gothic API, configured for Gothic 1 Classic
 - `g1o-server` — multiplayer game server
-- `g1o-master` — master server
 - `Shared` — RakNet, the language-neutral server scripting core, TinyXML, hashing, threading, and common protocol code
 - `dependencies` — pinned Squirrel and Sqrat submodules
 
@@ -23,7 +22,6 @@ Available targets:
 - `G1O.Client`
 - `G1O.Launcher`
 - `G1O.Server`
-- `G1O.Master`
 
 Configure a release build from the repository root with `xmake f -p windows -a x86 -m release`, then build all default products with `xmake`. To build one product, pass its target name to the build task, for example `xmake build G1O.Client`.
 
@@ -31,25 +29,19 @@ Master-server endpoints are xmake configuration options. For example:
 
 ```powershell
 xmake f -p windows -a x86 -m release `
-  --master_server_address=master.example.com `
-  --master_server_port=1200 `
-  --master_server_list_url=https://master.example.com/list.txt `
-  --launcher_version_url=https://master.example.com/version.txt
+  --master_server_endpoint=https://master.example.com/g1o/servers `
+  --launcher_version_url=https://master.example.com/g1o/version.txt
 ```
 
 In Bash/Git Bash, use backslashes for line continuation instead of PowerShell backticks:
 
 ```bash
 xmake f -p windows -a x86 -m release \
-  --master_server_address=127.0.0.1 \
-  --master_server_port=1200 \
-  --master_server_list_url=http://localhost/g1o/list.txt \
-  --launcher_version_url=http://localhost/g1o/version.txt
+  --master_server_endpoint=http://localhost:8080/g1o/servers \
+  --launcher_version_url=http://localhost:8080/g1o/version.txt
 ```
 
-These are build-time settings, not values from the client or server XML files. `master_server_address` is the RakNet host used by `GO_Server`; `master_server_port` is both its destination port and the port listened on by `GO_Master`. `master_server_list_url` is the separate HTTP(S) `list.txt` endpoint read by the launcher, and `launcher_version_url` is its update-check endpoint. Reconfigure and rebuild the affected targets after changing them.
-
-`GO_Master` writes `list.txt` and `list.html` into its current working directory; it does not serve HTTP itself. Run it in the web directory represented by `master_server_list_url`, or publish/copy those files there. A game server registers only when its `config.xml` has `public="true"` on its `<config>` element; the default is private.
+These are build-time settings, not values from the client or server XML files. `master_server_endpoint` is one HTTP(S) endpoint shared by `GO_Server` and `GO_Launcher`: public game servers POST JSON heartbeats to it every 15 seconds and the launcher retrieves the JSON list from it with GET. `launcher_version_url` remains the launcher's separate update-check endpoint. Reconfigure and rebuild the affected targets after changing them. A game server registers only when its `config.xml` has `public="true"`; the default is private. The server generates and persists `server_identity_seed` on first startup.
 
 Install a completed build into a Gothic directory with:
 
@@ -57,8 +49,8 @@ Install a completed build into a Gothic directory with:
 xmake install -o "E:\Gothic 1 Online"
 ```
 
-This installs `GO_Launcher.exe`, the matching Qt runtime, plugins, and launcher language files under `Multiplayer/Launcher`. The client DLL is installed as `Multiplayer/versions/<version>.dll`, matching the version reported by a server. Client resources are copied from `g1o-client/gothic1/resources` into the game directory; an existing client configuration is preserved. The server is installed into `g1o-server`, with `config.xml` beside the executable and scripts, imported script lists, documentation, and downloads under `g1o-server/resources`, matching the GMPC layout. `G1O.Master` is intentionally excluded from the default game installation.
+This installs `GO_Launcher.exe`, the matching Qt runtime, plugins, and launcher language files under `Multiplayer/Launcher`. The client DLL is installed as `Multiplayer/versions/<version>.dll`, matching the version reported by a server. Client resources are copied from `g1o-client/gothic1/resources` into the game directory; an existing client configuration is preserved. The server is installed into `g1o-server`, with `config.xml` beside the executable and scripts, imported script lists, documentation, and downloads under `g1o-server/resources`.
 
 The Gothic API target is deliberately compiled with `__G1`. Do not change it to `__G2` or `__G2A`; the class layouts, globals, and function addresses are not compatible.
 
-The scripting layer supports Squirrel and Lua through runtime adapters over one server-side value, event, timer, and native-function API. Server `config.xml` uses ordered `<script src="..." />` declarations and recursive `<import src="..." />` files. Imports are expanded inline, so the declared loading order remains authoritative. The complete list must use one language; mixed Squirrel/Lua lists are rejected before execution. Clients do not download or execute game-mode scripts. They report a fixed set of input and gameplay observations to server events, with the player identity derived from the authenticated connection. The game bindings remain explicitly Gothic 1 (`__G1`); the GMPC/GMPA/G2O references are used only for multiplayer behavior.
+The scripting layer supports Squirrel and Lua through runtime adapters over one server-side value, event, timer, and native-function API. Server `config.xml` uses ordered `<script src="..." />` declarations and recursive `<import src="..." />` files. Imports are expanded inline, so the declared loading order remains authoritative. The complete list must use one language; mixed Squirrel/Lua lists are rejected before execution. Clients do not download or execute game-mode scripts. They report a fixed set of input and gameplay observations to server events, with the player identity derived from the authenticated connection. The game bindings remain explicitly Gothic 1 (`__G1`).

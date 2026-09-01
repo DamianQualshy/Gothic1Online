@@ -1,95 +1,130 @@
 #include "stdafx.h"
-#define RAKNET_PASSWORD "TEMPORARY_PASSWORD"
 
-#ifndef G1O_MASTER_SERVER_ADDRESS
-#define G1O_MASTER_SERVER_ADDRESS "185.5.97.181"
+#include <memory>
+#include <string>
+
+#include <httplib.h>
+#include <nlohmann/json.hpp>
+
+#ifndef MASTER_SERVER_ENDPOINT
+#define MASTER_SERVER_ENDPOINT ""
 #endif
 
-#ifndef G1O_MASTER_SERVER_PORT
-#define G1O_MASTER_SERVER_PORT 1200
+namespace
+{
+	std::unique_ptr<httplib::Client> CreateMasterServerClient(const master_server::EndpointInfo& endpoint)
+	{
+#ifndef CPPHTTPLIB_OPENSSL_SUPPORT
+		if (endpoint.useHttps)
+		{
+			SPDLOG_ERROR("Master server endpoint requires HTTPS support, but this build lacks OpenSSL support");
+			return nullptr;
+		}
 #endif
+
+		std::string origin = endpoint.useHttps ? "https://" : "http://";
+		if (endpoint.host.find(':') != std::string::npos)
+		{
+			origin.push_back('[');
+			origin += endpoint.host;
+			origin.push_back(']');
+		}
+		else
+			origin += endpoint.host;
+		origin.push_back(':');
+		origin += std::to_string(endpoint.port);
+
+		auto client = std::make_unique<httplib::Client>(origin);
+#ifdef CPPHTTPLIB_OPENSSL_SUPPORT
+		if (endpoint.useHttps)
+			client->enable_server_certificate_verification(true);
+#endif
+		return client;
+	}
+
+	std::string SanitizeServerText(std::string text)
+	{
+		for (std::size_t i = 0; i < text.size(); ++i)
+		{
+			const unsigned char character = static_cast<unsigned char>(text[i]);
+			if (character < 0x20 && character != 0x07)
+			{
+				text.resize(i);
+				break;
+			}
+		}
+		return text;
+	}
+}
 
 CMaster::CMaster()
+	: nextUpdate(std::chrono::steady_clock::time_point::min()),
+	  endpointValid(false)
 {
-	peer = RakPeerInterface::GetInstance();
-	timeRefreshMaster = 0;
-	isConnected = false;
-	SocketDescriptor sd;
-	if( peer->Startup(1, &sd, 1) == RAKNET_STARTED )
-		SPDLOG_INFO("CMaster peer started");
-};
+	const auto parsedEndpoint = master_server::ParseEndpoint(MASTER_SERVER_ENDPOINT);
+	if (!parsedEndpoint)
+	{
+		SPDLOG_WARN("Server is public, but the master_server_endpoint xmake option is empty or invalid");
+		return;
+	}
 
-CMaster::~CMaster()
-{
-	peer->Shutdown(300);
-};
+	endpoint = *parsedEndpoint;
+	endpointValid = true;
+}
+
+CMaster::~CMaster() = default;
 
 void CMaster::Pulse()
 {
-	static bool wasAdded = false;
-	const unsigned int currentTime = GetTimeMS();
+	using namespace std::chrono_literals;
 
-	if (!isConnected && timeRefreshMaster < currentTime)
+	if (!endpointValid)
+		return;
+
+	const auto now = std::chrono::steady_clock::now();
+	if (now < nextUpdate)
+		return;
+	nextUpdate = now + 15s;
+
+	auto client = CreateMasterServerClient(endpoint);
+	if (!client)
+		return;
+
+	client->set_connection_timeout(5, 0);
+	client->set_read_timeout(5, 0);
+	client->set_write_timeout(5, 0);
+
+	CConfig* config = core.GetConfig();
+	const SystemAddress localAddress = core.GetNetwork()->GetPeer()->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS, 0);
+	const std::string address = localAddress == UNASSIGNED_SYSTEM_ADDRESS ? std::string{} : localAddress.ToString(false);
+	const unsigned int port = static_cast<unsigned int>(atoi(config->GetServerPort().C_String()));
+	const unsigned int maxSlots = static_cast<unsigned int>(atoi(config->GetMaxSlots().C_String()));
+
+	const nlohmann::json payload = {
+		{"server_seed", config->GetServerIdentitySeed().C_String()},
+		{"ip_address", address},
+		{"port", port},
+		{"name", SanitizeServerText(config->GetServerName().C_String())},
+		{"current_players", playerManager.GetNumberOfPlayers()},
+		{"max_slots", maxSlots},
+		{"map", SanitizeServerText(core.GetWorld().C_String())},
+		{"description", SanitizeServerText(core.GetDescription().C_String())},
+		{"version", versionString}
+	};
+
+	const auto response = client->Post(endpoint.path.c_str(), payload.dump(), "application/json");
+	if (!response)
 	{
-		if (!wasAdded) SPDLOG_INFO("[master] Adding server to master list");
-
-		ConnectionAttemptResult result = peer->Connect(
-			G1O_MASTER_SERVER_ADDRESS,
-			(unsigned short)G1O_MASTER_SERVER_PORT,
-			RAKNET_PASSWORD,
-			strlen(RAKNET_PASSWORD));
-
-		isConnected = result == CONNECTION_ATTEMPT_STARTED ||
-			result == ALREADY_CONNECTED_TO_ENDPOINT ||
-			result == CONNECTION_ATTEMPT_ALREADY_IN_PROGRESS;
-
-		if (!isConnected)
-			SPDLOG_ERROR("[master] Cannot start connection to {}:{} (error {})", G1O_MASTER_SERVER_ADDRESS, G1O_MASTER_SERVER_PORT, (int)result);
-
-		timeRefreshMaster = currentTime + 60000;
+		SPDLOG_WARN("Failed to update master server at {}:{}{}: {}", endpoint.host, endpoint.port, endpoint.path,
+			httplib::to_string(response.error()));
 	}
-
-	// RakNet connections are asynchronous. Packets must be consumed on every
-	// pulse, not only in the same pulse that called Connect().
-	for (Packet *packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())
+	else if (response->status >= 400)
 	{
-		switch (packet->data[0])
-		{
-			case ID_CONNECTION_REQUEST_ACCEPTED:
-			{
-				CConfig* cfg = core.GetConfig();
-				unsigned int port = (unsigned int)atoi(cfg->GetServerPort().C_String());
-				unsigned int maxSlots = (unsigned int)atoi(cfg->GetMaxSlots().C_String());
-
-				BitStream stream;
-				stream.Write((MessageID)GO_MASTER);
-				stream.Write(port);
-				stream.Write(cfg->GetServerName());
-				stream.Write(playerManager.GetNumberOfPlayers());
-				stream.Write(maxSlots);
-				stream.Write(core.GetDescription());
-				// Retain the legacy master-list field for wire compatibility.
-				stream.Write(RakString("NO_SCRIPT"));
-				stream.Write(RakString(versionString));
-				stream.Write(core.GetWorld());
-
-				if (peer->Send(&stream, HIGH_PRIORITY, RELIABLE, 0, packet->systemAddress, false) && !wasAdded)
-				{
-					wasAdded = true;
-					SPDLOG_INFO("[master] Server registration sent successfully");
-				}
-
-				peer->CloseConnection(packet->systemAddress, true);
-				isConnected = false;
-				break;
-			}
-
-			case ID_CONNECTION_ATTEMPT_FAILED:
-			case ID_CONNECTION_LOST:
-			case ID_DISCONNECTION_NOTIFICATION:
-			case ID_ALREADY_CONNECTED:
-				isConnected = false;
-				break;
-		}
+		SPDLOG_WARN("Master server responded with status {} when updating {}:{}{}", response->status,
+			endpoint.host, endpoint.port, endpoint.path);
 	}
-};
+	else
+	{
+		SPDLOG_DEBUG("Master server heartbeat succeeded with status {}", response->status);
+	}
+}

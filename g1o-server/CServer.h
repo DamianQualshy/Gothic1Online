@@ -61,7 +61,13 @@ public:
 	inline int GetMinute() const { return this->serverMinute; };
 	inline int GetDay() const { return this->serverDay; };
 	inline bool GetUnconscious() const { return this->serverUnconscious; };
-	void SetDescription(RakString _desc) { this->serverDescription = _desc;};
+	bool SetDescription(RakString _desc)
+	{
+		if (_desc.GetLength() > CConfig::MAX_DESCRIPTION_LENGTH)
+			return false;
+		this->serverDescription = _desc;
+		return true;
+	};
 	void SetWorld(RakString _world) { this->serverWorld = _world;};
 	void SetUnconscious(bool _enabled);
 

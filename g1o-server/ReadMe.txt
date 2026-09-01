@@ -5,7 +5,7 @@ Run GO_Server.exe with this directory as its working directory.
 
 Configuration is stored in config.xml. The server is private by default. Set
 public="true" on the <config> element to register it with the master server
-compiled into GO_Server.exe. Ordered <script> declarations and <import> files
+HTTP endpoint compiled into GO_Server.exe. Ordered <script> declarations and <import> files
 select the scripts loaded for the client, server, and shared sides.
 
 Required runtime directories are grouped under resources:
@@ -17,12 +17,9 @@ Required runtime directories are grouped under resources:
 The default config enables Squirrel and keeps the Lua import commented for quick
 switching. See resources/README.txt for the included events and commands.
 
-Master list files
------------------
-
-GO_Master.exe writes list.txt and list.html into its current working directory.
-It does not host those files over HTTP. Publish that directory through a web
-server at the URL compiled into GO_Launcher.exe.
+Public servers send a JSON heartbeat every 15 seconds to the endpoint selected
+with xmake's master_server_endpoint option. The launcher retrieves the JSON
+server list with GET from that same endpoint.
 
 See the repository README.md for xmake configuration, build, and installation
 commands.

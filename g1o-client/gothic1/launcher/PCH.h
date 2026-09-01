@@ -1,9 +1,6 @@
 #ifndef __PCH__
 #define __PCH__
 
-#define WINVER 0x0500
-#define _WIN32_WINNT 0x0500
-
 // Defines
 #include "Macros.h"
 #include "GlobalDefines.h"
@@ -19,6 +16,7 @@
 
 // Headers
 #include "SLauncher.h"
+#include <spdlog/spdlog.h>
 #include "Logging.h"
 #include "CLanguage.h"
 #include "CServerInfo.h"
