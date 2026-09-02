@@ -13,7 +13,6 @@ SLauncher::SLauncher(QWidget *parent) :
     m_AddonWidget(new CAddons),
     m_OptionWidget(new COptions),
     m_VersionName(VERSION_NAME),
-    m_VersionLabel(this),
     ui(new Ui::SLauncher)
 {
 #ifdef DEBUG_MODE
@@ -147,6 +146,7 @@ void SLauncher::translate()
 
     ui->treeInternet->setHeaderLabels(QStringList() << TRANSLATE("L_HOSTNAME") << TRANSLATE("L_IP") << TRANSLATE("L_PORT") << TRANSLATE("L_VERSION") << TRANSLATE("L_PLAYERS") << TRANSLATE("L_PING"));
     ui->treeFavorite->setHeaderLabels(QStringList() << TRANSLATE("L_HOSTNAME") << TRANSLATE("L_IP") << TRANSLATE("L_PORT") << TRANSLATE("L_VERSION") << TRANSLATE("L_PLAYERS") << TRANSLATE("L_PING"));
+    ui->labelVersion->setText(TRANSLATE("L_VERSION") + ": <b>" + VERSION_NAME + "</b>");
 
     setStatus(TRANSLATE("SB_READY"));
 
@@ -170,11 +170,10 @@ void SLauncher::initWidgets()
 {
     ui->setupUi(this);
 
-    QWidget::setWindowTitle(QString("%1 %2").arg(APP_NAME).arg(getVersion()));
+    // The reference launcher uses a fixed 900 x 500 canvas.
+    setFixedSize(900, 500);
 
-    m_VersionLabel.setStyleSheet("color: white; font-family: Sans; font-size: 12px");
-    m_VersionLabel.setText(VERSION_NAME);
-    m_VersionLabel.move(width() - 297, height() - 27);
+    QWidget::setWindowTitle(QString("%1 %2").arg(APP_NAME).arg(getVersion()));
 
     ui->labelLogo->setOpenExternalLinks(true);
 
@@ -184,16 +183,26 @@ void SLauncher::initWidgets()
     ui->treeInternet->setColumnCount(6);
     ui->treeFavorite->setColumnCount(6);
 
-    ui->treeInternet->header()->resizeSection(0, 200);
-    ui->treeFavorite->header()->resizeSection(0, 200);
-    ui->treeInternet->header()->resizeSection(1, 100);
-    ui->treeFavorite->header()->resizeSection(1, 100);
-    ui->treeInternet->header()->resizeSection(2, 50);
-    ui->treeFavorite->header()->resizeSection(2, 50);
-    ui->treeInternet->header()->resizeSection(3, 50);
-    ui->treeFavorite->header()->resizeSection(3, 50);
-    ui->treeInternet->header()->resizeSection(4, 50);
-    ui->treeFavorite->header()->resizeSection(4, 50);
+    ui->treeInternet->setIndentation(0);
+    ui->treeFavorite->setIndentation(0);
+
+    // Keep G2O's column proportions while accounting for G1O's separate port
+    // column. The hostname consumes the remaining viewport width.
+    const int columnWidths[] = {0, 105, 45, 70, 80, 50};
+    ui->treeInternet->header()->setStretchLastSection(false);
+    ui->treeFavorite->header()->setStretchLastSection(false);
+    ui->treeInternet->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+    ui->treeFavorite->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+    for (int column = 1; column < 6; ++column)
+    {
+        ui->treeInternet->header()->setSectionResizeMode(column, QHeaderView::Fixed);
+        ui->treeFavorite->header()->setSectionResizeMode(column, QHeaderView::Fixed);
+        ui->treeInternet->header()->resizeSection(column, columnWidths[column]);
+        ui->treeFavorite->header()->resizeSection(column, columnWidths[column]);
+    }
+
+    ui->treeInternet->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->treeFavorite->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     ui->treeInternet->header()->setSectionsClickable(true);
     ui->treeFavorite->header()->setSectionsClickable(true);

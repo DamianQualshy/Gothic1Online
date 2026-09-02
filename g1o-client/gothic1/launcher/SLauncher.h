@@ -77,9 +77,6 @@ private:
 
     QString m_VersionName;
 
-    // Version label
-    QLabel m_VersionLabel;
-
 private slots:
     void onQuit();
     void onRefresh();

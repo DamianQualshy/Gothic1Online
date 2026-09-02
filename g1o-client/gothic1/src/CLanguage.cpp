@@ -57,12 +57,44 @@ namespace
 		}
 		return "";
 	}
+
+	const char* GetGerman(EClientText text)
+	{
+		switch (text)
+		{
+		case EClientText::EstablishingConnection: return "Verbindung mit %s:%s wird hergestellt...";
+		case EClientText::ConnectionLost: return "Verbindung verloren";
+		case EClientText::ServerClosedConnection: return "Der Server hat die Verbindung geschlossen";
+		case EClientText::ConnectedJoining: return "Verbunden mit: %s. Spielbeitritt läuft...";
+		case EClientText::IncorrectVersion: return "Falsche Gothic-Online-Version";
+		case EClientText::ServerFull: return "Der Server ist voll";
+		case EClientText::NicknameUsed: return "Dein Nickname wird bereits verwendet";
+		case EClientText::Banned: return "Du wurdest von diesem Server gebannt!";
+		case EClientText::ConnectionFailed: return "Der Server ist nicht erreichbar (Verbindungsversuch fehlgeschlagen)";
+		case EClientText::Disconnected: return "Verbindung getrennt: %s";
+		case EClientText::NetworkProperties: return "Netzwerkeigenschaften";
+		case EClientText::ReceivedPackets: return "Empfangene Pakete: %d";
+		case EClientText::LostPackets: return "Paketverlust: %f%%";
+		case EClientText::LostPacketsLastSecond: return "Paketverlust in der letzten Sekunde: %f%%";
+		case EClientText::MessageResendBuffer: return "Nachrichten im Sendewiederholungspuffer: %d";
+		case EClientText::ByteResendBuffer: return "Bytes im Sendewiederholungspuffer: %d";
+		case EClientText::CreatedPlayers: return "Erstellte Spieler: %d";
+		case EClientText::CreatedItems: return "Erstellte Gegenstände: %d";
+		case EClientText::NotConnected: return "Nicht verbunden!";
+		case EClientText::PlayerList: return "Spieler auf diesem Server:";
+		}
+		return "";
+	}
 }
 
 const char* ClientLanguage::Get(EClientText text, const std::string& language)
 {
 	// The legacy Gothic 1 renderer is tied to the Central-European execution
 	// code page. Unsupported or missing translations deliberately fall back to
-	// English instead of leaking Polish strings into another selected language.
-	return language == "pl" ? GetPolish(text) : GetEnglish(text);
+	// English instead of displaying text from a different selected language.
+	if (language == "pl")
+		return GetPolish(text);
+	if (language == "de")
+		return GetGerman(text);
+	return GetEnglish(text);
 }

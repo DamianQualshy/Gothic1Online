@@ -10,7 +10,7 @@ L_ADDONS			Addons
 L_OPTIONS			Options
 L_REFRESH			Refresh
 L_NICKNAME			<b>Nickname:</b>
-L_INFORMATION		Information
+L_INFORMATION		Description
 L_HOSTNAME			Hostname
 L_IP				IP
 L_PORT				Port

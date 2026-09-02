@@ -1,0 +1,98 @@
+﻿# Language
+LANG_NAME			Deutsch
+ENABLE				AN
+DISABLE				AUS
+
+# Launcher common
+L_INTERNET			Internet
+L_FAVORITE			Favoriten
+L_ADDONS			Add-ons
+L_OPTIONS			Optionen
+L_REFRESH			Aktualisieren
+L_NICKNAME			<b>Nickname:</b>
+L_INFORMATION		Beschreibung
+L_HOSTNAME			Servername
+L_IP				IP
+L_PORT				Port
+L_PLAYERS			Spieler
+L_VERSION			Version
+L_PING				Ping
+
+# Favorite
+F_ADD				Hinzufügen
+F_EDIT				Bearbeiten
+F_REMOVE			Entfernen
+F_OK				OK
+F_ADRESS			IP:Port
+F_WADD				Favorit hinzufügen
+F_WREMOVE			Favorit entfernen
+F_ERR_01			Bitte gib eine IP-Adresse ein.
+F_ERR_02			Die eingegebene IP-Adresse ist ungültig!
+F_ERR_03			Der eingegebene Port ist ungültig!
+
+# Internet
+I_MASTER_LIST		Serverliste wird vom Masterserver abgerufen...
+I_MASTER_ERROR		Verbindung zum Masterserver fehlgeschlagen!
+I_MASTER_CONNECTING	Verbindung zum Masterserver wird hergestellt...
+
+# Network
+N_NAME				Netzwerk
+
+# Addons
+A_ERR_01			Add-on konnte nicht aktiviert werden! Starte den GO Launcher mit Administratorrechten.
+A_ERR_02			Add-on konnte nicht deaktiviert werden! Starte den GO Launcher mit Administratorrechten.
+
+# Options
+O_VIDEO				Video
+O_RES_X				Auflösung X:
+O_RES_Y				Auflösung Y:
+O_WINDOW_MODE		Fenstermodus
+O_GBOX_SOUND		Audio
+O_ESOUND			Sound aktivieren
+O_EMUSIC			Musik aktivieren
+O_SOUND				<b>Sound:</b>
+O_MUSIC				<b>Musik:</b>
+O_SAVE				Speichern
+
+# Server manager
+SM_DESCRIPTION		<b>Beschreibung:</b>
+SM_HOSTNAME			<b>Servername:</b>
+SM_IP				<b>IP:</b>
+SM_PORT				<b>Port:</b>
+SM_WORLD			<b>Welt:</b>
+SM_VERSION			<b>Version:</b>
+SM_PLAYERS			<b>Spieler:</b>
+SM_PING				<b>Ping:</b>
+SM_SERVER_OFFLINE	Der Server ist offline!
+SM_SERVER_FULL		Der Server ist voll!
+SM_WRONG_VERSION	Falsche Version.
+SM_INVALID_VERSION	Der Server hat eine ungültige Clientversion gemeldet.
+SM_MISSING_VERSION	Clientversion %1 ist nicht installiert.<br>Lege die DLL unter <b>%2</b> ab.
+
+# Downloader
+D_NAME				Downloader
+D_TOTAL_SIZE		Gesamtgröße: %1/%2 %3
+D_FILE_SIZE		Dateigröße: %1/%2 %3
+D_DOWNLOAD_FILE		Download (%1/%2): <b>%3</b>
+D_SAVE_FILE			Datei wird gespeichert (%1/%2): <b>%3</b>
+D_QUIT				Bitte warten, der Downloader wird beendet.
+D_CONNECT_FAILED	Verbindung zum Server fehlgeschlagen!
+D_CHECKING_FILES	Dateien werden überprüft, bitte warten...
+
+# Version
+V_NEW_AVAILABLE		Eine neue Version ist verfügbar: <b>%1</b>.<br><a href='%2'><b>Herunterladen</b></a>
+V_INFORMATION		<b>Information:</b>
+
+# Injector
+IR_ERR_01			%1 konnte nicht injiziert werden.<br>Starte den GO Launcher mit Administratorrechten!
+IR_ERR_02			Der Prozess %1 konnte nicht geöffnet werden.
+
+# Status bar
+SB_READY			Bereit
+SB_NO_SERVERS		Keine Server verfügbar
+SB_AVAIABLE_SERVERS	Verfügbare Server: %1
+SB_CHECKING_SERVERS	Server werden überprüft: %1 von %2
+
+# Config
+C_NAME				Konfiguration
+C_WRITE_ERROR		Konfigurationsdatei konnte nicht geschrieben werden!<br>Überprüfe die Zugriffsrechte.
