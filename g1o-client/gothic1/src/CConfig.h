@@ -4,19 +4,19 @@
 class CConfig
 {
 private:
-	RakString playerName;
-	RakString language;
-	bool LoadLegacyConfigFromFile(RakString fileName);
+	std::string playerName;
+	std::string language;
+	bool LoadLegacyConfigFromFile(std::string fileName);
 public:
 	CConfig();
 	~CConfig();
 
-	bool LoadConfigFromFile(RakString fileName);
-	void SaveConfigToFile(RakString fileName);
+	bool LoadConfigFromFile(std::string fileName);
+	void SaveConfigToFile(std::string fileName);
 	void SetDefault();
 
-	inline RakString GetPlayerName(){ return this->playerName;};
-	inline RakString GetLanguage(){ return this->language; };
+	inline std::string GetPlayerName(){ return this->playerName;};
+	inline std::string GetLanguage(){ return this->language; };
 
 };
 

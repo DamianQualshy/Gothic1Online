@@ -24,7 +24,7 @@ The server reads `config.xml` from its working directory. A missing file is crea
 | --- | --- | --- |
 | `public` | `false` | Enables registration with the configured master server. Accepts `true`, `false`, `1`, or `0`. |
 | `host_name` | `Gothic Online Server` | Name sent to clients, the launcher, and master-server listings. |
-| `port` | `28970` | RakNet game port and TCP download port. |
+| `port` | `28970` | GNS port used for gameplay, launcher queries, and resource synchronization. |
 | `max_slots` | `32` | Maximum number of accepted players. |
 | `rcon_pass` | `change-me` | Administrator password. Change it before public hosting. |
 | `server_identity_seed` | generated | Persistent base64-encoded server identity sent with HTTP master-server heartbeats. Leave it empty on first startup, keep it secret, and back it up when moving the server. |

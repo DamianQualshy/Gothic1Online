@@ -2,12 +2,10 @@
 #define CNETWORK_H
 
 #include <QObject>
-#include <QMutex>
 #include <QThread>
 
 #include <LaunchSession.h>
 
-#include "RakNetInclude.h"
 #include "CNetworkThread.h"
 #include "CServerInfo.h"
 #include "CDownloader.h"
@@ -36,10 +34,7 @@ private:
     void initConnections();
     void connectServer();
 
-    RakNet::RakPeerInterface *m_Peer;
-
     QThread m_Thread;
-    QMutex m_Mutex;
     QVector<CServerInfo> m_ServerList;
     CServerManager *m_ServerManager;
 

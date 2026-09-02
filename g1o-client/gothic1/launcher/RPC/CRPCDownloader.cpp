@@ -1,115 +1,175 @@
 #include "PCH.h"
 
-CRPCDownloader::CRPCDownloader() :
-    m_RakTCP(NULL),
-    m_SetID(-1),
-    m_DownloadDir(0),
-    m_DownloadActive(false)
-{
-}
+#include <Network/GOMessages.h>
 
-CRPCDownloader::~CRPCDownloader()
+#include <array>
+#include <filesystem>
+#include <fstream>
+#include <unordered_set>
+
+namespace
 {
-    if (m_RakTCP)
+    constexpr std::size_t HashChunkSize = 32 * 1024;
+
+    std::uint64_t HashFile(const std::filesystem::path& path)
     {
-        m_RakTCP->DetachPlugin(&m_DirectoryDeltaTransfer);
-        m_RakTCP->DetachPlugin(&m_FileListTransfer);
+        std::ifstream input(path, std::ios::binary);
+        std::array<char, HashChunkSize> buffer{};
+        std::uint64_t hash = 14695981039346656037ull;
+        while (input)
+        {
+            input.read(buffer.data(), buffer.size());
+            const std::streamsize count = input.gcount();
+            for (std::streamsize i = 0; i < count; ++i)
+            {
+                hash ^= static_cast<unsigned char>(buffer[static_cast<std::size_t>(i)]);
+                hash *= 1099511628211ull;
+            }
+        }
+        return hash;
+    }
+
+    bool ResolveResourcePath(const std::string& relativePath, std::filesystem::path& destination)
+    {
+        const std::filesystem::path root = std::filesystem::absolute(DOWNLOAD_FILE_PATH).lexically_normal();
+        const std::filesystem::path relative = std::filesystem::u8path(relativePath).lexically_normal();
+        if (relative.empty() || relative.is_absolute() || relative.has_root_name() || relative.has_root_directory())
+            return false;
+
+        std::filesystem::path current = root;
+        std::error_code error;
+        for (const auto& component : relative)
+        {
+            if (component == "." || component == "..")
+                return false;
+            current /= component;
+            if (std::filesystem::exists(current, error) && std::filesystem::is_symlink(current, error))
+                return false;
+            if (error)
+                return false;
+        }
+        destination = current.lexically_normal();
+        return true;
     }
 }
 
-//-------------------------------------------------------------------------------------------------------------------------------
-//  Public method
-//-------------------------------------------------------------------------------------------------------------------------------
-
-void CRPCDownloader::initialize(RakNet::PacketizedTCP &rakTCP)
+void CRPCDownloader::connectionRequest(HSteamNetConnection connection)
 {
-    m_RakTCP = &rakTCP;
+    m_Connection = connection;
+    m_Active = true;
+    NETWORK.getFileTransferCallback()->restart(true);
+    emit signalCheckingFiles();
+}
 
-    m_DirectoryDeltaTransfer.SetDownloadRequestIncrementalReadInterface(&m_PartTime, 10000);
-
-    m_RakTCP->AttachPlugin(&m_DirectoryDeltaTransfer);
-    m_RakTCP->AttachPlugin(&m_FileListTransfer);
-
-    m_DirectoryDeltaTransfer.SetFileListTransferPlugin(&m_FileListTransfer);
+void CRPCDownloader::connectionFailed()
+{
+    if (!m_Active && m_Connection == k_HSteamNetConnection_Invalid)
+    {
+        emit signalConnectionFailed();
+        return;
+    }
+    m_Active = false;
+    m_Connection = k_HSteamNetConnection_Invalid;
+    NETWORK.getFileTransferCallback()->cancel();
+    emit signalConnectionFailed();
 }
 
 void CRPCDownloader::cancelDownload(bool unfinished)
 {
-	m_DownloadActive = false;
-    if (unfinished) m_FileListTransfer.CancelReceive(m_SetID);
-    m_FileListTransfer.RemoveReceiver(NETWORK.m_serverAdress);
-    m_FileListTransfer.ClearCallbacks();
-
+    Q_UNUSED(unfinished)
+    m_Active = false;
+    m_Connection = k_HSteamNetConnection_Invalid;
     NETWORK.getFileTransferCallback()->restart(true);
 }
 
-bool CRPCDownloader::downloadNextSubDir()
+bool CRPCDownloader::handle(HSteamNetConnection connection, PacketReader& packet)
 {
-    ushort id;
+    if (!m_Active || connection != m_Connection)
+        return false;
 
-    switch (++m_DownloadDir)
+    EFileTransferRPC rpc{};
+    if (!packet.Read(rpc))
+        return false;
+
+    CFileTransferCallback* callback = NETWORK.getFileTransferCallback();
+    switch (rpc)
     {
-    case 1:
-        id = m_DirectoryDeltaTransfer.DownloadFromSubdirectory(UPLOAD_FILE_PATH, DOWNLOAD_FILE_PATH, true, NETWORK.m_serverAdress, NETWORK.getFileTransferCallback(), HIGH_PRIORITY, 0, 0);
-        if (id == -1)
-		{
-			m_DownloadActive = false;
-            emit signalConnectionFailed();
-			NETWORK.disconnectFromCurrent(true);
-		}
-        else
-            m_SetID = id;
-
+    case FILE_MANIFEST:
+        return receiveManifest(connection, packet);
+    case FILE_BEGIN:
+    {
+        std::string path;
+        std::uint64_t size = 0;
+        std::uint32_t index = 0;
+        std::uint32_t count = 0;
+        std::uint64_t totalSize = 0;
+        return packet.Read(path, 1024) && packet.Read(size) && packet.Read(index) && packet.Read(count) &&
+               packet.Read(totalSize) && packet.Empty() && callback->beginFile(path, size, index, count, totalSize);
+    }
+    case FILE_CHUNK:
+    {
+        std::uint64_t offset = 0;
+        std::uint32_t size = 0;
+        if (!packet.Read(offset) || !packet.Read(size) || size > 1024 * 1024 || packet.Remaining() != size)
+            return false;
+        return callback->writeChunk(offset, packet.CurrentData(), size);
+    }
+    case FILE_END:
+    {
+        std::uint64_t hash = 0;
+        return packet.Read(hash) && packet.Empty() && callback->endFile(hash);
+    }
+    case FILE_COMPLETE:
+        if (!packet.Empty() || !callback->complete())
+            return false;
+        m_Active = false;
         return true;
-
+    case FILE_ERROR:
+    {
+        std::string error;
+        if (packet.Read(error, 4096) && packet.Empty())
+            SPDLOG_ERROR("[resources] Server rejected resource synchronization: {}", error);
+        return false;
+    }
     default:
-		m_DownloadActive = false;
         return false;
     }
 }
 
-void CRPCDownloader::handle()
+bool CRPCDownloader::receiveManifest(HSteamNetConnection connection, PacketReader& packet)
 {
-    RakNet::SystemAddress systemAdress;
+    std::uint32_t count = 0;
+    if (!packet.Read(count) || count > 100000)
+        return false;
 
-    if ((systemAdress = NETWORK.m_RakTCP.HasFailedConnectionAttempt()) != RakNet::UNASSIGNED_SYSTEM_ADDRESS)
-        connectionFailed(systemAdress);
-    else if ((systemAdress = NETWORK.m_RakTCP.HasCompletedConnectionAttempt()) != RakNet::UNASSIGNED_SYSTEM_ADDRESS)
-        connectionRequest(systemAdress);
-    else if ((systemAdress = NETWORK.m_RakTCP.HasLostConnection()) != RakNet::UNASSIGNED_SYSTEM_ADDRESS)
-        disconnected(systemAdress);
-}
-
-void CRPCDownloader::connectionFailed(RakNet::SystemAddress systemAdress)
-{
-    Q_UNUSED(systemAdress)
-	m_DownloadActive = false;
-    emit signalConnectionFailed();
-}
-
-void CRPCDownloader::connectionRequest(RakNet::SystemAddress systemAdress)
-{
-    emit signalCheckingFiles();
-
-    NETWORK.m_serverAdress = systemAdress;
-    m_DownloadDir = 0;
-	m_DownloadActive = true;
-    NETWORK.getFileTransferCallback()->restart();
-
-    if (!downloadNextSubDir())
+    std::vector<std::string> required;
+    required.reserve(count);
+    std::unordered_set<std::string> paths;
+    for (std::uint32_t i = 0; i < count; ++i)
     {
-        cancelDownload(false);
-        NETWORK.m_RakTCP.CloseConnection(systemAdress);
+        std::string path;
+        std::uint64_t size = 0;
+        std::uint64_t hash = 0;
+        std::filesystem::path destination;
+        if (!packet.Read(path, 1024) || !packet.Read(size) || !packet.Read(hash) ||
+            !paths.emplace(path).second || !ResolveResourcePath(path, destination))
+            return false;
+
+        std::error_code error;
+        const bool current = std::filesystem::is_regular_file(destination, error) && !error &&
+                             std::filesystem::file_size(destination, error) == size && !error &&
+                             HashFile(destination) == hash;
+        if (!current)
+            required.push_back(path);
     }
-}
+    if (!packet.Empty())
+        return false;
 
-void CRPCDownloader::disconnected(RakNet::SystemAddress systemAdress)
-{
-    Q_UNUSED(systemAdress)
-	if (m_DownloadActive)
-	{
-		m_DownloadActive = false;
-		emit signalConnectionFailed();
-	}
+    PacketWriter request;
+    request.Write(GO_FILE_TRANSFER);
+    request.Write(FILE_REQUEST);
+    request.Write(static_cast<std::uint32_t>(required.size()));
+    for (const std::string& path : required)
+        request.Write(path);
+    return NETWORK.send(connection, request);
 }
-

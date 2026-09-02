@@ -44,7 +44,7 @@ int SFunction::getPlayerName(g1o::script::CallContext& context)
 
 	CPlayer* player = playerManager.GetPlayer(playerID);
 	if (player)
-		context.Push(player->name.C_String());
+		context.Push(player->name.c_str());
 	else
 		context.Push("NULL");
 
@@ -70,7 +70,7 @@ int SFunction::getPlayerPing(g1o::script::CallContext& context)
 
 	CPlayer* player = playerManager.GetPlayer(playerID);
 	if (player)
-		context.Push(core.GetNetwork()->GetPeer()->GetLastPing(player->GetAddress()));
+		context.Push(core.GetNetwork()->GetPing(player->GetConnection()));
 	else
 		context.Push(-1);
 
@@ -100,23 +100,23 @@ int SFunction::setPlayerVirtualWorld(g1o::script::CallContext& context)
 	{
 		player->SetVirtualWorld(virtualWorld);
 
-		BitStream s;
-		s.Write((MessageID)GO_PLAYER);
-		s.Write((MessageID)DESTROY_PLAYER);
+		PacketWriter s;
+		s.Write((std::uint8_t)GO_PLAYER);
+		s.Write((std::uint8_t)DESTROY_PLAYER);
 		s.Write(player->GetID());
-		core.GetNetwork()->SendToPlayersOnList(s, MEDIUM_PRIORITY, RELIABLE, &player->streamedPlayers);
+		core.GetNetwork()->SendToPlayersOnList(s, &player->streamedPlayers, k_nSteamNetworkingSend_Reliable);
 
 		for (int i = 0; i < player->streamedPlayers.Num(); ++i)
 		{
 			CPlayer *streamed = player->streamedPlayers[i];
 
-			BitStream s;
-			s.Write((MessageID)GO_PLAYER);
-			s.Write((MessageID)DESTROY_PLAYER);
+			PacketWriter s;
+			s.Write((std::uint8_t)GO_PLAYER);
+			s.Write((std::uint8_t)DESTROY_PLAYER);
 			s.Write(streamed->GetID());
 
 			streamed->streamedPlayers.Remove(player);
-			core.GetNetwork()->GetPeer()->Send(&s, MEDIUM_PRIORITY, RELIABLE, 0, player->GetAddress(), false);
+			core.GetNetwork()->Send(player->GetConnection(), s, k_nSteamNetworkingSend_Reliable);
 		}
 		
 		player->streamedPlayers.Clear();
@@ -202,15 +202,15 @@ int SFunction::sendMessageToAll(g1o::script::CallContext& context)
 	SCRIPT_CHECK_PARAM_INT(context, b, 2);
 	SCRIPT_CHECK_PARAM_STRING(context, message, 3);
 
-	BitStream s;
-	s.Write((MessageID)GO_CHAT);
-	s.Write((MessageID)MESSAGE_RGB);
-	s.Write(RakString(message));
+	PacketWriter s;
+	s.Write((std::uint8_t)GO_CHAT);
+	s.Write((std::uint8_t)MESSAGE_RGB);
+	s.Write(std::string(message));
 	s.Write(r);
 	s.Write(g);
 	s.Write(b);
 
-	core.GetNetwork()->SendToAll(s, LOW_PRIORITY, RELIABLE);
+	core.GetNetwork()->SendToAll(s, k_nSteamNetworkingSend_Reliable);
 
 	return 0;
 };
@@ -242,14 +242,14 @@ int SFunction::sendMessageToPlayer(g1o::script::CallContext& context)
 	CPlayer* player = playerManager.GetPlayer(playerID);
 	if (player)
 	{
-		BitStream s;
-		s.Write((MessageID)GO_CHAT);
-		s.Write((MessageID)MESSAGE_RGB);
-		s.Write(RakString(message));
+		PacketWriter s;
+		s.Write((std::uint8_t)GO_CHAT);
+		s.Write((std::uint8_t)MESSAGE_RGB);
+		s.Write(std::string(message));
 		s.Write(r);
 		s.Write(g);
 		s.Write(b);
-		core.GetNetwork()->GetPeer()->Send(&s, LOW_PRIORITY, RELIABLE, 0, player->GetAddress(), false);
+		core.GetNetwork()->Send(player->GetConnection(), s, k_nSteamNetworkingSend_Reliable);
 	}
 
 	return 0;
@@ -323,7 +323,7 @@ int SFunction::isPlayerAdmin(g1o::script::CallContext& context)
  */
 int SFunction::getMaxSlots(g1o::script::CallContext& context)
 {
-	context.Push(atoi(core.GetConfig()->GetMaxSlots().C_String()));
+	context.Push(atoi(core.GetConfig()->GetMaxSlots().c_str()));
 	return 1;
 };
 
@@ -356,7 +356,7 @@ int SFunction::getPlayersCount(g1o::script::CallContext& context)
  */
 int SFunction::getServerDescription(g1o::script::CallContext& context)
 {
-	context.Push(core.GetDescription().C_String());
+	context.Push(core.GetDescription().c_str());
 	return 1;
 };
 
@@ -394,7 +394,7 @@ int SFunction::setServerDescription(g1o::script::CallContext& context)
  */
 int SFunction::getServerWorld(g1o::script::CallContext& context)
 {
-	context.Push(core.GetWorld().C_String());
+	context.Push(core.GetWorld().c_str());
 	return 1;
 };
 
@@ -414,7 +414,7 @@ int SFunction::setServerWorld(g1o::script::CallContext& context)
 	SCRIPT_CHECK_PARAM_COUNT(context, 1);
 	SCRIPT_CHECK_PARAM_STRING(context, world, 0);
 
-	//RakString newWorld = utility::replaceString(world, "/", "\\").c_str();
+	//std::string newWorld = utility::replaceString(world, "/", "\\").c_str();
 	core.SetWorld(world);
 
 	return 0;
@@ -572,11 +572,11 @@ int SFunction::setPlayerInvisible(g1o::script::CallContext& context)
 
 		if (player->isInvisible)
 		{
-			BitStream s;
-			s.Write((MessageID)GO_PLAYER);
-			s.Write((MessageID)DESTROY_PLAYER);
+			PacketWriter s;
+			s.Write((std::uint8_t)GO_PLAYER);
+			s.Write((std::uint8_t)DESTROY_PLAYER);
 			s.Write(player->GetID());
-			core.GetNetwork()->SendToPlayersOnList(s, MEDIUM_PRIORITY, RELIABLE, &player->streamedPlayers);
+			core.GetNetwork()->SendToPlayersOnList(s, &player->streamedPlayers, k_nSteamNetworkingSend_Reliable);
 
 			for (int i = 0; i < player->streamedPlayers.Num(); ++i)
 				player->streamedPlayers[i]->streamedPlayers.Remove(player);

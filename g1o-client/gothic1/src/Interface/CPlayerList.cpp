@@ -2,7 +2,7 @@
 
 CPlayerList::CPlayerList()
 {
-	playerList = new RakString[1024];
+	playerList = new std::string[1024];
 	isShowing = false;
 	texture = new zCView(0, 0, 8192, 8192);
 	texture->SetPos(0,0);
@@ -29,7 +29,7 @@ void CPlayerList::Render()
 				view->InsertItem(texture);
 				core.GetChat()->Show(false);
 				/*for( size_t i = 0; i < 200; i++ )
-					playerList[i] = RakString("%d Player 0ms", i);*/
+					playerList[i] = std::string("%d Player 0ms", i);*/
 				isShowing = true;
 			}
 			else
@@ -44,9 +44,9 @@ void CPlayerList::Render()
 				zSTRING currentName;
 				for( size_t i = 0; i < 1024; i++ )
 				{
-					if( playerList[i] && !playerList[i].IsEmpty() )
+					if (!playerList[i].empty())
 					{
-						currentName = playerList[i].C_String();
+						currentName = playerList[i].c_str();
 						if( int(i/35) == column+1 )
 						{
 							y = 0;

@@ -9,7 +9,7 @@ int oCNpc::Hook_DoDropVob(zCVob *vob)
 		if( this == oCNpc::GetHero() )
 		{
 			this->_DoDropVob(vob);
-			itemManager.SendDropItem(RakString(item->GetInstanceName().ToChar()), item->GetPositionWorld(), item->GetAmount());
+			itemManager.SendDropItem(std::string(item->GetInstanceName().ToChar()), item->GetPositionWorld(), item->GetAmount());
 			vob->RemoveVobFromWorld();
 		}
 		else
@@ -22,7 +22,7 @@ int oCNpc::Hook_DoDropVob(zCVob *vob)
 int oCNpc::Hook_DoTakeVob(zCVob *vob)
 {
 	g1o::hooking::GetHookManager().Remove(0x006A0D10);
-	//core.GetChat()->AddLine(RakString("Take item"), zCOLOR(255,0,0,255));
+	//core.GetChat()->AddLine(std::string("Take item"), zCOLOR(255,0,0,255));
 	if( this == oCNpc::GetHero() )
 	{
 		this->_DoTakeVob(vob);

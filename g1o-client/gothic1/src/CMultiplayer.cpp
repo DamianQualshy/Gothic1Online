@@ -12,7 +12,7 @@ CMultiplayer::~CMultiplayer()
 	SPDLOG_TRACE("CMultiplayer::~CMultiplayer()");
 };
 
-bool CMultiplayer::InitMultiplayer(RakString hostname, int myid)
+bool CMultiplayer::InitMultiplayer(std::string hostname, int myid)
 {
 	if( this->IsInitiated() == false )
 	{
@@ -31,7 +31,7 @@ void CMultiplayer::RepairDoor()
 	bool next = true;
 	while (next && !triggerQueue.empty())
 	{
-		if (GetTimeMS() > triggerQueue.front().time)
+		if (g1o::network::NowMilliseconds() > triggerQueue.front().time)
 		{
 			oCMobInter *mob = triggerQueue.front().mob;
 			mob->StopInteraction(triggerQueue.front().npc);

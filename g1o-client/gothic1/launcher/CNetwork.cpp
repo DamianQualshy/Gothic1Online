@@ -3,7 +3,6 @@
 #include <LaunchSessionJson.h>
 
 CNetwork::CNetwork() :
-    m_Peer(RakNet::RakPeerInterface::GetInstance()),
     m_ServerList(NULL),
     m_CurrServers(NULL),
     m_MaxServers(NULL),
@@ -14,13 +13,8 @@ CNetwork::CNetwork() :
     SPDLOG_TRACE("{}", __FUNCTION__);
 #endif
     initConnections();
-    NETWORK.start(m_Thread, m_Peer);
-
-    RakNet::SocketDescriptor socketDescriptor;
-    if (m_Peer->Startup(1, &socketDescriptor, 1) != RakNet::RAKNET_STARTED)
-    {
-        CMessageBox::warrning("Network", "RakNet could not be initialized.");
-    }
+    if (!NETWORK.start(m_Thread))
+        CMessageBox::warrning("Network", "GameNetworkingSockets could not be initialized.");
 }
 
 CNetwork::~CNetwork()
@@ -32,10 +26,6 @@ CNetwork::~CNetwork()
 
     m_Thread.quit();
     m_Thread.wait();
-    m_Thread.deleteLater();
-
-    m_Peer->Shutdown(300);
-    RakNet::RakPeerInterface::DestroyInstance(m_Peer);
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------
@@ -44,18 +34,13 @@ CNetwork::~CNetwork()
 
 void CNetwork::sendRequest(const QVector<CServerInfo> &serverList, int index)
 {
-    NETWORK.setIndex(index);
-
     m_CurrServers = 0; m_MaxServers = serverList.size();
     if (m_MaxServers > 0)
     {
         LAUNCHER.setStatus(QString(TRANSLATE("SB_CHECKING_SERVERS")).arg(m_CurrServers + 1).arg(m_MaxServers));
 
-        // Thread safe
-        m_Mutex.lock();
         for (const CServerInfo &info : serverList)
-            m_Peer->Ping(info.getIpAdress().toStdString().c_str(), info.getPort().toInt(), false);
-        m_Mutex.unlock();
+            NETWORK.requestServer(info.getIpAdress(), info.getPort().toInt(), index);
 
         if (index == INDEX_FAVORITE)
             NETWORK.getFavoriteRPC()->enableRefreshTimer(true);
@@ -66,11 +51,7 @@ void CNetwork::sendRequest(const QVector<CServerInfo> &serverList, int index)
 
 void CNetwork::sendRequest(QString ipAdress, int port, int index)
 {
-    NETWORK.setIndex(index);
-    // Thread safe
-    m_Mutex.lock();
-    m_Peer->Ping(ipAdress.toStdString().c_str(), port, false);
-    m_Mutex.unlock();
+    NETWORK.requestServer(ipAdress, port, index);
 
     if (index == INDEX_FAVORITE)
         NETWORK.getFavoriteRPC()->enableRefreshTimer(true);

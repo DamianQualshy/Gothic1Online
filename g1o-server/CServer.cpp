@@ -42,9 +42,9 @@ void CServer::Start()
 
 	//SPDLOG_TRACE("CServer::Start()");
 	//Informacje o konfiguracji servera
-	SPDLOG_INFO("[config] Server name: {}", GetConfig()->GetServerName().C_String());
-	SPDLOG_INFO("[config] Server port: {}", GetConfig()->GetServerPort().C_String());
-	SPDLOG_INFO("[config] Max slots: {}", GetConfig()->GetMaxSlots().C_String());
+	SPDLOG_INFO("[config] Server name: {}", GetConfig()->GetServerName().c_str());
+	SPDLOG_INFO("[config] Server port: {}", GetConfig()->GetServerPort().c_str());
+	SPDLOG_INFO("[config] Max slots: {}", GetConfig()->GetMaxSlots().c_str());
 	SPDLOG_INFO("[config] Public server: {}", GetConfig()->GetServerPublic() ? "yes" : "no");
 	for (const std::string& script : GetConfig()->GetScripts())
 		SPDLOG_INFO("[config] Script: {}", script.c_str());
@@ -71,9 +71,9 @@ void CServer::Start()
 
 void CServer::SynchronizeTime()
 {
-	static int syncTime = GetTimeMS() + 4000;
+	static std::uint64_t syncTime = g1o::network::NowMilliseconds() + 4000;
 
-	if (GetTimeMS() >= syncTime)
+	if (g1o::network::NowMilliseconds() >= syncTime)
 	{
 		if (++serverMinute > 59)
 		{
@@ -86,7 +86,7 @@ void CServer::SynchronizeTime()
 			}
 		}
 
-		syncTime = GetTimeMS() + 4000;
+		syncTime = g1o::network::NowMilliseconds() + 4000;
 	}
 }
 
@@ -102,7 +102,7 @@ void CServer::SlaveThread(void *arg)
 		if (core.GetConfig()->GetServerPublic())
 			master.Pulse();
 
-		RakSleep(30);
+		g1o::network::Sleep(30);
 	}
 }
 
@@ -114,11 +114,12 @@ void CServer::MainThread()
 		playerManager.BroadcastPlayerList();
 		playerManager.CheckPlayersTimedOverlays();
 		pStreamer->Pulse();
+		pScriptDownload->Pulse(pNetwork);
 		SynchronizeTime();
 		scr.OnTick();
 		pNetwork->GetReceiver()->ReceivePackets(pNetwork);
 
-		RakSleep(1);
+		g1o::network::Sleep(1);
 	}
 };
 
@@ -126,10 +127,10 @@ void CServer::SetUnconscious(bool _enabled)
 {
 	serverUnconscious = _enabled;
 
-	BitStream bStream;
-	bStream.Write((MessageID)GO_SCRIPT);
-	bStream.Write((MessageID)SCRIPT_UNCONSCIOUS);
+	PacketWriter bStream;
+	bStream.Write((std::uint8_t)GO_SCRIPT);
+	bStream.Write((std::uint8_t)SCRIPT_UNCONSCIOUS);
 	bStream.Write(serverUnconscious);
 
-	pNetwork->SendToAll(bStream, MEDIUM_PRIORITY, RELIABLE);
+	pNetwork->SendToAll(bStream, k_nSteamNetworkingSend_Reliable);
 }

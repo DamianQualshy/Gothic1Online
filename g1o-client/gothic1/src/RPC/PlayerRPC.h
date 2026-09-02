@@ -3,37 +3,37 @@
 
 namespace PlayerRPC
 {
-	void HandlePlayerRPC(CNetwork* network, Packet* packet);
+	void HandlePlayerRPC(CNetwork* network, PacketReader& stream);
 	
-	void CreatePlayer(CNetwork* network, BitStream& stream);
-	void CreateAndSpawnPlayer(BitStream& stream);
-	void DestroyPlayer(CNetwork* network, BitStream& stream);
+	void CreatePlayer(CNetwork* network, PacketReader& stream);
+	void CreateAndSpawnPlayer(PacketReader& stream);
+	void DestroyPlayer(CNetwork* network, PacketReader& stream);
 
-	void Spawn(CNetwork* network, BitStream& stream);
-	void Unspawn(CNetwork* network, BitStream& stream);
+	void Spawn(CNetwork* network, PacketReader& stream);
+	void Unspawn(CNetwork* network, PacketReader& stream);
 
-	void SetPosition(BitStream& stream);
-	void SetAngle(BitStream& stream);
-	void PlayAnimation(BitStream& stream);
-	void ChangeWeaponMode(BitStream& stream);
-	void WearArmor(BitStream& stream) ;
-	void EquipWeapon(BitStream& stream) ;
-	void ChangeInstance(BitStream& stream);
-	void ItemHand(BitStream& stream);
-	void SetHealth(BitStream& stream);
-	void SetHealthMax(BitStream& stream);
-	void AttackHit(BitStream& stream);
-	void AttackDead(BitStream& stream);
-	void AttackUnconscious(BitStream& stream);
-	void StandUp(BitStream& stream);
-	void MagicSetup(BitStream& stream);
-	void MagicAttack(BitStream& stream);
-	void PlayerList(BitStream& stream);
-	//void SetProtection(BitStream& stream);
-	void SetOverlay(BitStream& stream);
-	void MobTrigger(BitStream& stream);
-	void ShootArrow(BitStream& stream);
-	void ForceStandUp(BitStream& stream);
+	void SetPosition(PacketReader& stream);
+	void SetAngle(PacketReader& stream);
+	void PlayAnimation(PacketReader& stream);
+	void ChangeWeaponMode(PacketReader& stream);
+	void WearArmor(PacketReader& stream) ;
+	void EquipWeapon(PacketReader& stream) ;
+	void ChangeInstance(PacketReader& stream);
+	void ItemHand(PacketReader& stream);
+	void SetHealth(PacketReader& stream);
+	void SetHealthMax(PacketReader& stream);
+	void AttackHit(PacketReader& stream);
+	void AttackDead(PacketReader& stream);
+	void AttackUnconscious(PacketReader& stream);
+	void StandUp(PacketReader& stream);
+	void MagicSetup(PacketReader& stream);
+	void MagicAttack(PacketReader& stream);
+	void PlayerList(PacketReader& stream);
+	//void SetProtection(PacketReader& stream);
+	void SetOverlay(PacketReader& stream);
+	void MobTrigger(PacketReader& stream);
+	void ShootArrow(PacketReader& stream);
+	void ForceStandUp(PacketReader& stream);
 };
 
 #endif //PLAYERRPC_H

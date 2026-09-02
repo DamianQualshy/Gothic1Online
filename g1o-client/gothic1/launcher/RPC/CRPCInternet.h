@@ -2,9 +2,9 @@
 #define CRPCINTERNET_H
 
 #include <QObject>
-#include <QQueue>
+#include <QString>
 
-#include "RakNetInclude.h"
+#include <Network/Packet.h>
 
 class CRPCInternet : public QObject
 {
@@ -16,27 +16,8 @@ signals:
                                  QString world, QString description, int onlinePlayers, int maxPlayers, int ping);
 
 public:
-    CRPCInternet();
-
-    void handlePacket(RakNet::Packet *packet);
-
-private:
-    void connectionFailed(RakNet::Packet *packet);
-    void connectionRequest(RakNet::Packet *packet);
-    void disconnected(RakNet::Packet *packet);
-    void serverReached(RakNet::Packet *packet);
-    void serverInformation(RakNet::Packet *packet);
-    void getInformation();
-    void finishGettingInformation();
-
-    struct Server
-    {
-        QString ipAddress;
-        int port;
-    };
-
-    QQueue<Server> m_ServerQueue;
-    bool m_CheckingServer;
+    void serverReached(const QString& ipAddress, int port, int ping);
+    void serverInformation(const QString& ipAddress, int port, int ping, PacketReader& packet);
 };
 
-#endif // CRPCINTERNET_H
+#endif

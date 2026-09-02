@@ -1,23 +1,40 @@
 #ifndef CNETWORK_H
 #define CNETWORK_H
 
+#include <string>
+
 class CNetwork
 {
 private:
-	RakPeerInterface* peer;
+	ISteamNetworkingSockets* sockets;
+	HSteamListenSocket listenSocket;
+	HSteamNetPollGroup pollGroup;
 	CReceiver* pReceiver;
+	bool initialized;
+
+	static CNetwork* callbackInstance;
+	static void ConnectionStatusChangedCallback(SteamNetConnectionStatusChangedCallback_t* info);
+	void OnConnectionStatusChanged(SteamNetConnectionStatusChangedCallback_t* info);
+
 public:
 	CNetwork();
 	~CNetwork();
 
 	bool InitNetwork();
-	RakPeerInterface* GetPeer() const {return this->peer;};
-	CReceiver* GetReceiver() const {return this->pReceiver;};
+	void PollCallbacks();
+	ISteamNetworkingSockets* GetSockets() const { return sockets; }
+	HSteamNetPollGroup GetPollGroup() const { return pollGroup; }
+	CReceiver* GetReceiver() const { return pReceiver; }
 
-	void SendToAll(BitStream& stream, PacketPriority priority, PacketReliability reliability);
-	void SendToPlayersOnList(BitStream& stream, PacketPriority priority, PacketReliability reliability, List<CPlayer*>* targetPlayerList);
-	void SendToAllWithoutPlayer(BitStream& stream, PacketPriority priority, PacketReliability reliability, CPlayer* player);
-	void SendToAllInWorld(BitStream& stream, PacketPriority priority, PacketReliability reliability, RakString world, CPlayer *player = NULL);
-};	
+	bool Send(HSteamNetConnection connection, const PacketWriter& packet, int sendFlags = k_nSteamNetworkingSend_Reliable);
+	void Disconnect(HSteamNetConnection connection, int reason = 0, const char* debug = "Disconnected", bool linger = true);
+	int GetPing(HSteamNetConnection connection) const;
+	std::string GetRemoteAddress(HSteamNetConnection connection) const;
 
-#endif //CNETWORK_H
+	void SendToAll(const PacketWriter& packet, int sendFlags = k_nSteamNetworkingSend_Reliable);
+	void SendToPlayersOnList(const PacketWriter& packet, List<CPlayer*>* targetPlayerList, int sendFlags = k_nSteamNetworkingSend_Reliable);
+	void SendToAllWithoutPlayer(const PacketWriter& packet, CPlayer* player, int sendFlags = k_nSteamNetworkingSend_Reliable);
+	void SendToAllInWorld(const PacketWriter& packet, const std::string& world, CPlayer* player = nullptr, int sendFlags = k_nSteamNetworkingSend_Reliable);
+};
+
+#endif

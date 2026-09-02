@@ -3,36 +3,39 @@
 
 struct STimedOverlay
 {
-	TimeMS time;
-	RakString overlay;
+	std::uint64_t time;
+	std::string overlay;
 
-	STimedOverlay() {}
-	STimedOverlay(TimeMS _time, RakString _overlay) : time(_time), overlay(_overlay) {}
+	STimedOverlay() : time(0) {}
+	STimedOverlay(std::uint64_t timeValue, std::string overlayValue)
+		: time(timeValue), overlay(std::move(overlayValue)) {}
 };
 
 class CPlayer : public CCreature
 {
+private:
+	HSteamNetConnection connection;
+	std::string ipAddress;
+
 public:
-	SystemAddress addr; //player addr
 	int playerId;
-public:
 	List<CPlayer*> streamedPlayers;
 	List<CItem*> streamedItems;
-	List<RakString> overlaysList;
+	List<std::string> overlaysList;
 	List<STimedOverlay> timedOverlays;
 	bool bConnected;
 
-	CPlayer(SystemAddress _clientAddress, int _playerID, RakString _playerName);
+	CPlayer(HSteamNetConnection clientConnection, std::string clientIp, int playerID, std::string playerName);
 	~CPlayer();
 
 	void Disconnect();
 	void CheckTimedOverlay();
 
-	inline SystemAddress GetAddress(){return this->addr;};
-	inline const char* GetIP() {return inet_ntoa(this->addr.address.addr4.sin_addr);};
-	inline int GetID() { return this->playerId;};
-	inline int GetVirtualWorld() { return this->virtualWorld; };
-	void SetVirtualWorld(unsigned world_id) { this->virtualWorld = world_id; };
+	HSteamNetConnection GetConnection() const { return connection; }
+	const std::string& GetIP() const { return ipAddress; }
+	int GetID() const { return playerId; }
+	int GetVirtualWorld() const { return virtualWorld; }
+	void SetVirtualWorld(unsigned worldId) { virtualWorld = worldId; }
 };
 
-#endif //CPLAYER_H
+#endif

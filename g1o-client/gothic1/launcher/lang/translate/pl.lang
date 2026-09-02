@@ -37,7 +37,6 @@ I_MASTER_CONNECTING	Łączenie z Głównym Serwerem
 
 # Network
 N_NAME				Sieć
-N_RAKNET_ERROR		Nie można zinicjalizować biblioteki <b>RakNet</b>
 
 # Addons
 A_ERR_01			Nie można włączyć dodatku! Prawdopodobnie brak uprawnień.

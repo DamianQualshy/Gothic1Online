@@ -6,9 +6,9 @@ namespace CGothicWindow
 {
 	HINSTANCE GetGothicInstance();
 	HWND GetGothicWindowHandle();
-	RakString GetGothicWindowName();
+	std::string GetGothicWindowName();
 
-	void SetGothicWindowName(RakString& windowName);
+	void SetGothicWindowName(const std::string& windowName);
 };
 
 

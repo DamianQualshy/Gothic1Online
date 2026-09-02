@@ -5,13 +5,13 @@ class CCreature
 {
 public:
 	int id;
-	RakString name;
+	std::string name;
 
-	RakString instance;
+	std::string instance;
 	bool spawned;
 	bool isDead;
 	bool isUnconscious;
-	RakString world;
+	std::string world;
 	float x;
 	float y;
 	float z;
@@ -25,17 +25,17 @@ public:
 	
 	int animationId;
 
-	RakString armorInstance;
-	RakString meleeWeaponInstance;
-	RakString rangedWeaponInstance;
-	RakString leftHand;
-	RakString rightHand;
-	RakString magicItem;
+	std::string armorInstance;
+	std::string meleeWeaponInstance;
+	std::string rangedWeaponInstance;
+	std::string leftHand;
+	std::string rightHand;
+	std::string magicItem;
 
-	RakString bodyModel, headModel;
+	std::string bodyModel, headModel;
 	int bodyTexture, headTexture;
 
-	RakString overlay;
+	std::string overlay;
 
 	int weaponMode;
 

@@ -8,14 +8,14 @@ This repository contains the Gothic 1 client DLL, external Qt launcher, game ser
 - `g1o-client/gothic1/launcher` — external launcher
 - `g1o-client/gothic1/lib/gothic-api` — maintained Union Gothic API, configured for Gothic 1 Classic
 - `g1o-server` — multiplayer game server
-- `Shared` — RakNet, the language-neutral server scripting core, TinyXML, hashing, threading, and common protocol code
+- `Shared` — GameNetworkingSockets packet protocol, the language-neutral server scripting core, TinyXML, hashing, threading, and common code
 - `dependencies` — pinned Squirrel and Sqrat submodules
 
 The old hand-written ZenGin class layouts have been removed. G1O-specific helpers and hooks live in `g1o-client/gothic1/src/game`, while declarations that extend ZenGin classes use `ZenGin/Gothic_UserAPI`.
 
 ## Build configuration
 
-The project uses xmake and targets 32-bit Windows. Native multiplayer targets use the static MSVC runtime; the launcher retains Qt's dynamic runtime convention and requires Qt 5 Widgets.
+The project uses xmake and targets 32-bit Windows. All native targets use the static MSVC runtime, and the launcher requires Qt 5 Widgets.
 
 Available targets:
 

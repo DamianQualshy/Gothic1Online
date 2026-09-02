@@ -5,11 +5,11 @@ class CCreature
 {
 public:
 	int id;
-	RakString name;
+	std::string name;
 
-	RakString instance;
+	std::string instance;
 	oCNpc* npc;
-	RakString world;
+	std::string world;
 	zVEC3 pos;
 	float angle;
 	int maxhealth;
@@ -23,11 +23,11 @@ public:
 	bool unconscious;
 	bool dead;
 
-	RakString leftHand;
-	RakString rightHand;
-	RakString armorInstance;
-	RakString meleeWeaponInstance;
-	RakString rangedWeaponInstance;
+	std::string leftHand;
+	std::string rightHand;
+	std::string armorInstance;
+	std::string meleeWeaponInstance;
+	std::string rangedWeaponInstance;
 
 	zSTRING bodyModel, headModel;
 	int bodyTexture, headTexture;
@@ -44,7 +44,7 @@ public:
 	~CCreature();
 
 	inline int GetID() const{ return this->id;};
-	inline RakString& GetName(){ return this->name; };
+	inline std::string& GetName(){ return this->name; };
 	void GetAdditionalVisuals(zSTRING &_bodyModel, int &_bodyTexture, zSTRING &_headModel, int &_headTexture);
 };
 

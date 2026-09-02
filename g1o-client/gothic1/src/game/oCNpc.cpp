@@ -12,7 +12,7 @@ zCModelAni* oCNpc::GetCurrentAni()
 			zCModelAni* animation = model->GetAniFromAniID(i);
 			if( animation )
 			{
-				if( CAnimation::GetInstance().IsAniBlockedForAll(animation) == false && CAnimation::GetInstance().IsAnimationTurning(RakString(animation->GetAniName().ToChar())) == false )
+				if( CAnimation::GetInstance().IsAniBlockedForAll(animation) == false && CAnimation::GetInstance().IsAnimationTurning(std::string(animation->GetAniName().ToChar())) == false )
 				{
 					if( model->IsAnimationActive(animation->GetAniName()) )
 					{

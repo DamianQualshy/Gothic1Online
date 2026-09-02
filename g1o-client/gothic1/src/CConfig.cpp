@@ -6,14 +6,14 @@
 
 namespace
 {
-	void ReadString(const nlohmann::json& config, const char* name, RakString& value)
+	void ReadString(const nlohmann::json& config, const char* name, std::string& value)
 	{
 		const auto field = config.find(name);
 		if (field != config.end() && field->is_string())
 			value = field->get_ref<const std::string&>().c_str();
 	}
 
-	void ReadLegacyString(TiXmlElement* parent, const char* name, RakString& value)
+	void ReadLegacyString(TiXmlElement* parent, const char* name, std::string& value)
 	{
 		if (!parent)
 			return;
@@ -46,11 +46,11 @@ CConfig::~CConfig()
 	SPDLOG_TRACE("CConfig::~CConfig()");
 }
 
-bool CConfig::LoadConfigFromFile(RakString fileName)
+bool CConfig::LoadConfigFromFile(std::string fileName)
 {
-	SPDLOG_TRACE("CConfig::LoadConfigFromFile({})", fileName.C_String());
+	SPDLOG_TRACE("CConfig::LoadConfigFromFile({})", fileName.c_str());
 
-	std::ifstream file(fileName.C_String());
+	std::ifstream file(fileName.c_str());
 	if (!file)
 	{
 		SPDLOG_TRACE("Config file doesn't exist");
@@ -70,16 +70,16 @@ bool CConfig::LoadConfigFromFile(RakString fileName)
 	}
 	catch (const nlohmann::json::exception& exception)
 	{
-		SPDLOG_WARN("Could not parse {}: {}", fileName.C_String(), exception.what());
+		SPDLOG_WARN("Could not parse {}: {}", fileName.c_str(), exception.what());
 		return false;
 	}
 
 	return true;
 }
 
-bool CConfig::LoadLegacyConfigFromFile(RakString fileName)
+bool CConfig::LoadLegacyConfigFromFile(std::string fileName)
 {
-	TiXmlDocument document(fileName.C_String());
+	TiXmlDocument document(fileName.c_str());
 	if (!document.LoadFile())
 		return false;
 
@@ -92,16 +92,16 @@ bool CConfig::LoadLegacyConfigFromFile(RakString fileName)
 	return true;
 }
 
-void CConfig::SaveConfigToFile(RakString fileName)
+void CConfig::SaveConfigToFile(std::string fileName)
 {
-	SPDLOG_TRACE("CConfig::SaveConfigToFile({})", fileName.C_String());
-	std::ofstream file(fileName.C_String());
+	SPDLOG_TRACE("CConfig::SaveConfigToFile({})", fileName.c_str());
+	std::ofstream file(fileName.c_str());
 	if (!file)
 		return;
 
 	nlohmann::ordered_json config;
-	config["playerName"] = playerName.C_String();
-	config["lang"] = language.C_String();
+	config["playerName"] = playerName.c_str();
+	config["lang"] = language.c_str();
 	config["launcherPosX"] = -1;
 	config["launcherPosY"] = -1;
 	config["favorites"] = nlohmann::ordered_json::array();

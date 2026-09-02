@@ -4,7 +4,7 @@
 class CKey
 {
 private:
-	unsigned timeLastKey;
+	std::uint64_t timeLastKey;
 	List<int> disabledKeys;
 
 public:

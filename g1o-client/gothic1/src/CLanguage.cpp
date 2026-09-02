@@ -59,10 +59,10 @@ namespace
 	}
 }
 
-const char* ClientLanguage::Get(EClientText text, const RakString& language)
+const char* ClientLanguage::Get(EClientText text, const std::string& language)
 {
 	// The legacy Gothic 1 renderer is tied to the Central-European execution
 	// code page. Unsupported or missing translations deliberately fall back to
 	// English instead of leaking Polish strings into another selected language.
-	return language.StrCmp("pl") == 0 ? GetPolish(text) : GetEnglish(text);
+	return language == "pl" ? GetPolish(text) : GetEnglish(text);
 }

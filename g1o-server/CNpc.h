@@ -4,7 +4,7 @@
 class CNpc : public CCreature
 {
 private:
-	RakString ani;
+	std::string ani;
 	float wX, wY, wZ; //walkTo positions (for sliding)
 	bool isWalking;
 public:
@@ -14,7 +14,7 @@ public:
 	List<CPlayer*> streamedPlayers;
 	void pulse();
 
-	void AI_walkTo(RakString animation, float x, float y, float z); //Npc odtwarza animke dopoki nie dojdzie do pozycji
+	void AI_walkTo(std::string animation, float x, float y, float z); //Npc odtwarza animke dopoki nie dojdzie do pozycji
 
 };
 

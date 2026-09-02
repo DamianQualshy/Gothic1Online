@@ -13,7 +13,7 @@
 
 //Defines
 //#define DEV_MODE
-#define BAN_LIST RakString("banlist")
+#define BAN_LIST "banlist"
 #ifndef G1O_VERSION
 #define G1O_VERSION "0.5.0"
 #endif
@@ -37,7 +37,6 @@ using namespace std;
 #include "CConfig.h"
 #include "CReceiver.h"
 #include "CNetwork.h"
-#include "CNetworkError.h"
 #include "CScriptDownload.h"
 #include "CStreamer.h"
 #include "CAdmin.h"

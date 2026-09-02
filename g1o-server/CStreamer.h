@@ -8,8 +8,8 @@
 class CStreamer
 {
 private:
-	unsigned int timeStreamPlayers;
-	unsigned int timeStreamItems;
+	std::uint64_t timeStreamPlayers;
+	std::uint64_t timeStreamItems;
 public:
 	CStreamer();
 	~CStreamer();

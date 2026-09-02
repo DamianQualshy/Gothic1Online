@@ -24,7 +24,7 @@ CNpc* CBotManager::get(size_t id)
 
 size_t CBotManager::getFreeID()
 {
-	size_t id = atoi(core.GetConfig()->GetMaxSlots().C_String()) + 1;
+	size_t id = atoi(core.GetConfig()->GetMaxSlots().c_str()) + 1;
 	if( getCount() > 0 )
 	{
 		for( ; ; ++id )
@@ -34,7 +34,7 @@ size_t CBotManager::getFreeID()
 	return id;
 };
 
-CNpc* CBotManager::createNpc(RakString name, RakString instance)
+CNpc* CBotManager::createNpc(std::string name, std::string instance)
 {
 	size_t id = getFreeID();
 	CNpc* bot = new CNpc();

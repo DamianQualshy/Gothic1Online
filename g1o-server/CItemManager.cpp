@@ -49,9 +49,9 @@ CItem* CItemManager::GetItem(unsigned int _itemID)
 	return NULL;
 };
 
-CItem* CItemManager::CreateItem(RakString instance, unsigned int amount, float x, float y, float z, RakString world)
+CItem* CItemManager::CreateItem(std::string instance, unsigned int amount, float x, float y, float z, std::string world)
 {
-	SPDLOG_INFO("Creating item {} amount {} at pos {:f} {:f} {:f}", instance.C_String(), amount, x, y, z);
+	SPDLOG_INFO("Creating item {} amount {} at pos {:f} {:f} {:f}", instance.c_str(), amount, x, y, z);
 	unsigned int itemID;
 	if( GetFreeID(itemID) == true )
 	{
@@ -70,7 +70,7 @@ bool CItemManager::DestroyItem(unsigned int _itemID)
 	CItem* item = GetItem(_itemID);
 	if( item )
 	{
-		SPDLOG_INFO("Destroying item instance {} id {}", item->GetInstance().C_String(), item->GetID());
+		SPDLOG_INFO("Destroying item instance {} id {}", item->GetInstance().c_str(), item->GetID());
 		itemList.Remove(item);
 		//Usunięcie ze streamera
 		for( playerListIter i = playerManager.playerList.begin(); i != playerManager.playerList.end(); ++i )
@@ -87,16 +87,16 @@ bool CItemManager::CreateItemForPlayer(CItem* item, CPlayer *player)
 	{
 		if( player->streamedItems.FindIndex(item) == -1 )
 		{
-			SPDLOG_INFO("Creating item {} for player {}", item->GetID(), player->name.C_String());
+			SPDLOG_INFO("Creating item {} for player {}", item->GetID(), player->name.c_str());
 			float x,y,z;
 			item->GetPositionXYZ(x,y,z);
 
-			BitStream stream;
-			stream.Write((MessageID)GO_ITEM);
-			stream.Write((MessageID)CREATE_ITEM);
-			stream.Write(item->GetID());
+			PacketWriter stream;
+			stream.Write((std::uint8_t)GO_ITEM);
+			stream.Write((std::uint8_t)CREATE_ITEM);
+			stream.Write(static_cast<std::uint32_t>(item->GetID()));
 			stream.Write(item->GetInstance());
-			stream.Write(item->GetAmount());
+			stream.Write(static_cast<std::uint32_t>(item->GetAmount()));
 			stream.Write(x);
 			stream.Write(y);
 			stream.Write(z);
@@ -104,7 +104,7 @@ bool CItemManager::CreateItemForPlayer(CItem* item, CPlayer *player)
 			player->streamedItems.PushBack(item);
 
 			CNetwork* net = core.GetNetwork();
-			if( net->GetPeer()->Send(&stream,LOW_PRIORITY,RELIABLE,0,player->GetAddress(),false) )
+			if( net->Send(player->GetConnection(), stream, k_nSteamNetworkingSend_Reliable) )
 				return true;
 		}
 	}
@@ -118,16 +118,16 @@ bool CItemManager::DestroyItemForPlayer(CItem* item, CPlayer *player)
 		int index = player->streamedItems.FindIndex(item);
 		if( index != -1 )
 		{
-			SPDLOG_INFO("Destroying item {} for player {}", item->GetID(), player->name.C_String());
-			BitStream stream;
-			stream.Write((MessageID)GO_ITEM);
-			stream.Write((MessageID)DESTROY_ITEM);
-			stream.Write(item->GetID());
+			SPDLOG_INFO("Destroying item {} for player {}", item->GetID(), player->name.c_str());
+			PacketWriter stream;
+			stream.Write((std::uint8_t)GO_ITEM);
+			stream.Write((std::uint8_t)DESTROY_ITEM);
+			stream.Write(static_cast<std::uint32_t>(item->GetID()));
 
 			player->streamedItems.RemoveIndex(index);
 
 			CNetwork* net = core.GetNetwork();
-			if( net->GetPeer()->Send(&stream,LOW_PRIORITY,RELIABLE,0,player->GetAddress(),false) )
+			if( net->Send(player->GetConnection(), stream, k_nSteamNetworkingSend_Reliable) )
 				return true;
 		}
 	}

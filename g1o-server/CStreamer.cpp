@@ -16,7 +16,7 @@ void CStreamer::Pulse()
 
 void CStreamer::StreamPlayers(bool timeout)
 {
-	if (!timeout || timeout && timeStreamPlayers < GetTimeMS())
+	if (!timeout || timeout && timeStreamPlayers < g1o::network::NowMilliseconds())
 	{
 		unsigned numOfPlayers = playerManager.GetNumberOfPlayers();
 		if (numOfPlayers > 1)
@@ -46,11 +46,11 @@ void CStreamer::StreamPlayers(bool timeout)
 								}
 								else if (distance > STREAM_DISTANCE && IsPlayerStreamedToPlayer(streamed, player))
 								{
-									BitStream stream;
-									stream.Write((MessageID)GO_PLAYER);
-									stream.Write((MessageID)DESTROY_PLAYER);
+									PacketWriter stream;
+									stream.Write((std::uint8_t)GO_PLAYER);
+									stream.Write((std::uint8_t)DESTROY_PLAYER);
 									stream.Write(streamed->GetID());
-									core.GetNetwork()->GetPeer()->Send(&stream, LOW_PRIORITY, RELIABLE, 0, player->GetAddress(), false);
+									core.GetNetwork()->Send(player->GetConnection(), stream, k_nSteamNetworkingSend_Reliable);
 									player->streamedPlayers.Remove(streamed);
 								}
 							}
@@ -60,13 +60,13 @@ void CStreamer::StreamPlayers(bool timeout)
 			}
 		}
 
-		timeStreamPlayers = GetTimeMS() + STREAM_TIME;
+		timeStreamPlayers = g1o::network::NowMilliseconds() + STREAM_TIME;
 	}
 };
 
 void CStreamer::StreamItems()
 {
-	if( timeStreamItems < GetTimeMS() )
+	if( timeStreamItems < g1o::network::NowMilliseconds() )
 	{
 		unsigned int numOfPlayers = playerManager.GetNumberOfPlayers();
 		unsigned int numOfItems = itemManager.GetNumberOfItems();
@@ -85,7 +85,7 @@ void CStreamer::StreamItems()
 					item = itemManager.itemList[j];
 					float x, y, z;
 					item->GetPositionXYZ(x,y,z);
-					if( goMath::GetDistance3D(player->x, player->y, player->z, x, y, z) <= STREAM_DISTANCE && player->world.StrCmp(item->GetWorldName()) == 0 )
+					if (goMath::GetDistance3D(player->x, player->y, player->z, x, y, z) <= STREAM_DISTANCE && player->world == item->GetWorldName())
 					{
 						if( IsItemStreamedToPlayer(item,player) == false )
 							itemManager.CreateItemForPlayer(item, player);
@@ -96,7 +96,7 @@ void CStreamer::StreamItems()
 				}
 			}
 		}
-		timeStreamItems = GetTimeMS() + ITEM_STREAM_TIME;
+		timeStreamItems = g1o::network::NowMilliseconds() + ITEM_STREAM_TIME;
 	}
 };
 

@@ -96,7 +96,7 @@ DWORD __stdcall CSplashScreen::InitializeSplashScreen(void * param)
 	while(GetMessage( &msg, 0, 0, 0 ))
 	{ 
 		DispatchMessage(&msg); 
-		RakSleep(3);
+		g1o::network::Sleep(3);
 	}
 	SPDLOG_INFO("[startup] Gothic splash thread stopped");
 	return NULL;

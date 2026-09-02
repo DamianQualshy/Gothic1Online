@@ -28,7 +28,7 @@
 
 //Gothic Online headers
 #include "zengin\\ZenginIncludes.h" //ZenGin (silnik gothica)
-#include <GO_SharedIncludes.h> //RakNet, TinyXML, goMath
+#include <GO_SharedIncludes.h> // Networking, TinyXML, goMath
 #include "Hooking\\HookManager.h"
 #include "Logging\\Logging.h"
 

@@ -3,10 +3,10 @@
 
 namespace ScriptRPC
 {
-	void HandleScriptRPC(CNetwork* network, Packet* packet);
+	void HandleScriptRPC(CNetwork* network, PacketReader& stream);
 
-	void ScriptUnconscious(CNetwork* network, BitStream& stream);
-	void ScriptVisual(CNetwork* network, BitStream& stream);
+	void ScriptUnconscious(CNetwork* network, PacketReader& stream);
+	void ScriptVisual(CNetwork* network, PacketReader& stream);
 };
 
 #endif //SCRIPTRPC_H

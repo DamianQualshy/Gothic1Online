@@ -9,7 +9,7 @@ public:
 	zSTRING text;
 	zSTRING font;
 	zCOLOR color;
-	CDraw(RakString txt, RakString fnt, int x, int y, zCOLOR clr);
+	CDraw(std::string txt, std::string fnt, int x, int y, zCOLOR clr);
 	~CDraw() {};
 	void OnRender(zCView* screen);
 };

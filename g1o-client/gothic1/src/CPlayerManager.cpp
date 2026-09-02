@@ -12,11 +12,11 @@ CPlayerManager::~CPlayerManager()
 	SPDLOG_TRACE("CPlayerManager::~CPlayerManager()");
 };
 
-CLocalPlayer* CPlayerManager::CreateLocalPlayer(int playerID, RakString playerName)
+CLocalPlayer* CPlayerManager::CreateLocalPlayer(int playerID, std::string playerName)
 {
-	SPDLOG_TRACE("CPlayerManager::CreateLocalPlayer({}, {})", playerID,playerName.C_String());
+	SPDLOG_TRACE("CPlayerManager::CreateLocalPlayer({}, {})", playerID,playerName.c_str());
 
-	if(playerName.GetLength() <= 30)
+	if(playerName.size() <= 30)
 	{
 		CLocalPlayer* player = new CLocalPlayer(playerID, playerName);
 		this->playerList.PushBack(player);
@@ -28,10 +28,10 @@ CLocalPlayer* CPlayerManager::CreateLocalPlayer(int playerID, RakString playerNa
 	return NULL;
 };
 
-CPlayer* CPlayerManager::CreatePlayer(int playerID, RakString playerName)
+CPlayer* CPlayerManager::CreatePlayer(int playerID, std::string playerName)
 {
-	SPDLOG_TRACE("CPlayerManager::CreatePlayer({}, {})", playerID,playerName.C_String());
-	if(playerName.GetLength() <= 30)
+	SPDLOG_TRACE("CPlayerManager::CreatePlayer({}, {})", playerID,playerName.c_str());
+	if(playerName.size() <= 30)
 	{
 		CPlayer* player = new CPlayer(playerID, playerName);
 		this->playerList.PushBack(player);

@@ -3,7 +3,7 @@
 
 struct ChatLine
 {
-	RakString text;
+	std::string text;
 	zCOLOR color;
 };
 
@@ -13,15 +13,15 @@ private:
 	bool bIsInitiated;
 	bool bIsShowing;
 	bool bIsInputActive;
-	RakString currentText; //obecnie wprowadzane znaki z klawiatury;
+	std::string currentText; //obecnie wprowadzane znaki z klawiatury;
 	unsigned int chatLines;
 	vector<ChatLine> lines;
-	RakString lastMessage;
+	std::string lastMessage;
 	//Key eventy
-	unsigned int timeLastKey;
-	RakString lastLetter;
+	std::uint64_t timeLastKey;
+	std::string lastLetter;
 	//Animacja gestykulacji
-	unsigned int timeGesticulation;
+	std::uint64_t timeGesticulation;
 public:
 	CChat();
 	~CChat();
@@ -32,7 +32,7 @@ public:
 	bool IsShowing() const { return this->bIsShowing; };
 	bool IsInputActive() const { return this->bIsInputActive; };
 	unsigned int GetLines() const { return this->chatLines; };
-	void AddLine(RakString text, zCOLOR color);
+	void AddLine(std::string text, zCOLOR color);
 	void Show(bool enable){ this->bIsShowing = enable;};
 	void KeyEvent(int key);
 	void Clear();

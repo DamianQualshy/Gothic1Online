@@ -27,7 +27,7 @@ enum class EClientText
 
 namespace ClientLanguage
 {
-	const char* Get(EClientText text, const RakString& language);
+	const char* Get(EClientText text, const std::string& language);
 }
 
 #endif // CCLIENTLANGUAGE_H

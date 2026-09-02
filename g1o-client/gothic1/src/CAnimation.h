@@ -172,7 +172,7 @@ public:
 		return animgr;
 	}
 
-	bool IsAnimationTurning(RakString aniName);
+	bool IsAnimationTurning(std::string aniName);
 	int GetAnimationMove(oCNpc* npc);
 	bool IsAnimationMoveActive(oCNpc* npc);
 	int GetAnimationHandAction(oCNpc* npc);

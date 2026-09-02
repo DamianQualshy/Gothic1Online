@@ -3,17 +3,15 @@
 
 namespace ConnectionRPC
 {
-	void HandleConnectionRPC(CNetwork* network, Packet* packet);
-	void CatchConnection(CNetwork* network, Packet* packet);
-	void LostConnection(CNetwork* network, Packet* packet);
-	void Disconnection(CNetwork* network, Packet* packet);
-	void PleaseConnect(CNetwork* network, BitStream& stream, SystemAddress clientAddress);
+	void HandleConnectionRPC(CNetwork* network, HSteamNetConnection connection, PacketReader& packet);
+	void CatchConnection(CNetwork* network, HSteamNetConnection connection, const std::string& remoteAddress);
+	void Disconnected(CNetwork* network, HSteamNetConnection connection, bool transportFailure, const char* debug);
+	void PleaseConnect(CNetwork* network, HSteamNetConnection connection, PacketReader& packet);
 
-	//Send
-	void IncorrectVersion(CNetwork* network, SystemAddress clientAddress);
-	void ServerFull(CNetwork* network, SystemAddress clientAddress);
-	void NicknameUsed(CNetwork* network, SystemAddress clientAddress);
-	void ClosedConnectionWithReason(CNetwork* network, SystemAddress clientAddress, RakString reason);
-};
+	void IncorrectVersion(CNetwork* network, HSteamNetConnection connection);
+	void ServerFull(CNetwork* network, HSteamNetConnection connection);
+	void NicknameUsed(CNetwork* network, HSteamNetConnection connection);
+	void ClosedConnectionWithReason(CNetwork* network, HSteamNetConnection connection, const std::string& reason);
+}
 
-#endif //CONNECTIONRPC_H
+#endif

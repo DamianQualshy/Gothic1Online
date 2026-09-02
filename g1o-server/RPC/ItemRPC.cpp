@@ -1,44 +1,44 @@
 #include "../stdafx.h"
 
-void ItemRPC::HandleItemRPC(CNetwork* network, Packet* packet)
-{
-	BitStream stream(packet->data,packet->length,false);
-	stream.IgnoreBytes(1);
+#include <cmath>
 
-	MessageID eItemRPC;
-	stream.Read(eItemRPC);
+void ItemRPC::HandleItemRPC(CNetwork* network, HSteamNetConnection connection, PacketReader& stream)
+{
+
+	EItemRPC eItemRPC{};
+	if (!playerManager.GetPlayer(connection) || !stream.Read(eItemRPC))
+		return;
 	switch(eItemRPC)
 	{
-	case CREATE_ITEM: CreateItem(packet,stream); break;
-	case DESTROY_ITEM: DestroyItem(packet,stream); break;
+	case CREATE_ITEM: CreateItem(connection,stream); break;
+	case DESTROY_ITEM: DestroyItem(connection,stream); break;
 	}
 };
 
-void ItemRPC::CreateItem(Packet* packet, BitStream& stream)
+void ItemRPC::CreateItem(HSteamNetConnection connection, PacketReader& stream)
 {
-	RakString instanceName;
-	unsigned int amount;
-	float x, y, z;
-	RakString world;
+	std::string instanceName;
+	unsigned int amount = 0;
+	float x = 0.0f, y = 0.0f, z = 0.0f;
+	std::string world;
 
-	stream.Read(instanceName);
-	stream.Read(amount);
-	stream.Read(x);
-	stream.Read(y);
-	stream.Read(z);
-	stream.Read(world);
+	if (!stream.Read(instanceName, 256) || !stream.Read(amount) || amount == 0 || !stream.Read(x) ||
+		!stream.Read(y) || !stream.Read(z) || !stream.Read(world, 1024) || !stream.Empty() ||
+		!std::isfinite(x) || !std::isfinite(y) || !std::isfinite(z))
+		return;
 
 	CItem* item = itemManager.CreateItem(instanceName,amount,x,y,z,world);
 	if( item )
-		SEvent::PlayerDropItem(playerManager.GetPlayer(packet->systemAddress)->GetID(), item->GetID(), instanceName.C_String(), amount, world.C_String());
+		SEvent::PlayerDropItem(playerManager.GetPlayer(connection)->GetID(), item->GetID(), instanceName.c_str(), amount, world.c_str());
 };
 
-void ItemRPC::DestroyItem(Packet* packet, BitStream& stream)
+void ItemRPC::DestroyItem(HSteamNetConnection connection, PacketReader& stream)
 {
-	unsigned int itemID;
-	stream.Read(itemID);
+	unsigned int itemID = 0;
+	if (!stream.Read(itemID) || !stream.Empty())
+		return;
 	CItem* item = itemManager.GetItem(itemID);
 	if( item )
-		SEvent::PlayerTakeItem(playerManager.GetPlayer(packet->systemAddress)->GetID(), item->GetID(), item->GetInstance().C_String(), item->GetAmount(), item->GetWorldName().C_String());
+		SEvent::PlayerTakeItem(playerManager.GetPlayer(connection)->GetID(), item->GetID(), item->GetInstance().c_str(), item->GetAmount(), item->GetWorldName().c_str());
 	itemManager.DestroyItem(itemID);
 };

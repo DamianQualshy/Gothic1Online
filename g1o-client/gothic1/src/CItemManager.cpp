@@ -34,11 +34,11 @@ bool CItemManager::IsItemExist(size_t _itemID)
 	return false;
 };
 
-oCItem* CItemManager::CreateItem(RakString _itemInstance, zVEC3 _pos, size_t _amount, size_t _itemID)
+oCItem* CItemManager::CreateItem(std::string _itemInstance, zVEC3 _pos, size_t _amount, size_t _itemID)
 {
 	if( IsItemExist(_itemID) == false )
 	{
-		oCItem* worldItem = oCObjectFactory::GetFactory()->CreateItem2(zSTRING(_itemInstance.C_String()), _pos, _amount);
+		oCItem* worldItem = oCObjectFactory::GetFactory()->CreateItem2(zSTRING(_itemInstance.c_str()), _pos, _amount);
 		if( worldItem )
 		{
 			CItem* new_item = new CItem(_itemInstance, worldItem, _amount, _pos, _itemID);
@@ -61,21 +61,21 @@ bool CItemManager::DestroyItem(size_t _itemID)
 	return false;
 };
 
-bool CItemManager::SendDropItem(RakString _itemInstance, zVEC3 _pos, size_t _amount)
+bool CItemManager::SendDropItem(std::string _itemInstance, zVEC3 _pos, size_t _amount)
 {
 	CNetwork* net = core.GetNetwork();
 	if( net->IsConnected() == true )
 	{
-		BitStream s;
-		s.Write((MessageID)GO_ITEM);
-		s.Write((MessageID)CREATE_ITEM);
+		PacketWriter s;
+		s.Write((std::uint8_t)GO_ITEM);
+		s.Write((std::uint8_t)CREATE_ITEM);
 		s.Write(_itemInstance);
-		s.Write(_amount); 
+		s.Write(static_cast<std::uint32_t>(_amount));
 		s.Write(_pos[0]);
 		s.Write(_pos[1]);
 		s.Write(_pos[2]);
-		s.Write(RakString("%s.ZEN",oCGame::GetGame()->GetGameWorld()->GetWorldName().ToChar()));
-		if( net->GetPeer()->Send(&s, LOW_PRIORITY, RELIABLE, 0, net->GetServerAddress(), false) )
+		s.Write(std::string(oCGame::GetGame()->GetGameWorld()->GetWorldName().ToChar()) + ".ZEN");
+		if( net->Send(s, k_nSteamNetworkingSend_Reliable) )
 			return true;
 	}
 	return false;
@@ -91,15 +91,15 @@ bool CItemManager::SendTakeItem(oCItem* item)
 			CNetwork* net = core.GetNetwork();
 			if( net->IsConnected() == true )
 			{
-				BitStream s;
-				s.Write((MessageID)GO_ITEM);
-				s.Write((MessageID)DESTROY_ITEM);
-				s.Write(_item->GetID());
+				PacketWriter s;
+				s.Write((std::uint8_t)GO_ITEM);
+				s.Write((std::uint8_t)DESTROY_ITEM);
+				s.Write(static_cast<std::uint32_t>(_item->GetID()));
 
 				itemList.Remove(_item);
 				delete _item;
 
-				if( net->GetPeer()->Send(&s, LOW_PRIORITY, RELIABLE, 0, net->GetServerAddress(), false) )
+				if( net->Send(s, k_nSteamNetworkingSend_Reliable) )
 					return true;
 			}
 		}

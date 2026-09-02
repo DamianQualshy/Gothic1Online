@@ -35,7 +35,7 @@ public:
 
 	void pulse();
 
-	CNpc* createNpc( RakString name, RakString instance );
+	CNpc* createNpc( std::string name, std::string instance );
 	void destroyNpc( CNpc* bot );
 	inline void destroyNpc( size_t id );
 	inline CNpc* get( size_t id );

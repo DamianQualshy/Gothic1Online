@@ -47,12 +47,12 @@ CCreature::CCreature()
 CCreature::~CCreature()
 {
 	//SPDLOG_TRACE("CCreature::~CCreature()");
-	instance.FreeMemory();
-	world.FreeMemory();
-	armorInstance.FreeMemory();
-	meleeWeaponInstance.FreeMemory();
-	rangedWeaponInstance.FreeMemory();
-	leftHand.FreeMemory();
-	rightHand.FreeMemory();
-	magicItem.FreeMemory();
+	instance.clear();
+	world.clear();
+	armorInstance.clear();
+	meleeWeaponInstance.clear();
+	rangedWeaponInstance.clear();
+	leftHand.clear();
+	rightHand.clear();
+	magicItem.clear();
 };

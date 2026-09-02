@@ -5,28 +5,27 @@ class CLocalPlayer : public CPlayer
 {
 private:
 	//Timery
-	unsigned int posBroadcastTimer;
-	unsigned int angleBroadcastTimer;
-	unsigned int weaponModeBroadcastTimer;
-	unsigned int aniBroadcastTimer;
-	unsigned int armorBroadcastTimer;
-	unsigned int weaponBroadcastTimer;
-	unsigned int instanceBroadcastTimer;
-	unsigned int handBroadcastTimer;
-	unsigned int standUpTimer;
-	unsigned int fightBroadcastTimer;
-	unsigned int worldBroadcastTimer;
-	unsigned int protectionBroadcastTimer;
-	unsigned int skillWeaponBroadcastTimer;
-	unsigned int lastDeathTimer;
-	unsigned int pingTimer;
-	unsigned int focusTimer;
+	std::uint64_t posBroadcastTimer;
+	std::uint64_t angleBroadcastTimer;
+	std::uint64_t weaponModeBroadcastTimer;
+	std::uint64_t aniBroadcastTimer;
+	std::uint64_t armorBroadcastTimer;
+	std::uint64_t weaponBroadcastTimer;
+	std::uint64_t instanceBroadcastTimer;
+	std::uint64_t handBroadcastTimer;
+	std::uint64_t standUpTimer;
+	std::uint64_t fightBroadcastTimer;
+	std::uint64_t worldBroadcastTimer;
+	std::uint64_t protectionBroadcastTimer;
+	std::uint64_t skillWeaponBroadcastTimer;
+	std::uint64_t lastDeathTimer;
+	std::uint64_t focusTimer;
 	bool isDead;
 	
 public:
 	oCMobInter *lastMob;
 
-	CLocalPlayer(int playerID, RakString playerName);
+	CLocalPlayer(int playerID, std::string playerName);
 	~CLocalPlayer();
 
 	void SetAdditionalVisuals(zSTRING const& _bodyModel, int _bodyTexture, zSTRING const& _headModel, int _headTexture);
@@ -43,7 +42,7 @@ public:
 	void SendEquipWeapon(); //Ranged/Melee
 	void SendInstanceChange(); //Zmiana w inna postac
 	void SendHand(); //Poki co prawa reka (zablokowane bo kraszuje)
-	void SendChangeLevel(RakString levelName);
+	void SendChangeLevel(std::string levelName);
 	void SendEnterWorld();
 	void SendHealth();
 	void SendMaxHealth();
@@ -53,8 +52,8 @@ public:
 	void SendMagicAttack();
 	//void SendProtection();
 	void SendMobTrigger(bool trigger, oCMobInter *mob);
-	void SendOverlay(bool add, RakString overlay);
-	void SendTimedOverlay(TimeMS time, RakString overlay);
+	void SendOverlay(bool add, std::string overlay);
+	void SendTimedOverlay(std::uint64_t time, std::string overlay);
 	void SendArrow();
 	void SendFocus(int focusID, bool taken);
 	void BroadcastWorld();
@@ -62,7 +61,6 @@ public:
 	void Unconscious();
 	void ReleaseMob();
 	void HandleFocus();
-	void PingSelf();
 	void BroadcastStats();
 };
 

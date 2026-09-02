@@ -1,46 +1,48 @@
 #include "stdafx.h"
 
-CReceiver::CReceiver()
-{
-	SPDLOG_TRACE("CReceiver::CReceiver()");
-};
+CReceiver::CReceiver() = default;
+CReceiver::~CReceiver() = default;
 
-CReceiver::~CReceiver()
+void CReceiver::ReceivePackets(CNetwork* network)
 {
-	SPDLOG_TRACE("CReceiver::~CReceiver()");
-};
-
-void CReceiver::ReceivePackets(CNetwork *network)
-{
-	for(Packet* packet = network->GetPeer()->Receive(); packet; network->GetPeer()->DeallocatePacket(packet), packet = network->GetPeer()->Receive() ) //Pakiety na klatkę
+	const HSteamNetConnection connection = network->GetConnection();
+	if (connection != k_HSteamNetConnection_Invalid)
 	{
-		//SPDLOG_TRACE("Packet caught!");
-		//Dodanie liczby odebranych pakietów
-		CNetInterface::GetInstance().PushOnePacketCnt();
-		switch(packet->data[0])
+		while (true)
 		{
-		case GO_CONNECTION:
-			ConnectionRPC::HandleConnectionRPC(network,packet); break;
-		case GO_CHAT:
-			ChatRPC::HandleChatRPC(network,packet); break;
-		case GO_PLAYER:
-			PlayerRPC::HandlePlayerRPC(network,packet); break;
-		case GO_ITEM:
-			ItemRPC::HandleItemRPC(network,packet); break;
-		case GO_SCRIPT:
-			ScriptRPC::HandleScriptRPC(network,packet); break;
+			ISteamNetworkingMessage* message = nullptr;
+			const int received = network->GetSockets()->ReceiveMessagesOnConnection(connection, &message, 1);
+			if (received <= 0)
+				break;
 
-			//Raknetowskie od polaczenia
-		case ID_CONNECTION_REQUEST_ACCEPTED:
-			ConnectionRPC::CatchConnection(network,packet); break;
-		case ID_CONNECTION_LOST:
-			ConnectionRPC::LostConnection(network,packet); break;
-		case ID_DISCONNECTION_NOTIFICATION:
-			ConnectionRPC::Disconnection(network,packet); break;
-		case ID_CONNECTION_ATTEMPT_FAILED:
-			ConnectionRPC::ConnectionFailed(network); break;
-		case ID_CONNECTION_BANNED:
-			ConnectionRPC::Banned(network); break;
+			CNetInterface::GetInstance().PushOnePacketCnt();
+			PacketReader packet(message->m_pData, message->m_cbSize);
+			EMultiplayerMessages kind{};
+			if (packet.Read(kind))
+			{
+				switch (kind)
+				{
+				case GO_CONNECTION:
+					ConnectionRPC::HandleConnectionRPC(network, packet);
+					break;
+				case GO_CHAT:
+					ChatRPC::HandleChatRPC(network, packet);
+					break;
+				case GO_PLAYER:
+					PlayerRPC::HandlePlayerRPC(network, packet);
+					break;
+				case GO_ITEM:
+					ItemRPC::HandleItemRPC(network, packet);
+					break;
+				case GO_SCRIPT:
+					ScriptRPC::HandleScriptRPC(network, packet);
+					break;
+				default:
+					break;
+				}
+			}
+			message->Release();
 		}
 	}
-};
+	network->PollCallbacks();
+}

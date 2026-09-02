@@ -8,7 +8,7 @@ public:
 	CAdmin();
 	~CAdmin();
 
-	void HandleAdminCommand(CPlayer* player, RakString command);
+	void HandleAdminCommand(CPlayer* player, std::string command);
 };
 
 #endif //CADMIN_H

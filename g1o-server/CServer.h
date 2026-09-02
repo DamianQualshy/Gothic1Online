@@ -6,11 +6,11 @@
 struct SMobTrigger
 {
 	float x, y, z;
-	RakString world;
+	std::string world;
 
 	bool operator==(const SMobTrigger &mob) { if (x == mob.x && y == mob.y && z == mob.z && world == mob.world) return true; return false; }
 	SMobTrigger() {}
-	SMobTrigger(float _x, float _y, float _z, RakString _world) : x(_x), y(_y), z(_z), world(_world) {}
+	SMobTrigger(float _x, float _y, float _z, std::string _world) : x(_x), y(_y), z(_z), world(_world) {}
 };
 
 class CServer //singleton
@@ -23,8 +23,8 @@ private:
 	CBan* pBan;
 	CScriptDownload* pScriptDownload;
 
-	RakString serverDescription;
-	RakString serverWorld;
+	std::string serverDescription;
+	std::string serverWorld;
 	int serverHour, serverMinute, serverDay;
 	bool serverUnconscious;
 
@@ -54,21 +54,22 @@ public:
 	CMultiplayer* GetMultiplayer() {return this->pMultiplayer;};
 	CStreamer* GetStreamer() {return this->pStreamer;};
 	CBan* GetBanSystem() {return this->pBan;};
+	CScriptDownload* GetScriptDownload() { return this->pScriptDownload; }
 
-	inline RakString GetDescription() const {return this->serverDescription;};
-	inline RakString GetWorld() const {return this->serverWorld;};
+	inline std::string GetDescription() const {return this->serverDescription;};
+	inline std::string GetWorld() const {return this->serverWorld;};
 	inline int GetHour() const { return this->serverHour; };
 	inline int GetMinute() const { return this->serverMinute; };
 	inline int GetDay() const { return this->serverDay; };
 	inline bool GetUnconscious() const { return this->serverUnconscious; };
-	bool SetDescription(RakString _desc)
+	bool SetDescription(std::string _desc)
 	{
-		if (_desc.GetLength() > CConfig::MAX_DESCRIPTION_LENGTH)
+		if (_desc.size() > CConfig::MAX_DESCRIPTION_LENGTH)
 			return false;
 		this->serverDescription = _desc;
 		return true;
 	};
-	void SetWorld(RakString _world) { this->serverWorld = _world;};
+	void SetWorld(std::string _world) { this->serverWorld = _world;};
 	void SetUnconscious(bool _enabled);
 
 };

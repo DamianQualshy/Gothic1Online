@@ -3,11 +3,11 @@
 
 namespace ScriptRPC
 {
-	void HandleScriptRPC(CNetwork* network, Packet* packet);
+	void HandleScriptRPC(CNetwork* network, HSteamNetConnection connection, PacketReader& stream);
 
-	void ScriptVisual(CNetwork* network, BitStream& stream, Packet* packet);
-	void ScriptFocus(CNetwork* network, BitStream& stream, Packet* packet);
-	void ClientEvent(CNetwork* network, BitStream& stream, Packet* packet);
+	void ScriptVisual(CNetwork* network, PacketReader& stream, HSteamNetConnection connection);
+	void ScriptFocus(CNetwork* network, PacketReader& stream, HSteamNetConnection connection);
+	void ClientEvent(CNetwork* network, PacketReader& stream, HSteamNetConnection connection);
 };
 
 #endif //SCRIPTRPC_H

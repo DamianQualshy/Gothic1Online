@@ -86,7 +86,7 @@ The native client reports a fixed set of observations to the server:
 | `onMobTrigger` / `onMobUntrigger` | `name`, `x`, `y`, `z`, `type` |
 | `onUseItem` | `instance`, `amount`, `hand` |
 
-The server derives `playerId` from the authenticated RakNet connection; it never accepts that identity from packet contents. Event kinds and argument ranges are validated before dispatch.
+The server derives `playerId` from the authenticated GNS connection; it never accepts that identity from packet contents. Event kinds and argument ranges are validated before dispatch.
 
 !!! warning
     These events describe client observations. They arrive over the network and cannot synchronously cancel a Gothic action that already occurred. Treat position, item, and mob details as untrusted input when they affect authoritative state.

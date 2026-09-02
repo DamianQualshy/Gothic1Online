@@ -3,8 +3,8 @@
 
 namespace ChatRPC
 {
-	void HandleChatRPC(CNetwork* network, Packet* packet);
-	void PlayerMessage(CNetwork* network, BitStream& stream);
+	void HandleChatRPC(CNetwork* network, HSteamNetConnection connection, PacketReader& stream);
+	void PlayerMessage(CNetwork* network, HSteamNetConnection connection, PacketReader& stream);
 };
 
 #endif //CHATRPC_H

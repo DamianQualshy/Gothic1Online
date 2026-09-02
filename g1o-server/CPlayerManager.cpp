@@ -1,214 +1,173 @@
 #include "stdafx.h"
 
 CPlayerManager::CPlayerManager()
+	: timerBroadcastList(0), nextPlayerId(0)
 {
-	//SPDLOG_TRACE("CPlayerManager::CPlayerManager()");
-	timerBroadcastList = 0;
-	playerList.clear();
-};
+}
 
 CPlayerManager::~CPlayerManager()
 {
-	//SPDLOG_TRACE("CPlayerManager::~CPlayerManager()");
-	playerList.clear(); //Można dać pentelkę co usunie wszystkich graczy
-};							  //delete player. ale to nie ma sensu w tym kontekscie
+	for (const auto& entry : playerList)
+		delete entry.second;
+}
 
-bool CPlayerManager::IsNicknameUsed(RakString playerName)
+bool CPlayerManager::IsNicknameUsed(const std::string& playerName) const
 {
-	for(playerListIter i = playerList.begin(); i != playerList.end(); ++i )
-	{
-		if( i->second->name.StrCmp(playerName) == 0 )
+	for (const auto& entry : playerList)
+		if (entry.second->name == playerName)
 			return true;
-	}
 	return false;
-};
+}
 
-bool CPlayerManager::IsPlayerInManager(CPlayer* player)
+bool CPlayerManager::IsPlayerInManager(const CPlayer* player) const
 {
-	for(playerListIter i = playerList.begin(); i != playerList.end(); ++i)
-	{
-		if(i->second == player)
+	for (const auto& entry : playerList)
+		if (entry.second == player)
 			return true;
-	}
 	return false;
-};
+}
 
-CPlayer* CPlayerManager::CreatePlayer(SystemAddress address, RakString playerName)
+CPlayer* CPlayerManager::CreatePlayer(HSteamNetConnection connection, const std::string& playerName)
 {
-	//SPDLOG_TRACE("CPlayerManager::CreatePlayer(, {})", playerName.C_String());
-	if(playerName.GetLength() <= 30)
-	{
-		int playerId = (int)address.systemIndex;
-		CPlayer* player = new CPlayer(address, playerId, playerName);
-		playerList[playerId] = player;
-		player->bConnected = true;
+	if (playerName.empty() || playerName.size() > 30)
+		return nullptr;
 
-		return player;
-	}
-	return NULL;
-};
+	while (playerList.contains(nextPlayerId))
+		++nextPlayerId;
+	const int playerId = nextPlayerId++;
+	auto* player = new CPlayer(connection, core.GetNetwork()->GetRemoteAddress(connection), playerId, playerName);
+	player->bConnected = true;
+	playerList.emplace(playerId, player);
+	return player;
+}
 
 void CPlayerManager::CreatePlayerForOtherPlayer(CPlayer* player, CPlayer* receiver)
-{	
-	//SPDLOG_TRACE("CPlayerManager, Creating player {} for player {}", player->name.C_String(), receiver->name.C_String());
-
+{
+	if (!player || !receiver)
+		return;
 	CNetwork* network = core.GetNetwork();
-	if(player->spawned)
+	PacketWriter packet;
+	if (player->spawned)
 	{
-		SPDLOG_DEBUG("Player {} armor {}", player->name.C_String(), player->armorInstance.C_String());
-
-		BitStream stream;
-		stream.Write((MessageID)GO_PLAYER);
-		stream.Write((MessageID)CREATE_AND_SPAWN);
-		stream.Write(player->playerId);
-		stream.Write(player->name);
-		stream.Write(player->instance);
-		stream.Write(player->bodyModel);
-		stream.Write(player->bodyTexture);
-		stream.Write(player->headModel);
-		stream.Write(player->headTexture);
-		/*stream.Write(player->protection[0]);
-		stream.Write(player->protection[1]);
-		stream.Write(player->protection[2]);
-		stream.Write(player->protection[3]);*/
-		stream.Write(player->x);
-		stream.Write(player->y);
-		stream.Write(player->z);
-		stream.Write(player->angle);
-		stream.Write(player->maxhealth);
-		stream.Write(player->health);
-		stream.Write(player->armorInstance);
-		stream.Write(player->rangedWeaponInstance);
-		stream.Write(player->meleeWeaponInstance);
-		stream.Write(player->weaponMode);
-		stream.Write(player->leftHand);
-		stream.Write(player->rightHand);
-
-		network->GetPeer()->Send(&stream, LOW_PRIORITY, RELIABLE, 0, receiver->GetAddress(),false);
-
-		stream.Reset();
+		packet.Write(GO_PLAYER);
+		packet.Write(CREATE_AND_SPAWN);
+		packet.Write(player->playerId);
+		packet.Write(player->name);
+		packet.Write(player->instance);
+		packet.Write(player->bodyModel);
+		packet.Write(player->bodyTexture);
+		packet.Write(player->headModel);
+		packet.Write(player->headTexture);
+		packet.Write(player->x);
+		packet.Write(player->y);
+		packet.Write(player->z);
+		packet.Write(player->angle);
+		packet.Write(player->maxhealth);
+		packet.Write(player->health);
+		packet.Write(player->armorInstance);
+		packet.Write(player->rangedWeaponInstance);
+		packet.Write(player->meleeWeaponInstance);
+		packet.Write(player->weaponMode);
+		packet.Write(player->leftHand);
+		packet.Write(player->rightHand);
+		network->Send(receiver->GetConnection(), packet);
 
 		for (int i = 0; i < player->overlaysList.Num(); ++i)
 		{
-			stream.Write((MessageID)GO_PLAYER);
-			stream.Write((MessageID)SET_OVERLAY);
-			stream.Write(player->GetID());
-			stream.Write(true);
-			stream.Write(player->overlaysList.GetElementByIndex(i));
-
-			network->GetPeer()->Send(&stream, LOW_PRIORITY, RELIABLE, 0, receiver->GetAddress(), false);
-
-			stream.Reset();
+			packet.Reset();
+			packet.Write(GO_PLAYER);
+			packet.Write(SET_OVERLAY);
+			packet.Write(player->GetID());
+			packet.Write(true);
+			packet.Write(player->overlaysList.GetElementByIndex(i));
+			network->Send(receiver->GetConnection(), packet);
 		}
-
 		for (int i = 0; i < player->timedOverlays.Num(); ++i)
 		{
-			stream.Write((MessageID)GO_PLAYER);
-			stream.Write((MessageID)SET_OVERLAY);
-			stream.Write(player->GetID());
-			stream.Write(true);
-			stream.Write(player->overlaysList.GetElementByIndex(i));
-
-			network->GetPeer()->Send(&stream, LOW_PRIORITY, RELIABLE, 0, receiver->GetAddress(), false);
-
-			stream.Reset();
+			packet.Reset();
+			packet.Write(GO_PLAYER);
+			packet.Write(SET_OVERLAY);
+			packet.Write(player->GetID());
+			packet.Write(true);
+			packet.Write(player->timedOverlays.GetElementByIndex(i).overlay);
+			network->Send(receiver->GetConnection(), packet);
 		}
 	}
 	else
 	{
-		BitStream stream;
-		stream.Write((MessageID)GO_PLAYER);
-		stream.Write((MessageID)CREATE_PLAYER);
-		stream.Write(player->playerId);
-		stream.Write(player->name);
-		network->GetPeer()->Send(&stream,LOW_PRIORITY,RELIABLE,0,receiver->GetAddress(),false);
-	}
-
-};
-
-bool CPlayerManager::DestroyPlayer(CPlayer *player)
-{
-	if(this->IsPlayerInManager(player) == true)
-	{
-		BitStream stream;
-		stream.Write((MessageID)GO_PLAYER);
-		stream.Write((MessageID)DESTROY_PLAYER);
-		stream.Write(player->GetID());
-
-		player->spawned = false;
-
-		for(playerListIter i = playerList.begin(); i != playerList.end(); ++i)
-		{
-			if(i->second->GetID() != player->GetID())
-			{
-				CStreamer* streamer = core.GetStreamer();
-				if( streamer->IsPlayerStreamedToPlayer(player, i->second) == true )
-				{
-					core.GetNetwork()->GetPeer()->Send(&stream,LOW_PRIORITY,RELIABLE,0,i->second->GetAddress(),false);
-					i->second->streamedPlayers.Remove(player);
-				}
-			}
-		}
-		playerList.erase(player->GetID());
-		delete player;
-	}
-
-	return false;
-};
-
-void CPlayerManager::CheckPlayersTimedOverlays()
-{
-	for (playerListIter i = playerList.begin(); i != playerList.end(); ++i)
-	{
-		i->second->CheckTimedOverlay();
+		packet.Write(GO_PLAYER);
+		packet.Write(CREATE_PLAYER);
+		packet.Write(player->playerId);
+		packet.Write(player->name);
+		network->Send(receiver->GetConnection(), packet);
 	}
 }
 
-CPlayer* CPlayerManager::GetPlayer(int playerID)
+bool CPlayerManager::DestroyPlayer(CPlayer* player)
 {
-	if( playerList.find(playerID) != playerList.end() )
-		return playerList[playerID];
-	return NULL;
-};
+	if (!IsPlayerInManager(player))
+		return false;
 
-CPlayer* CPlayerManager::GetPlayer(SystemAddress clientAddress)
-{
-	for(playerListIter i = playerList.begin(); i != playerList.end(); ++i)
-		if(i->second->GetAddress() == clientAddress)
-			return i->second;
-	return NULL;
-};
+	PacketWriter packet;
+	packet.Write(GO_PLAYER);
+	packet.Write(DESTROY_PLAYER);
+	packet.Write(player->GetID());
+	player->spawned = false;
+	for (const auto& entry : playerList)
+	{
+		if (entry.second != player && core.GetStreamer()->IsPlayerStreamedToPlayer(player, entry.second))
+		{
+			core.GetNetwork()->Send(entry.second->GetConnection(), packet);
+			entry.second->streamedPlayers.Remove(player);
+		}
+	}
+	playerList.erase(player->GetID());
+	delete player;
+	return true;
+}
 
-CPlayer* CPlayerManager::GetPlayer(RakString playerName)
+void CPlayerManager::CheckPlayersTimedOverlays()
 {
-	for(playerListIter i = playerList.begin(); i != playerList.end(); ++i)
-		if( i->second->name.StrCmp(playerName) == 0 )
-			return i->second;
-	return NULL;
-};
+	for (const auto& entry : playerList)
+		entry.second->CheckTimedOverlay();
+}
+
+CPlayer* CPlayerManager::GetPlayer(int playerID) const
+{
+	const auto iterator = playerList.find(playerID);
+	return iterator == playerList.end() ? nullptr : iterator->second;
+}
+
+CPlayer* CPlayerManager::GetPlayer(HSteamNetConnection connection) const
+{
+	for (const auto& entry : playerList)
+		if (entry.second->GetConnection() == connection)
+			return entry.second;
+	return nullptr;
+}
+
+CPlayer* CPlayerManager::GetPlayer(const std::string& playerName) const
+{
+	for (const auto& entry : playerList)
+		if (entry.second->name == playerName)
+			return entry.second;
+	return nullptr;
+}
 
 void CPlayerManager::BroadcastPlayerList()
 {
-	if( timerBroadcastList < GetTimeMS() )
-	{
-		if( this->GetNumberOfPlayers() > 0 )
-		{
-			char PlayerList[1024][100];
-			memset(&PlayerList, 1024, 0);
-			CPlayer* player = NULL;
-			size_t j = 0;
-			for(playerListIter i = playerList.begin(); i != playerList.end(); ++i, ++j)
-			{
-				player = i->second;
-				sprintf(&PlayerList[j][0], "(ID:%d) %s", player->GetID(), player->name.C_String());
-			}
-			BitStream s;
-			s.Write((MessageID)GO_PLAYER);
-			s.Write((MessageID)PLAYER_LIST);
-			s.Write(PlayerList);
+	const auto now = g1o::network::NowMilliseconds();
+	if (now < timerBroadcastList)
+		return;
+	timerBroadcastList = now + 10000;
+	if (playerList.empty())
+		return;
 
-			core.GetNetwork()->SendToAll(s, LOW_PRIORITY, RELIABLE);
-		}
-		timerBroadcastList = GetTimeMS() + 10000;
-	}
-};
+	PacketWriter packet;
+	packet.Write(GO_PLAYER);
+	packet.Write(PLAYER_LIST);
+	packet.Write(static_cast<std::uint32_t>(playerList.size()));
+	for (const auto& entry : playerList)
+		packet.Write("(ID:" + std::to_string(entry.second->GetID()) + ") " + entry.second->name);
+	core.GetNetwork()->SendToAll(packet);
+}

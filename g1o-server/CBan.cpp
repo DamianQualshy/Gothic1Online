@@ -1,91 +1,68 @@
 #include "stdafx.h"
 
-CBan::CBan()
-{
-	banList.Clear();
-};
+#include <algorithm>
 
-CBan::~CBan()
+namespace
 {
-	banList.Clear();
-};
-
-bool CBan::PushToBanList(RakString address)
-{
-	for( size_t i = 0; i < banList.Num(); i++ )
+	void TrimLine(std::string& line)
 	{
-		if( address.StrCmp(RakString(banList[i])) == 0 )
-		{
-			return false;
-		}
+		while (!line.empty() && (line.back() == '\r' || line.back() == '\n' || line.back() == ' ' || line.back() == '\t'))
+			line.pop_back();
 	}
-	CNetwork* net = core.GetNetwork();
-	net->GetPeer()->AddToBanList(address.C_String());
-	banList.PushBack(address.C_String());
-	address.FreeMemory(); //Tutaj raczej zbędne
-	return true;
-};
-
-bool CBan::PopFromBanList(RakString address)
-{
-	for( size_t i = 0; i < banList.Num(); i++ )
-	{
-		if( address.StrCmp(RakString(banList[i])) == 0 )
-		{
-			CNetwork* net = core.GetNetwork();
-			net->GetPeer()->RemoveFromBanList(banList[i]);
-			banList.RemoveIndex(i);
-			return true;
-		}
-	}
-	return false;
 }
 
-bool CBan::LoadBanList(RakString fileName)
-{
-	FILE* f = fopen(fileName.C_String(), "r");
-	if( f )
-	{
-		char buff[20];
-		while( fgets(buff, 20, f) != NULL )
-		{
-			SPDLOG_INFO("Banlist.go: {}", &buff[0]);
-			PushToBanList(RakString(buff));
-		}
-		fclose(f);
-		return true;
-	}
-	return false;
-};
+CBan::CBan() = default;
+CBan::~CBan() = default;
 
-bool CBan::SaveBanList(RakString fileName)
+bool CBan::PushToBanList(std::string address)
 {
-	FILE* f = fopen(fileName.C_String(), "w+");
-	if( f )
-	{
-		for( size_t i = 0; i < banList.Num(); i++ )
-		{
-			SPDLOG_INFO("Banlist.go: {}", banList[i]);
-			fputs(banList[i], f);
-		}
-		fclose(f);
-		return true;
-	}
-	return false;
-};
+	TrimLine(address);
+	if (address.empty() || IsBanned(address))
+		return false;
+	banList.push_back(std::move(address));
+	return true;
+}
 
-bool CBan::BanPlayer(CPlayer* player, RakString fileName)
+bool CBan::PopFromBanList(const std::string& address)
 {
-	if( player && fileName.IsEmpty() == false )
-	{
-		char ip[20];
-		player->GetAddress().ToString(false,&ip[0]);
-		if( PushToBanList(RakString(ip)) == true )
-		{
-			player->Disconnect();
-			if( SaveBanList(fileName) == true)
-				return true;
-		}
-	}
-	return false;
-};
+	const auto iterator = std::find(banList.begin(), banList.end(), address);
+	if (iterator == banList.end())
+		return false;
+	banList.erase(iterator);
+	return true;
+}
+
+bool CBan::IsBanned(const std::string& address) const
+{
+	return std::find(banList.begin(), banList.end(), address) != banList.end();
+}
+
+bool CBan::LoadBanList(const std::string& fileName)
+{
+	std::ifstream input(fileName);
+	if (!input)
+		return false;
+
+	std::string address;
+	while (std::getline(input, address))
+		PushToBanList(address);
+	return true;
+}
+
+bool CBan::SaveBanList(const std::string& fileName) const
+{
+	std::ofstream output(fileName, std::ios::trunc);
+	if (!output)
+		return false;
+	for (const auto& address : banList)
+		output << address << '\n';
+	return output.good();
+}
+
+bool CBan::BanPlayer(CPlayer* player, const std::string& fileName)
+{
+	if (!player || fileName.empty() || !PushToBanList(player->GetIP()))
+		return false;
+	player->Disconnect();
+	return SaveBanList(fileName);
+}

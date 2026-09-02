@@ -3,31 +3,31 @@
 
 namespace PlayerRPC
 {
-	void HandlePlayerRPC(CNetwork* network, Packet* packet);
+	void HandlePlayerRPC(CNetwork* network, HSteamNetConnection connection, PacketReader& stream);
 
-	void SetPosition(Packet* packet, BitStream& stream);
-	void SetAngle(Packet* packet, BitStream& stream);
-	void PlayAnimation(Packet* packet, BitStream& stream);
-	void ChangeWeaponMode(Packet* packet, BitStream& stream);
-	void WearArmor(Packet* packet, BitStream& stream);
-	void EquipWeapon(Packet* packet, BitStream& stream);
-	void ChangeInstance(Packet* packet, BitStream& stream);
-	void ItemHand(Packet* packet, BitStream& stream);
-	void ChangeLevel(Packet* packet, BitStream& stream);
-	void EnterWorld(Packet* packet);
-	void SetHealth(Packet* packet, BitStream& stream);
-	void SetHealthMax(Packet* packet, BitStream& stream);
-	void AttackHit(Packet* packet, BitStream& stream);
-	void AttackDead(Packet* packet, BitStream& stream);
-	void AttackUnconscious(Packet* packet, BitStream& stream);
-	void StandUp(Packet* packet, BitStream& stream);
-	void MagicSetup(Packet* packet, BitStream& stream);
-	void MagicAttack(Packet* packet, BitStream& stream);
-	//void SetProtection(Packet* packet, BitStream& stream);
-	void SetOverlay(Packet* packet, BitStream& stream);
-	void SetTimedOverlay(Packet* packet, BitStream& stream);
-	void MobTrigger(Packet* packet, BitStream& stream);
-	void ShootArrow(Packet* packet, BitStream& stream);
+	void SetPosition(HSteamNetConnection connection, PacketReader& stream);
+	void SetAngle(HSteamNetConnection connection, PacketReader& stream);
+	void PlayAnimation(HSteamNetConnection connection, PacketReader& stream);
+	void ChangeWeaponMode(HSteamNetConnection connection, PacketReader& stream);
+	void WearArmor(HSteamNetConnection connection, PacketReader& stream);
+	void EquipWeapon(HSteamNetConnection connection, PacketReader& stream);
+	void ChangeInstance(HSteamNetConnection connection, PacketReader& stream);
+	void ItemHand(HSteamNetConnection connection, PacketReader& stream);
+	void ChangeLevel(HSteamNetConnection connection, PacketReader& stream);
+	void EnterWorld(HSteamNetConnection connection);
+	void SetHealth(HSteamNetConnection connection, PacketReader& stream);
+	void SetHealthMax(HSteamNetConnection connection, PacketReader& stream);
+	void AttackHit(HSteamNetConnection connection, PacketReader& stream);
+	void AttackDead(HSteamNetConnection connection, PacketReader& stream);
+	void AttackUnconscious(HSteamNetConnection connection, PacketReader& stream);
+	void StandUp(HSteamNetConnection connection, PacketReader& stream);
+	void MagicSetup(HSteamNetConnection connection, PacketReader& stream);
+	void MagicAttack(HSteamNetConnection connection, PacketReader& stream);
+	//void SetProtection(HSteamNetConnection connection, PacketReader& stream);
+	void SetOverlay(HSteamNetConnection connection, PacketReader& stream);
+	void SetTimedOverlay(HSteamNetConnection connection, PacketReader& stream);
+	void MobTrigger(HSteamNetConnection connection, PacketReader& stream);
+	void ShootArrow(HSteamNetConnection connection, PacketReader& stream);
 };
 
 #endif //PLAYERRPC_H

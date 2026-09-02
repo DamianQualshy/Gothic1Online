@@ -1,160 +1,127 @@
 #include "../stdafx.h"
 
-void ConnectionRPC::HandleConnectionRPC(CNetwork* network, Packet* packet)
+#include <cmath>
+
+namespace
 {
-	BitStream stream(packet->data, packet->length, false);
-	stream.IgnoreBytes(1);
-
-	MessageID eConnectionRPC;
-	stream.Read(eConnectionRPC);
-
-	if(eConnectionRPC == PLEASE_CONNECT)
-		PleaseConnect(network,stream,packet->systemAddress);
-};
-
-void ConnectionRPC::CatchConnection(CNetwork* network, Packet* packet)
-{
-	SPDLOG_INFO("[connection] {} is trying to connect, index : {}", packet->systemAddress.ToString(true, '_'), packet->systemAddress.systemIndex);
-};
-
-void ConnectionRPC::LostConnection(CNetwork* network, Packet* packet)
-{
-	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
-	if( player )
+	void SendRejection(CNetwork* network, HSteamNetConnection connection, EConnectionRPC reason)
 	{
-		SEvent::PlayerDisconnect(player->GetID(), "LOST_CONNECTION");
-		player->spawned = false;
-		SPDLOG_INFO("[connection] {} lost connection with the server {}", player->name.C_String(),player->GetAddress().ToString());
-		player->Disconnect();
-		playerManager.DestroyPlayer(player);
+		PacketWriter packet;
+		packet.Write(GO_CONNECTION);
+		packet.Write(reason);
+		network->Send(connection, packet);
+		network->Disconnect(connection, 2000 + static_cast<int>(reason), "Connection rejected", true);
 	}
-	else
-		network->GetPeer()->CloseConnection(packet->systemAddress,true);
-};
+}
 
-void ConnectionRPC::Disconnection(CNetwork* network, Packet* packet)
+void ConnectionRPC::HandleConnectionRPC(CNetwork* network, HSteamNetConnection connection, PacketReader& packet)
 {
-	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
-	if( player )
-	{
-		SEvent::PlayerDisconnect(player->GetID(), "DISCONNECTED");
-		player->spawned = false;
-		SPDLOG_INFO("[connection] {} disconnected from server {}", player->name.C_String(),player->GetAddress().ToString());
+	EConnectionRPC rpc{};
+	if (packet.Read(rpc) && rpc == PLEASE_CONNECT)
+		PleaseConnect(network, connection, packet);
+}
 
-		player->Disconnect();
-		playerManager.DestroyPlayer(player);
+void ConnectionRPC::CatchConnection(CNetwork*, HSteamNetConnection connection, const std::string& remoteAddress)
+{
+	SPDLOG_INFO("[connection] Incoming GNS transport {} from {}", connection, remoteAddress);
+}
+
+void ConnectionRPC::Disconnected(CNetwork*, HSteamNetConnection connection, bool transportFailure, const char* debug)
+{
+	CPlayer* player = playerManager.GetPlayer(connection);
+	if (!player)
+		return;
+
+	SEvent::PlayerDisconnect(player->GetID(), transportFailure ? "LOST_CONNECTION" : "DISCONNECTED");
+	player->spawned = false;
+	player->bConnected = false;
+	SPDLOG_INFO("[connection] {} disconnected: {}", player->name, debug ? debug : "no detail");
+	playerManager.DestroyPlayer(player);
+}
+
+void ConnectionRPC::PleaseConnect(CNetwork* network, HSteamNetConnection connection, PacketReader& packet)
+{
+	std::uint32_t version = 0;
+	std::string playerName;
+	std::string world;
+	float x = 0.0f;
+	float y = 0.0f;
+	float z = 0.0f;
+	if (!packet.Read(version) || !packet.Read(playerName, 30) || !packet.Read(world, 256) ||
+		!packet.Read(x) || !packet.Read(y) || !packet.Read(z) || !packet.Empty() ||
+		!std::isfinite(x) || !std::isfinite(y) || !std::isfinite(z) ||
+		playerName.find('\0') != std::string::npos || world.find('\0') != std::string::npos)
+	{
+		ClosedConnectionWithReason(network, connection, "Malformed connection request");
+		return;
 	}
-	else
-		network->GetPeer()->CloseConnection(packet->systemAddress,true);
 
-};
-
-void ConnectionRPC::PleaseConnect(CNetwork* network, BitStream& stream, SystemAddress clientAddress)
-{
-	SPDLOG_INFO("[connection] Incoming connection: {}", clientAddress.ToString());
-
-	int versionNum;
-	RakString playerName;
-	RakString ignoredDllHash;
-	stream.Read(versionNum);
-	stream.Read(ignoredDllHash);
-	stream.Read(playerName);
-
-	if (versionNum == versionNumber)
+	if (version != versionNumber)
 	{
-		ignoredDllHash.FreeMemory();
-		//Sprawdzenie czy serwer nie jest pełny
-		if(playerManager.GetNumberOfPlayers() != atoi(core.GetConfig()->GetMaxSlots().C_String()))
-		{
-			//Sprawdzenie czy nick nie jest zajęty										//Nick zablokowany, zeby nikt nie podszywal sie
-			if(playerManager.IsNicknameUsed(playerName) == false && playerName.StrCmp("(SERVER)") != 0) //pod konsole
-			{
-				CPlayer* player = playerManager.CreatePlayer(clientAddress,playerName);
-				if( player )
-				{
-					stream.Read(player->world);
-					stream.Read(player->x);
-					stream.Read(player->y);
-					stream.Read(player->z);
+		IncorrectVersion(network, connection);
+		return;
+	}
+	if (playerManager.GetNumberOfPlayers() >= static_cast<unsigned int>(std::stoi(core.GetConfig()->GetMaxSlots())))
+	{
+		ServerFull(network, connection);
+		return;
+	}
+	if (playerName == "(SERVER)" || playerManager.IsNicknameUsed(playerName))
+	{
+		NicknameUsed(network, connection);
+		return;
+	}
 
-					//Akceptowanie połączenia
-					BitStream bStream;
-					bStream.Write((MessageID)GO_CONNECTION);
-					bStream.Write((MessageID)ACCEPT_CONNECTION);
-					bStream.Write(core.GetConfig()->GetServerName());
-					bStream.Write(player->GetID());
-					// Hour/minute
-					bStream.Write(core.GetHour());
-					bStream.Write(core.GetMinute());
-					bStream.Write(core.GetDay());
-					// Unconscious
-					bStream.Write(core.GetUnconscious());
-					network->GetPeer()->Send(&bStream,LOW_PRIORITY,RELIABLE,0,clientAddress,false);
+	CPlayer* player = playerManager.CreatePlayer(connection, playerName);
+	if (!player)
+	{
+		ClosedConnectionWithReason(network, connection, "Invalid player name");
+		return;
+	}
+	player->world = std::move(world);
+	player->x = x;
+	player->y = y;
+	player->z = z;
 
-					bStream.Reset();
+	PacketWriter response;
+	response.Write(GO_CONNECTION);
+	response.Write(ACCEPT_CONNECTION);
+	response.Write(core.GetConfig()->GetServerName());
+	response.Write(player->GetID());
+	response.Write(core.GetHour());
+	response.Write(core.GetMinute());
+	response.Write(core.GetDay());
+	response.Write(core.GetUnconscious());
+	network->Send(connection, response);
 
-					//Tworzenie gracza dla wszystkich i wszystkich dla gracza
-					/*CMultiplayer* m = core.GetMultiplayer();
-					m->CreateAllPlayersForPlayer(player);
-					m->CreatePlayerForAllPlayers(player);*/
+	playerManager.CreatePlayerForOtherPlayer(player, player);
+	playerManager.BroadcastPlayerList();
+	player->spawned = true;
+	SEvent::PlayerConnect(player->GetID());
+	SPDLOG_INFO("[join] {} joined from {}", playerName, player->GetIP());
+}
 
-					playerManager.CreatePlayerForOtherPlayer(player, player);
-					playerManager.BroadcastPlayerList();
-		
-					player->spawned = true;
-					SEvent::PlayerConnect(player->GetID());
-
-				SPDLOG_INFO("[join] {} has joined the server {}", playerName.C_String(),player->GetAddress().ToString());
-				}
-			}
-			else
-				NicknameUsed(network,clientAddress);
-		}
-		else
-			ServerFull(network,clientAddress);
-
-	}	
-	else 
-		IncorrectVersion(network,clientAddress);
-
-};
-
-//Send
-void ConnectionRPC::IncorrectVersion(CNetwork* network, SystemAddress clientAddress)
+void ConnectionRPC::IncorrectVersion(CNetwork* network, HSteamNetConnection connection)
 {
-	BitStream stream;
-	stream.Write((MessageID)GO_CONNECTION);
-	stream.Write((MessageID)INCORRECT_VERSION);
-	network->GetPeer()->Send(&stream,LOW_PRIORITY,RELIABLE,0,clientAddress,false);
-	network->GetPeer()->CloseConnection(clientAddress,true);
+	SendRejection(network, connection, INCORRECT_VERSION);
+}
 
-};
-
-void ConnectionRPC::ServerFull(CNetwork* network, SystemAddress clientAddress)
+void ConnectionRPC::ServerFull(CNetwork* network, HSteamNetConnection connection)
 {
-	BitStream stream;
-	stream.Write((MessageID)GO_CONNECTION);
-	stream.Write((MessageID)SERVER_FULL);
-	network->GetPeer()->Send(&stream,LOW_PRIORITY,RELIABLE,0,clientAddress,false);
-	network->GetPeer()->CloseConnection(clientAddress,true);	
-};
+	SendRejection(network, connection, SERVER_FULL);
+}
 
-void ConnectionRPC::NicknameUsed(CNetwork* network, SystemAddress clientAddress)
+void ConnectionRPC::NicknameUsed(CNetwork* network, HSteamNetConnection connection)
 {
-	BitStream stream;
-	stream.Write((MessageID)GO_CONNECTION);
-	stream.Write((MessageID)NICKNAME_USED);
-	network->GetPeer()->Send(&stream,LOW_PRIORITY,RELIABLE,0,clientAddress,false);
-	network->GetPeer()->CloseConnection(clientAddress,true);
-};
+	SendRejection(network, connection, NICKNAME_USED);
+}
 
-void ConnectionRPC::ClosedConnectionWithReason(CNetwork* network, SystemAddress clientAddress, RakString reason)
+void ConnectionRPC::ClosedConnectionWithReason(CNetwork* network, HSteamNetConnection connection, const std::string& reason)
 {
-	BitStream stream;
-	stream.Write((MessageID)GO_CONNECTION);
-	stream.Write((MessageID)CLOSED_CONNECTION_REASON);
-	stream.Write(reason);
-
-	network->GetPeer()->Send(&stream,LOW_PRIORITY,RELIABLE,0,clientAddress,false);
-	network->GetPeer()->CloseConnection(clientAddress,true);
-};
+	PacketWriter packet;
+	packet.Write(GO_CONNECTION);
+	packet.Write(CLOSED_CONNECTION_REASON);
+	packet.Write(reason);
+	network->Send(connection, packet);
+	network->Disconnect(connection, 2004, reason.c_str(), true);
+}

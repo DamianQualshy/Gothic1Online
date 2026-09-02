@@ -92,7 +92,7 @@ void CClient::Start()
 	SPDLOG_INFO("[startup] Installing early Gothic hooks");
 	SPDLOG_TRACE("CClient::Start()");
 	//Zmiana nazwy okna
-	//CGothicWindow::SetGothicWindowName(RakString("Gothic Online"));
+	//CGothicWindow::SetGothicWindowName(std::string("Gothic Online"));
 	//Wstawianie hook'ów
 	this->InitializeHooks();
 

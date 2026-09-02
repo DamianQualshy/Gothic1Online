@@ -3,13 +3,7 @@
 
 #include <QObject>
 
-#include <DirectoryDeltaTransfer.h>
-#include <FileListTransfer.h>
-#include <IncrementalReadInterface.h>
-#include <PacketizedTCP.h>
-
-#include "RakNetInclude.h"
-#include "CFileTransferCallback.h"
+#include <Network/Packet.h>
 
 class CRPCDownloader : public QObject
 {
@@ -20,27 +14,17 @@ signals:
     void signalCheckingFiles();
 
 public:
-    CRPCDownloader();
-    ~CRPCDownloader();
-
-    void initialize(RakNet::PacketizedTCP &rakTCP);
+    void connectionRequest(HSteamNetConnection connection);
+    void connectionFailed();
     void cancelDownload(bool unfinished);
-    bool downloadNextSubDir();
-    void handle();
-
-    // RakNet messages
-    void connectionFailed(RakNet::SystemAddress systemAdress);
-    void connectionRequest(RakNet::SystemAddress systemAdress);
-    void disconnected(RakNet::SystemAddress systemAdress);
+    bool handle(HSteamNetConnection connection, PacketReader& packet);
+    bool isActive() const { return m_Active; }
 
 private:
-    RakNet::DirectoryDeltaTransfer m_DirectoryDeltaTransfer;
-    RakNet::FileListTransfer m_FileListTransfer;
-    RakNet::IncrementalReadInterface m_PartTime;
-    RakNet::PacketizedTCP *m_RakTCP;
-    RakNet::SystemAddress m_ServerAdress;
-    ushort m_SetID, m_DownloadDir;
-    bool m_DownloadActive;
+    bool receiveManifest(HSteamNetConnection connection, PacketReader& packet);
+
+    HSteamNetConnection m_Connection = k_HSteamNetConnection_Invalid;
+    bool m_Active = false;
 };
 
-#endif // CRPCDOWNLOADER_H
+#endif

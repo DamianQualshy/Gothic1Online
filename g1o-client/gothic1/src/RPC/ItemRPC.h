@@ -3,10 +3,10 @@
 
 namespace ItemRPC
 {
-	void HandleItemRPC(CNetwork* network, Packet* packet);
+	void HandleItemRPC(CNetwork* network, PacketReader& stream);
 
-	void CreateItem(BitStream& stream);
-	void DestroyItem(BitStream& stream);
+	void CreateItem(PacketReader& stream);
+	void DestroyItem(PacketReader& stream);
 };
 
 #endif //ITEMRPC_H

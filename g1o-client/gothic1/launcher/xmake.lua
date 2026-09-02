@@ -3,27 +3,15 @@ local launcher_dir = os.scriptdir()
 target("G1O.Launcher")
     set_kind("binary")
     set_basename("GO_Launcher")
+    set_runtimes("MT")
     set_prefixdir("/", {bindir = "Multiplayer/Launcher"})
-    set_runtimes("MD")
     add_rules("qt.widgetapp")
 
     add_files("*.cpp", "RPC/*.cpp", "Style/*.cpp")
     add_files("*.h", "RPC/*.h", "Style/*.h")
     add_files("*.ui", "resource.qrc", "GO_Launcher_resource.rc")
-    add_files("RakNet/*.cpp")
-    remove_files(
-        "RakNet/BitStream_NoTemplate.cpp",
-        "RakNet/FileListTransfer_original.cpp",
-        "RakNet/RakNetSocket2_360_720.cpp",
-        "RakNet/RakNetSocket2_NativeClient.cpp",
-        "RakNet/RakNetSocket2_PS3_PS4.cpp",
-        "RakNet/RakNetSocket2_PS4.cpp",
-        "RakNet/RakNetSocket2_Vita.cpp",
-        "RakNet/RakNetSocket2_WindowsStore8.cpp",
-        "RakNet/VitaIncludes.cpp",
-        "RakNet/PS4Includes.cpp")
-    add_includedirs(".", "RakNet", "../../../Shared")
-    add_packages("nlohmann_json", "qt5widgets")
+    add_includedirs(".", "../../../Shared")
+    add_packages("nlohmann_json", "qt5widgets", "gamenetworkingsockets")
     add_packages("fmt", "spdlog", {cxxflags = {}})
     add_frameworks("QtCore", "QtGui", "QtNetwork", "QtWidgets")
     set_values("qt.deploy.flags",

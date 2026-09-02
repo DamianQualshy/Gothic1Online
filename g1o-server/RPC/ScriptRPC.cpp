@@ -2,56 +2,58 @@
 
 #include <cmath>
 
-void ScriptRPC::HandleScriptRPC(CNetwork* network, Packet* packet)
+void ScriptRPC::HandleScriptRPC(CNetwork* network, HSteamNetConnection connection, PacketReader& stream)
 {
 	//SPDLOG_TRACE("ScriptRPC::HandleScriptRPC()");
-	BitStream stream(packet->data,packet->length,false);
-	stream.IgnoreBytes(1);
 
-	MessageID eScriptRPC;
-	stream.Read(eScriptRPC);
+	EScriptRPC eScriptRPC{};
+	if (!playerManager.GetPlayer(connection) || !stream.Read(eScriptRPC))
+		return;
 
 	switch (eScriptRPC)
 	{
 	case SCRIPT_VISUAL:
-		ScriptVisual(network, stream, packet); break;
+		ScriptVisual(network, stream, connection); break;
 	case SCRIPT_FOCUS:
-		ScriptFocus(network, stream, packet); break;
+		ScriptFocus(network, stream, connection); break;
 	case SCRIPT_CLIENT_EVENT:
-		ClientEvent(network, stream, packet); break;
+		ClientEvent(network, stream, connection); break;
 	}
 };
 
-void ScriptRPC::ScriptVisual(CNetwork* network, BitStream& stream, Packet* packet)
+void ScriptRPC::ScriptVisual(CNetwork* network, PacketReader& stream, HSteamNetConnection connection)
 {
-	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
-	if (player)
+	CPlayer* player = playerManager.GetPlayer(connection);
+	std::string bodyModel, headModel;
+	int bodyTexture = 0, headTexture = 0;
+	if (player && stream.Read(bodyModel, 256) && stream.Read(bodyTexture) &&
+		stream.Read(headModel, 256) && stream.Read(headTexture) && stream.Empty())
 	{
-		stream.Read(player->bodyModel);
-		stream.Read(player->bodyTexture);
-		stream.Read(player->headModel);
-		stream.Read(player->headTexture);
+		player->bodyModel = std::move(bodyModel);
+		player->bodyTexture = bodyTexture;
+		player->headModel = std::move(headModel);
+		player->headTexture = headTexture;
 
-		BitStream s;
-		s.Write((MessageID)GO_SCRIPT);
-		s.Write((MessageID)SCRIPT_VISUAL);
+		PacketWriter s;
+		s.Write((std::uint8_t)GO_SCRIPT);
+		s.Write((std::uint8_t)SCRIPT_VISUAL);
 		s.Write(player->GetID());
 		s.Write(player->bodyModel);
 		s.Write(player->bodyTexture);
 		s.Write(player->headModel);
 		s.Write(player->headTexture);
 
-		network->SendToPlayersOnList(s, LOW_PRIORITY, RELIABLE_ORDERED, &player->streamedPlayers);
+		network->SendToPlayersOnList(s, &player->streamedPlayers, k_nSteamNetworkingSend_Reliable);
 	}
 };
 
-void ScriptRPC::ScriptFocus(CNetwork* network, BitStream& stream, Packet* packet)
+void ScriptRPC::ScriptFocus(CNetwork*, PacketReader& stream, HSteamNetConnection connection)
 {
-	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
+	CPlayer* player = playerManager.GetPlayer(connection);
 	bool focusType;
 	int focusID;
 
-	if (!player || !stream.Read(focusType) || !stream.Read(focusID))
+	if (!player || !stream.Read(focusType) || !stream.Read(focusID) || !stream.Empty())
 		return;
 
 	if (focusType)
@@ -60,28 +62,28 @@ void ScriptRPC::ScriptFocus(CNetwork* network, BitStream& stream, Packet* packet
 		SEvent::PlayerLostFocus(player->GetID(), focusID);
 }
 
-void ScriptRPC::ClientEvent(CNetwork* network, BitStream& stream, Packet* packet)
+void ScriptRPC::ClientEvent(CNetwork*, PacketReader& stream, HSteamNetConnection connection)
 {
-	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
-	MessageID rawEvent;
-	if (!player || !stream.Read(rawEvent)) return;
+	CPlayer* player = playerManager.GetPlayer(connection);
+	EClientScriptEvent event{};
+	if (!player || !stream.Read(event)) return;
 
 	const int playerID = player->GetID();
-	switch (static_cast<EClientScriptEvent>(rawEvent))
+	switch (event)
 	{
 	case CLIENT_EVENT_KEY_DOWN: {
-		int key;
-		RakString letter;
-		if (stream.Read(key) && key >= 0 && key < 512 && stream.Read(letter) && letter.GetLength() <= 8)
-			SEvent::KeyDown(playerID, key, letter.C_String());
+		int key = 0;
+		std::string letter;
+		if (stream.Read(key) && key >= 0 && key < 512 && stream.Read(letter, 8) && stream.Empty())
+			SEvent::KeyDown(playerID, key, letter.c_str());
 		break;
 	}
 	case CLIENT_EVENT_MOUSE_DOWN:
 	case CLIENT_EVENT_MOUSE_UP: {
-		int button;
-		if (stream.Read(button) && button >= 0 && button <= 1)
+		int button = 0;
+		if (stream.Read(button) && button >= 0 && button <= 1 && stream.Empty())
 		{
-			if (rawEvent == CLIENT_EVENT_MOUSE_DOWN)
+			if (event == CLIENT_EVENT_MOUSE_DOWN)
 				SEvent::MouseDown(playerID, button);
 			else
 				SEvent::MouseUp(playerID, button);
@@ -89,42 +91,42 @@ void ScriptRPC::ClientEvent(CNetwork* network, BitStream& stream, Packet* packet
 		break;
 	}
 	case CLIENT_EVENT_MOUSE_WHEEL: {
-		int delta;
-		if (stream.Read(delta)) SEvent::MouseWheel(playerID, delta);
+		int delta = 0;
+		if (stream.Read(delta) && stream.Empty()) SEvent::MouseWheel(playerID, delta);
 		break;
 	}
 	case CLIENT_EVENT_OPEN_INVENTORY:
-		SEvent::OpenInventory(playerID);
+		if (stream.Empty()) SEvent::OpenInventory(playerID);
 		break;
 	case CLIENT_EVENT_CLOSE_INVENTORY:
-		SEvent::CloseInventory(playerID);
+		if (stream.Empty()) SEvent::CloseInventory(playerID);
 		break;
 	case CLIENT_EVENT_MOB_TRIGGER:
 	case CLIENT_EVENT_MOB_UNTRIGGER: {
-		RakString name;
-		float x, y, z;
-		int type;
-		if (stream.Read(name) && name.GetLength() <= 256 && stream.Read(x) && stream.Read(y) && stream.Read(z) &&
+		std::string name;
+		float x = 0.0f, y = 0.0f, z = 0.0f;
+		int type = -1;
+		if (stream.Read(name, 256) && stream.Read(x) && stream.Read(y) && stream.Read(z) &&
 			std::isfinite(x) && std::isfinite(y) && std::isfinite(z) &&
-			stream.Read(type) && type >= -1 && type <= 6)
+			stream.Read(type) && type >= -1 && type <= 6 && stream.Empty())
 		{
-			if (rawEvent == CLIENT_EVENT_MOB_TRIGGER)
-				SEvent::MobTrigger(playerID, name.C_String(), x, y, z, type);
+			if (event == CLIENT_EVENT_MOB_TRIGGER)
+				SEvent::MobTrigger(playerID, name.c_str(), x, y, z, type);
 			else
-				SEvent::MobUntrigger(playerID, name.C_String(), x, y, z, type);
+				SEvent::MobUntrigger(playerID, name.c_str(), x, y, z, type);
 		}
 		break;
 	}
 	case CLIENT_EVENT_USE_ITEM: {
-		RakString instance;
-		int amount, hand;
-		if (stream.Read(instance) && instance.GetLength() <= 256 && stream.Read(amount) && amount >= 0 &&
-			stream.Read(hand) && hand >= 0 && hand <= 1)
-			SEvent::UseItem(playerID, instance.C_String(), amount, hand);
+		std::string instance;
+		int amount = 0, hand = 0;
+		if (stream.Read(instance, 256) && stream.Read(amount) && amount >= 0 &&
+			stream.Read(hand) && hand >= 0 && hand <= 1 && stream.Empty())
+			SEvent::UseItem(playerID, instance.c_str(), amount, hand);
 		break;
 	}
 	default:
-		SPDLOG_INFO("[script] Rejected unknown client event {} from player {}", static_cast<unsigned>(rawEvent), playerID);
+		SPDLOG_INFO("[script] Rejected unknown client event {} from player {}", static_cast<unsigned>(event), playerID);
 		break;
 	}
 }

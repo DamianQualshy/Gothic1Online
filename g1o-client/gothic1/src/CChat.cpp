@@ -33,14 +33,14 @@ void CChat::InitChat()
 {
 	if( this->IsInitiated() == false )
 	{
-		/*this->textLines = new RakString[this->chatLines];
+		/*this->textLines = new std::string[this->chatLines];
 		this->colorLines = new zCOLOR[this->chatLines];*/
 
 		this->bIsInitiated = true;
 	}
 };
 
-void CChat::AddLine(RakString text, zCOLOR color)
+void CChat::AddLine(std::string text, zCOLOR color)
 {
 	SPDLOG_TRACE("CChat::AddLine()");
 	if(this->IsInitiated() == true)
@@ -48,7 +48,7 @@ void CChat::AddLine(RakString text, zCOLOR color)
 		ChatLine line;
 		line.text = text;
 		line.color = color;
-		if(text.GetLength() <= 255)
+		if(text.size() <= 255)
 		{
 			if( lines.size() < chatLines )
 				lines.push_back(line);
@@ -77,10 +77,10 @@ void CChat::Render()
 		{
 			for(unsigned int i = 0; i < lines.size(); i++)
 			{
-				if(lines[i].text.GetLength() > 0)
+				if(lines[i].text.size() > 0)
 				{
 					screen->SetFontColor(lines[i].color);
-					screen->Print(50, lineDistance, zSTRING(lines[i].text.C_String()));
+					screen->Print(50, lineDistance, zSTRING(lines[i].text.c_str()));
 					screen->SetFontColor(color);
 				}
 
@@ -93,12 +93,12 @@ void CChat::Render()
 			screen->SetFontColor(zCOLOR(70,70,70,255));
 			screen->Print(50, lineDistance, zSTRING(">"));
 			screen->SetFontColor(color);
-			zSTRING print(this->currentText.C_String());
+			zSTRING print(this->currentText.c_str());
 			print += "|";
 			screen->Print(130, lineDistance, print);
 
 			//Gestykulowanie
-			if( this->timeGesticulation < GetTimeMS() )
+			if( this->timeGesticulation < g1o::network::NowMilliseconds() )
 			{
 				//Odtworzenie animacji i sprawdzanie czy gracz jest "zamrożony"
 				oCNpc* hero = oCNpc::GetHero();
@@ -108,7 +108,7 @@ void CChat::Render()
 					if( !hero->IsDead() && !hero->IsUnconscious() )
 						hero->StartDialogAni();
 				}
-				this->timeGesticulation = GetTimeMS() + 3500; //zauważyłem że zwykła animka gestykulacji trwa 3.5 sekundy
+				this->timeGesticulation = g1o::network::NowMilliseconds() + 3500; //zauważyłem że zwykła animka gestykulacji trwa 3.5 sekundy
 			}
 		}
 		//Stara czcionka
@@ -122,7 +122,7 @@ void CChat::KeyEvent(int key)
 	{
 		this->bIsInputActive = true;
 		this->lastLetter = "t";
-		this->timeLastKey = GetTimeMS() + 175; //175ms, bo ostatni klawisz to "t", a nie chcemy zeby przy kazdym otwarciu czatu sie drukowal
+		this->timeLastKey = g1o::network::NowMilliseconds() + 175; //175ms, bo ostatni klawisz to "t", a nie chcemy zeby przy kazdym otwarciu czatu sie drukowal
 		oCNpc* hero = oCNpc::GetHero();
 		if( hero )
 		{
@@ -144,7 +144,7 @@ void CChat::KeyEvent(int key)
 	else if(key == KEY_RETURN && this->IsInputActive())
 	{
 		this->bIsInputActive = false;
-		if( this->currentText.GetLength() > 0 )
+		if( this->currentText.size() > 0 )
 		{
 			CNetwork* net = core.GetNetwork();
 			// Commands and regular messages are both evaluated by the server.
@@ -152,21 +152,18 @@ void CChat::KeyEvent(int key)
 				//Wysłanie wiadomości
 				if( net->IsConnected() == true )
 				{
-					BitStream stream;
-					stream.Write((MessageID)GO_CHAT);
-					stream.Write((MessageID)CHAT_MESSAGE);
-					stream.Write(core.GetMultiplayer()->GetMyID());
+					PacketWriter stream;
+					stream.Write((std::uint8_t)GO_CHAT);
+					stream.Write((std::uint8_t)CHAT_MESSAGE);
 					stream.Write(this->currentText);
-					net->GetPeer()->Send(&stream, HIGH_PRIORITY, RELIABLE_ORDERED,0,net->GetServerAddress(),false);
+					net->Send(stream, k_nSteamNetworkingSend_Reliable);
 				}
 			}
-			this->lastMessage.Clear();
-			this->lastMessage.FreeMemory();
+			this->lastMessage.clear();
 			this->lastMessage = this->currentText;
 
 		}
-		this->currentText.Clear();
-		this->currentText.FreeMemory();
+		this->currentText.clear();
 		
 		if(oCNpc::GetHero()->IsMovLock()) oCNpc::GetHero()->SetMovLock(0);
 	}
@@ -184,14 +181,13 @@ void CChat::KeyEvent(int key)
 		}
 		else if(key == KEY_BACK)
 		{
-			if(this->currentText.GetLength() > 0)
-				this->currentText.Erase(this->currentText.GetLength()-1, 1);
+			if(this->currentText.size() > 0)
+				this->currentText.erase(this->currentText.size()-1, 1);
 		}
 		else if (key == KEY_ESCAPE)
 		{
 			this->bIsInputActive = false;
-			this->currentText.Clear();
-			this->currentText.FreeMemory();
+			this->currentText.clear();
 
 			if (oCNpc::GetHero()->IsMovLock()) oCNpc::GetHero()->SetMovLock(0);
 		}
@@ -200,19 +196,19 @@ void CChat::KeyEvent(int key)
 			char c_key = core.GetKeyBoard()->GetTranslatedLetter(zCInput::GetInput()->GetLetter(key));
 			if( c_key )
 			{
-				if( this->lastLetter == RakString(c_key) )
+				if( this->lastLetter == std::string(1, c_key) )
 				{
-					if( GetTimeMS() > this->timeLastKey )
+					if( g1o::network::NowMilliseconds() > this->timeLastKey )
 					{
 						this->currentText += c_key;	
-						this->timeLastKey = GetTimeMS() + 160;
+						this->timeLastKey = g1o::network::NowMilliseconds() + 160;
 					}
 				}
 				else
 				{
 					this->currentText += c_key;
 					this->lastLetter = c_key;
-					this->timeLastKey = GetTimeMS() + 130;
+					this->timeLastKey = g1o::network::NowMilliseconds() + 130;
 				}
 			}
 		}

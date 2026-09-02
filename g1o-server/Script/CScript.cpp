@@ -4,7 +4,7 @@ namespace {
 
 std::uint64_t ScriptClock()
 {
-	return static_cast<std::uint64_t>(GetTimeMS());
+	return static_cast<std::uint64_t>(g1o::network::NowMilliseconds());
 }
 
 const std::vector<std::string> kServerEvents = {

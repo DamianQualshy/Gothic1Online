@@ -95,20 +95,20 @@ void CMaster::Pulse()
 	client->set_write_timeout(5, 0);
 
 	CConfig* config = core.GetConfig();
-	const SystemAddress localAddress = core.GetNetwork()->GetPeer()->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS, 0);
-	const std::string address = localAddress == UNASSIGNED_SYSTEM_ADDRESS ? std::string{} : localAddress.ToString(false);
-	const unsigned int port = static_cast<unsigned int>(atoi(config->GetServerPort().C_String()));
-	const unsigned int maxSlots = static_cast<unsigned int>(atoi(config->GetMaxSlots().C_String()));
+	// The registry derives the public address from the HTTP request source.
+	const std::string address;
+	const unsigned int port = static_cast<unsigned int>(atoi(config->GetServerPort().c_str()));
+	const unsigned int maxSlots = static_cast<unsigned int>(atoi(config->GetMaxSlots().c_str()));
 
 	const nlohmann::json payload = {
-		{"server_seed", config->GetServerIdentitySeed().C_String()},
+		{"server_seed", config->GetServerIdentitySeed().c_str()},
 		{"ip_address", address},
 		{"port", port},
-		{"name", SanitizeServerText(config->GetServerName().C_String())},
+		{"name", SanitizeServerText(config->GetServerName().c_str())},
 		{"current_players", playerManager.GetNumberOfPlayers()},
 		{"max_slots", maxSlots},
-		{"map", SanitizeServerText(core.GetWorld().C_String())},
-		{"description", SanitizeServerText(core.GetDescription().C_String())},
+		{"map", SanitizeServerText(core.GetWorld().c_str())},
+		{"description", SanitizeServerText(core.GetDescription().c_str())},
 		{"version", versionString}
 	};
 

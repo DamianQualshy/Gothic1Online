@@ -10,12 +10,12 @@ class CConfig
 private:
 	bool valid;
 	bool serverPublic;
-	RakString serverName;
-	RakString serverDescription;
-	RakString serverIdentitySeed;
-	RakString serverPort;
-	RakString maxSlots;
-	RakString adminPassword;
+	std::string serverName;
+	std::string serverDescription;
+	std::string serverIdentitySeed;
+	std::string serverPort;
+	std::string maxSlots;
+	std::string adminPassword;
 	std::vector<std::string> scripts;
 
 public:
@@ -24,18 +24,18 @@ public:
 	CConfig();
 	~CConfig();
 
-	bool LoadConfigFromFile(RakString fileName);
-	void SaveConfigToFile(RakString fileName);
+	bool LoadConfigFromFile(std::string fileName);
+	void SaveConfigToFile(std::string fileName);
 	void SetDefault();
 
 	bool IsValid() const { return valid; }
 	bool GetServerPublic() const { return serverPublic; }
-	RakString GetServerName() const { return serverName; }
-	RakString GetServerDescription() const { return serverDescription; }
-	RakString GetServerIdentitySeed() const { return serverIdentitySeed; }
-	RakString GetServerPort() const { return serverPort; }
-	RakString GetMaxSlots() const { return maxSlots; }
-	RakString GetAdminPassword() const { return adminPassword; }
+	std::string GetServerName() const { return serverName; }
+	std::string GetServerDescription() const { return serverDescription; }
+	std::string GetServerIdentitySeed() const { return serverIdentitySeed; }
+	std::string GetServerPort() const { return serverPort; }
+	std::string GetMaxSlots() const { return maxSlots; }
+	std::string GetAdminPassword() const { return adminPassword; }
 	const std::vector<std::string>& GetScripts() const { return scripts; }
 };
 

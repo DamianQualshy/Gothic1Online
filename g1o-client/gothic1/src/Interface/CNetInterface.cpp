@@ -1,18 +1,31 @@
 #include "..\\stdafx.h"
 
+namespace
+{
+	std::string FormatValue(EClientText text, const std::string& language, std::int64_t value)
+	{
+		std::string result = ClientLanguage::Get(text, language);
+		for (const char* placeholder : {"%llu", "%lld", "%u", "%d", "%f"})
+		{
+			const auto position = result.find(placeholder);
+			if (position != std::string::npos)
+			{
+				result.replace(position, std::strlen(placeholder), std::to_string(value));
+				return result;
+			}
+		}
+		return result + " " + std::to_string(value);
+	}
+}
+
 CNetInterface::CNetInterface()
+	: isShowing(false), receivedPacketCount(0), window(new zCView(0, 0, windowMaxPosX, windowMaxPosY))
 {
-	isShowing = false;
-	receivedPacketCount = 0;
-	window = new zCView(0,0,windowMaxPosX,windowMaxPosY);
-	window->SetPos(0,0);
+	window->SetPos(0, 0);
 	window->InsertBack(zSTRING("DLG_CONVERSATION.TGA"));
-};
+}
 
-CNetInterface::~CNetInterface()
-{
-
-};
+CNetInterface::~CNetInterface() = default;
 
 void CNetInterface::Render()
 {
@@ -20,67 +33,66 @@ void CNetInterface::Render()
 	zCView* screen = zCView::GetScreen();
 	zCInput* input = zCInput::GetInput();
 	CChat* chat = core.GetChat();
-	CNetwork* net = core.GetNetwork();
-	RakString language = core.GetConfig()->GetLanguage();
-	zSTRING font = screen->GetFontName();
-	zCOLOR color = zCOLOR(255,255,255,255);
+	CNetwork* network = core.GetNetwork();
+	const std::string language = core.GetConfig()->GetLanguage();
+	const zSTRING font = screen->GetFontName();
+	const zCOLOR color(255, 255, 255, 255);
 
-	if( game->GetShowPlayerStatus() )
+	if (game->GetShowPlayerStatus())
 	{
-		if( input->KeyPressed(KEY_F1) )
+		if (input->KeyPressed(KEY_F1))
 		{
-			if( this->isShowing == false )
+			if (!isShowing)
 			{
-				if( chat->IsShowing() == true )
+				if (chat->IsShowing())
 					chat->Show(false);
 				screen->InsertItem(window);
-				window->SetSize(windowMaxPosX,windowMaxPosY);
-				this->isShowing = true;
+				window->SetSize(windowMaxPosX, windowMaxPosY);
+				isShowing = true;
 			}
 		}
-		else
+		else if (isShowing)
 		{
-			if( this->isShowing == true )
-			{
-				if( chat->IsShowing() == false )
-					chat->Show(true);
-				screen->RemoveItem(window);
-				this->isShowing = false;
-			}
+			if (!chat->IsShowing())
+				chat->Show(true);
+			screen->RemoveItem(window);
+			isShowing = false;
 		}
 
-		//Teraz faktyczne renderowanie
-		if( this->isShowing == true )
+		if (isShowing)
 		{
 			screen->SetFont(zSTRING("Font_Old_20_White_Hi.TGA"));
-			screen->SetFontColor(zCOLOR(247,243,115,255));
-			screen->Print(0,0,zSTRING(ClientLanguage::Get(EClientText::NetworkProperties, language)));
+			screen->SetFontColor(zCOLOR(247, 243, 115, 255));
+			screen->Print(0, 0, zSTRING(ClientLanguage::Get(EClientText::NetworkProperties, language)));
 			screen->SetFontColor(color);
 			screen->SetFont(font);
-			if( net->IsConnected() == true )
+			if (network->IsConnected())
 			{
-				RakNetStatistics rns;
-				net->GetPeer()->GetStatistics(0,&rns);
-				//screen->Print(0,400,zSTRING(RakString("Ping: %dms",core.GetMultiplayer()->pingTime).C_String()));
-				screen->Print(0,400,zSTRING(RakString("Ping: %dms",core.GetNetwork()->GetPeer()->GetLastPing(net->GetServerAddress())).C_String()));
-				screen->Print(0,600,zSTRING(RakString("FPS: %d",vidGetFPSRate()).C_String()));
-				screen->Print(0,800,zSTRING(RakString(ClientLanguage::Get(EClientText::ReceivedPackets, language), this->receivedPacketCount).C_String()));
-				screen->Print(0,1000,zSTRING(RakString(ClientLanguage::Get(EClientText::LostPackets, language), rns.packetlossTotal).C_String()));
-				screen->Print(0,1200,zSTRING(RakString(ClientLanguage::Get(EClientText::LostPacketsLastSecond, language), rns.packetlossLastSecond).C_String()));
-				screen->Print(0,1400,zSTRING(RakString(ClientLanguage::Get(EClientText::MessageResendBuffer, language), rns.messagesInResendBuffer).C_String()));
-				screen->Print(0,1600,zSTRING(RakString(ClientLanguage::Get(EClientText::ByteResendBuffer, language), rns.bytesInResendBuffer).C_String()));
-				screen->Print(0,1800,zSTRING(RakString(ClientLanguage::Get(EClientText::CreatedPlayers, language), playerManager.GetNumberOfPlayers()).C_String()));
-				screen->Print(0,2000,zSTRING(RakString(ClientLanguage::Get(EClientText::CreatedItems, language), itemManager.GetNumberOfItems()).C_String()));
+				SteamNetConnectionRealTimeStatus_t status{};
+				network->GetStatus(status);
+				screen->Print(0, 400, zSTRING(("Ping: " + std::to_string(network->GetPing()) + "ms").c_str()));
+				screen->Print(0, 600, zSTRING(("FPS: " + std::to_string(vidGetFPSRate())).c_str()));
+				screen->Print(0, 800, zSTRING(FormatValue(EClientText::ReceivedPackets, language, receivedPacketCount).c_str()));
+				const int localLoss = status.m_flConnectionQualityLocal < 0.0f ? 0 :
+					static_cast<int>((1.0f - status.m_flConnectionQualityLocal) * 100.0f);
+				const int remoteLoss = status.m_flConnectionQualityRemote < 0.0f ? 0 :
+					static_cast<int>((1.0f - status.m_flConnectionQualityRemote) * 100.0f);
+				screen->Print(0, 1000, zSTRING(FormatValue(EClientText::LostPackets, language, localLoss).c_str()));
+				screen->Print(0, 1200, zSTRING(FormatValue(EClientText::LostPacketsLastSecond, language, remoteLoss).c_str()));
+				screen->Print(0, 1400, zSTRING(FormatValue(EClientText::MessageResendBuffer, language, status.m_cbPendingReliable).c_str()));
+				screen->Print(0, 1600, zSTRING(FormatValue(EClientText::ByteResendBuffer, language, status.m_cbSentUnackedReliable).c_str()));
+				screen->Print(0, 1800, zSTRING(FormatValue(EClientText::CreatedPlayers, language, playerManager.GetNumberOfPlayers()).c_str()));
+				screen->Print(0, 2000, zSTRING(FormatValue(EClientText::CreatedItems, language, itemManager.GetNumberOfItems()).c_str()));
 			}
 			else
 			{
-				screen->SetFontColor(zCOLOR(255,0,0,255));
-				screen->Print((windowMaxPosX/2),(windowMaxPosY/2),zSTRING(ClientLanguage::Get(EClientText::NotConnected, language)));
+				screen->SetFontColor(zCOLOR(255, 0, 0, 255));
+				screen->Print(windowMaxPosX / 2, windowMaxPosY / 2,
+					zSTRING(ClientLanguage::Get(EClientText::NotConnected, language)));
 				screen->SetFontColor(color);
 			}
 		}
 	}
-
 	screen->SetFont(font);
 	screen->SetFontColor(color);
-};
+}

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-CItem::CItem(RakString _instanceName, size_t _amount, float _x, float _y, float _z, size_t _id, RakString _world)
+CItem::CItem(std::string _instanceName, size_t _amount, float _x, float _y, float _z, size_t _id, std::string _world)
 {
 	id = _id;
 	instanceName = _instanceName;
@@ -13,5 +13,5 @@ CItem::CItem(RakString _instanceName, size_t _amount, float _x, float _y, float 
 
 CItem::~CItem()
 {
-	instanceName.FreeMemory();
+	instanceName.clear();
 };

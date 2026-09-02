@@ -24,7 +24,7 @@ public:
 	}
 	bool GetFreeID(unsigned int& itemID);
 
-	CItem* CreateItem(RakString instance, unsigned int amount, float x, float y, float z, RakString world);
+	CItem* CreateItem(std::string instance, unsigned int amount, float x, float y, float z, std::string world);
 	bool DestroyItem(unsigned int _itemID);
 
 	bool CreateItemForPlayer(CItem* item, CPlayer* player);

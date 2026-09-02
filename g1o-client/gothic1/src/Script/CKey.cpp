@@ -19,10 +19,10 @@ void CKey::KeyEvent(int key)
 		core.GetKeyBoard()->SwitchLayout();
 
 	// Blockade keys, when chat is active
-	if (!core.GetChat()->IsInputActive() && GetTimeMS() > this->timeLastKey)
+	if (!core.GetChat()->IsInputActive() && g1o::network::NowMilliseconds() > this->timeLastKey)
 	{
 		CEvent::KeyDown(key);
-		this->timeLastKey = GetTimeMS() + 70;
+		this->timeLastKey = g1o::network::NowMilliseconds() + 70;
 	}
 }
 

@@ -5,19 +5,19 @@ class CPlayer : public CCreature
 {
 public:
 	CPlayer();
-	CPlayer(int playerID, RakString playerName);
+	CPlayer(int playerID, std::string playerName);
 	~CPlayer();
 
-	void Spawn(float x, float y, float z, RakString instance);
+	void Spawn(float x, float y, float z, std::string instance);
 	void Respawn(); //Naprawienie buga ze smiercia
 	void UnSpawn();
 	void SetAdditionalVisuals(zSTRING const& _bodyModel, int _bodyTexture, zSTRING const& _headModel, int _headTexture);
 private:
-	size_t timerSlide;
+	std::uint64_t timerSlide;
 	bool isSlideAllowed;
-	size_t timerArmor;
-	size_t timerWeapon;
-	size_t timerHealth;
+	std::uint64_t timerArmor;
+	std::uint64_t timerWeapon;
+	std::uint64_t timerHealth;
 public:
 	void Repair();
 private:

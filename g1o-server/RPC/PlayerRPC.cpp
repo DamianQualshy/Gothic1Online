@@ -1,257 +1,265 @@
 #include "../stdafx.h"
 
-void PlayerRPC::HandlePlayerRPC(CNetwork* network, Packet* packet)
-{
-	BitStream stream(packet->data,packet->length,false);
-	stream.IgnoreBytes(1);
+#include <cmath>
 
-	MessageID ePlayerRPC;
-	stream.Read(ePlayerRPC);
+void PlayerRPC::HandlePlayerRPC(CNetwork* network, HSteamNetConnection connection, PacketReader& stream)
+{
+
+	EPlayerRPC ePlayerRPC{};
+	if (!playerManager.GetPlayer(connection) || !stream.Read(ePlayerRPC))
+		return;
 
 	switch(ePlayerRPC)
 	{
 	case SET_POSITION: 
-		SetPosition(packet,stream); break;
+		SetPosition(connection,stream); break;
 	case SET_ROTATION:
-		SetAngle(packet,stream); break;
+		SetAngle(connection,stream); break;
 	case CHANGE_WEAPONMODE:
-		ChangeWeaponMode(packet,stream); break;
+		ChangeWeaponMode(connection,stream); break;
 	case PLAY_ANIMATION:
-		PlayAnimation(packet,stream); break;
+		PlayAnimation(connection,stream); break;
 	case WEAR_ARMOR:
-		WearArmor(packet,stream); break;
+		WearArmor(connection,stream); break;
 	case EQUIP_WEAPON:
-		EquipWeapon(packet,stream); break;
+		EquipWeapon(connection,stream); break;
 	case CHANGE_INSTANCE:
-		ChangeInstance(packet,stream); break;
+		ChangeInstance(connection,stream); break;
 	case ITEM_HAND:
-		ItemHand(packet, stream); break;
+		ItemHand(connection, stream); break;
 	case CHANGE_LEVEL:
-		ChangeLevel(packet, stream); break;
+		ChangeLevel(connection, stream); break;
 	case ENTER_WORLD:
-		EnterWorld(packet); break;
+		if (stream.Empty()) EnterWorld(connection); break;
 	case SET_HEALTH:
-		SetHealth(packet,stream); break;
+		SetHealth(connection,stream); break;
 	case SET_HEALTH_MAX:
-		SetHealthMax(packet,stream); break;
+		SetHealthMax(connection,stream); break;
 	case ATTACK_HIT:
-		AttackHit(packet,stream); break;
+		AttackHit(connection,stream); break;
 	case ATTACK_DEAD:
-		AttackDead(packet,stream); break;
+		AttackDead(connection,stream); break;
 	case ATTACK_UNCONSCIOUS:
-		AttackUnconscious(packet,stream); break;
+		AttackUnconscious(connection,stream); break;
 	case STAND_UP:
-		StandUp(packet,stream); break;
+		StandUp(connection,stream); break;
 	case MAGIC_SETUP:
-		MagicSetup(packet,stream); break;
+		MagicSetup(connection,stream); break;
 	case MAGIC_ATTACK:
-		MagicAttack(packet,stream); break;
+		MagicAttack(connection,stream); break;
 	//case SET_PROTECTION:
-		//SetProtection(packet, stream); break;
+		//SetProtection(connection, stream); break;
 	//case SET_SKILLWEAPON:
-		//SetSkillWeapon(packet, stream); break;
+		//SetSkillWeapon(connection, stream); break;
 	case SET_OVERLAY:
-		SetOverlay(packet, stream); break;
+		SetOverlay(connection, stream); break;
 	case SET_TIMED_OVERLAY:
-		SetTimedOverlay(packet, stream); break;
+		SetTimedOverlay(connection, stream); break;
 	case MOB_TRIGGER:
-		MobTrigger(packet, stream); break;
+		MobTrigger(connection, stream); break;
 	case SHOOT_ARROW:
-		ShootArrow(packet, stream); break;
+		ShootArrow(connection, stream); break;
 	}
 };
 
-void PlayerRPC::SetPosition(Packet* packet, BitStream& stream)
+void PlayerRPC::SetPosition(HSteamNetConnection connection, PacketReader& stream)
 {
-	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
-	if( player && player->bConnected == true && player->spawned == true )
+	CPlayer* player = playerManager.GetPlayer(connection);
+	float x = 0.0f, y = 0.0f, z = 0.0f;
+	if (player && player->bConnected && player->spawned && stream.Read(x) && stream.Read(y) && stream.Read(z) &&
+		stream.Empty() && std::isfinite(x) && std::isfinite(y) && std::isfinite(z))
 	{
-		stream.Read(player->x);
-		stream.Read(player->y);
-		stream.Read(player->z);
+		player->x = x;
+		player->y = y;
+		player->z = z;
 		
-		BitStream wStream;
-		wStream.Write((MessageID)GO_PLAYER);
-		wStream.Write((MessageID)SET_POSITION);
+		PacketWriter wStream;
+		wStream.Write((std::uint8_t)GO_PLAYER);
+		wStream.Write((std::uint8_t)SET_POSITION);
 		wStream.Write(player->playerId);
 		wStream.Write(player->x);
 		wStream.Write(player->y);
 		wStream.Write(player->z);
 
-		core.GetNetwork()->SendToPlayersOnList(wStream, LOW_PRIORITY, UNRELIABLE, &player->streamedPlayers);
+		core.GetNetwork()->SendToPlayersOnList(wStream, &player->streamedPlayers, k_nSteamNetworkingSend_UnreliableNoDelay);
 	}
 };
 
-void PlayerRPC::SetAngle(Packet* packet, BitStream& stream)
+void PlayerRPC::SetAngle(HSteamNetConnection connection, PacketReader& stream)
 {
-	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
+	CPlayer* player = playerManager.GetPlayer(connection);
 
-	if( player && player->bConnected == true && player->spawned == true )
+	float angle = 0.0f;
+	if (player && player->bConnected && player->spawned && stream.Read(angle) && stream.Empty() && std::isfinite(angle))
 	{
-		stream.Read(player->angle);
+		player->angle = angle;
 
-		BitStream wStream;
-		wStream.Write((MessageID)GO_PLAYER);
-		wStream.Write((MessageID)SET_ROTATION);
+		PacketWriter wStream;
+		wStream.Write((std::uint8_t)GO_PLAYER);
+		wStream.Write((std::uint8_t)SET_ROTATION);
 		wStream.Write(player->playerId);
 		wStream.Write(player->angle);
 
-		core.GetNetwork()->SendToPlayersOnList(wStream, LOW_PRIORITY, UNRELIABLE, &player->streamedPlayers);
+		core.GetNetwork()->SendToPlayersOnList(wStream, &player->streamedPlayers, k_nSteamNetworkingSend_UnreliableNoDelay);
 	}
 };
 
-void PlayerRPC::ChangeWeaponMode(Packet* packet, BitStream& stream)
+void PlayerRPC::ChangeWeaponMode(HSteamNetConnection connection, PacketReader& stream)
 {
 	//SPDLOG_TRACE("PlayerRPC::ChangeWeaponMode");
-	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
+	CPlayer* player = playerManager.GetPlayer(connection);
 
-	if( player && player->bConnected == true && player->spawned == true )
+	int weaponMode = 0;
+	if (player && player->bConnected && player->spawned && stream.Read(weaponMode) && stream.Empty())
 	{
-		stream.Read(player->weaponMode);
+		player->weaponMode = weaponMode;
 
-		BitStream wStream;
-		wStream.Write((MessageID)GO_PLAYER);
-		wStream.Write((MessageID)CHANGE_WEAPONMODE);
+		PacketWriter wStream;
+		wStream.Write((std::uint8_t)GO_PLAYER);
+		wStream.Write((std::uint8_t)CHANGE_WEAPONMODE);
 		wStream.Write(player->playerId);
 		wStream.Write(player->weaponMode);
 
-		core.GetNetwork()->SendToPlayersOnList(wStream,LOW_PRIORITY,RELIABLE_ORDERED, &player->streamedPlayers);
+		core.GetNetwork()->SendToPlayersOnList(wStream, &player->streamedPlayers, k_nSteamNetworkingSend_Reliable);
 	}
 };
 
-void PlayerRPC::PlayAnimation(Packet* packet, BitStream& stream)
+void PlayerRPC::PlayAnimation(HSteamNetConnection connection, PacketReader& stream)
 {
-	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
+	CPlayer* player = playerManager.GetPlayer(connection);
 
-	if( player && player->spawned )
+	int animationId = 0;
+	if (player && player->spawned && stream.Read(animationId) && stream.Empty())
 	{
-		stream.Read(player->animationId);
+		player->animationId = animationId;
 
-		BitStream wStream;
-		wStream.Write((MessageID)GO_PLAYER);
-		wStream.Write((MessageID)PLAY_ANIMATION);
+		PacketWriter wStream;
+		wStream.Write((std::uint8_t)GO_PLAYER);
+		wStream.Write((std::uint8_t)PLAY_ANIMATION);
 		wStream.Write(player->playerId);
 		wStream.Write(player->animationId);
 
-		core.GetNetwork()->SendToPlayersOnList(wStream,LOW_PRIORITY,RELIABLE, &player->streamedPlayers);
+		core.GetNetwork()->SendToPlayersOnList(wStream, &player->streamedPlayers, k_nSteamNetworkingSend_Reliable);
 	}
 };
 
-void PlayerRPC::WearArmor(Packet* packet, BitStream& stream)
+void PlayerRPC::WearArmor(HSteamNetConnection connection, PacketReader& stream)
 {
 	//SPDLOG_TRACE("PlayerRPC::WearArmor");
-	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
-	if( player && player->bConnected == true && player->spawned == true )
+	CPlayer* player = playerManager.GetPlayer(connection);
+	std::string armor;
+	if (player && player->bConnected && player->spawned && stream.Read(armor, 256) && stream.Empty())
 	{
-		stream.Read(player->armorInstance);
+		player->armorInstance = std::move(armor);
 
-		BitStream wStream;
-		wStream.Write((MessageID)GO_PLAYER);
-		wStream.Write((MessageID)WEAR_ARMOR);
+		PacketWriter wStream;
+		wStream.Write((std::uint8_t)GO_PLAYER);
+		wStream.Write((std::uint8_t)WEAR_ARMOR);
 		wStream.Write(player->playerId);
 		wStream.Write(player->armorInstance);
 
-		core.GetNetwork()->SendToPlayersOnList(wStream,LOW_PRIORITY,RELIABLE, &player->streamedPlayers);
+		core.GetNetwork()->SendToPlayersOnList(wStream, &player->streamedPlayers, k_nSteamNetworkingSend_Reliable);
 	};
 };
 
-void PlayerRPC::EquipWeapon(Packet* packet, BitStream& stream)
+void PlayerRPC::EquipWeapon(HSteamNetConnection connection, PacketReader& stream)
 {
 	//SPDLOG_TRACE("PlayerRPC::EquipWeapon");
-	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
-	if( player && player->bConnected == true && player->spawned == true )
+	CPlayer* player = playerManager.GetPlayer(connection);
+	int weaponType = 0;
+	std::string instance;
+	if (player && player->bConnected && player->spawned && stream.Read(weaponType) &&
+		(weaponType == 1 || weaponType == 2) && stream.Read(instance, 256) && stream.Empty())
 	{
-		int weaponType;
-		stream.Read(weaponType);
-		BitStream wStream;
-		wStream.Write((MessageID)GO_PLAYER);
-		wStream.Write((MessageID)EQUIP_WEAPON);
+		PacketWriter wStream;
+		wStream.Write((std::uint8_t)GO_PLAYER);
+		wStream.Write((std::uint8_t)EQUIP_WEAPON);
 		wStream.Write(player->playerId);
 		wStream.Write(weaponType);
 		if(weaponType == 1)
 		{
-			stream.Read(player->meleeWeaponInstance);
+			player->meleeWeaponInstance = instance;
 			wStream.Write(player->meleeWeaponInstance);
-			//SPDLOG_TRACE("{} Equip {}", player->name.C_String(), player->meleeWeaponInstance.C_String());
+			//SPDLOG_TRACE("{} Equip {}", player->name.c_str(), player->meleeWeaponInstance.c_str());
 		}
 		else if( weaponType == 2 )
 		{
-			stream.Read(player->rangedWeaponInstance);
+			player->rangedWeaponInstance = instance;
 			wStream.Write(player->rangedWeaponInstance);
-			//SPDLOG_TRACE("{} Equip {}", player->name.C_String(), player->rangedWeaponInstance.C_String());
+			//SPDLOG_TRACE("{} Equip {}", player->name.c_str(), player->rangedWeaponInstance.c_str());
 		}
 		
-		core.GetNetwork()->SendToPlayersOnList(wStream,LOW_PRIORITY,RELIABLE_ORDERED, &player->streamedPlayers);
+		core.GetNetwork()->SendToPlayersOnList(wStream, &player->streamedPlayers, k_nSteamNetworkingSend_Reliable);
 		
 	}
 };
 
-void PlayerRPC::ChangeInstance(Packet* packet, BitStream& stream)
+void PlayerRPC::ChangeInstance(HSteamNetConnection connection, PacketReader& stream)
 {
 	//SPDLOG_TRACE("PlayerRPC::ChangeInstance");
-	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
-	if( player && player->bConnected == true && player->spawned == true )
+	CPlayer* player = playerManager.GetPlayer(connection);
+	std::string instance;
+	if (player && player->bConnected && player->spawned && stream.Read(instance, 256) && stream.Empty())
 	{
-		stream.Read(player->instance);
+		player->instance = std::move(instance);
 
 
-		BitStream wStream;
-		wStream.Write((MessageID)GO_PLAYER);
-		wStream.Write((MessageID)CHANGE_INSTANCE);
+		PacketWriter wStream;
+		wStream.Write((std::uint8_t)GO_PLAYER);
+		wStream.Write((std::uint8_t)CHANGE_INSTANCE);
 		wStream.Write(player->playerId);
 		wStream.Write(player->instance);
 
-		core.GetNetwork()->SendToPlayersOnList(wStream,LOW_PRIORITY,RELIABLE_ORDERED, &player->streamedPlayers);
+		core.GetNetwork()->SendToPlayersOnList(wStream, &player->streamedPlayers, k_nSteamNetworkingSend_Reliable);
 
 	}
 };
 
-void PlayerRPC::ItemHand(Packet* packet, BitStream& stream)
+void PlayerRPC::ItemHand(HSteamNetConnection connection, PacketReader& stream)
 {
-	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
-	if( player && player->bConnected == true && player->spawned == true )
+	CPlayer* player = playerManager.GetPlayer(connection);
+	int hand = 0;
+	std::string handItem;
+	if (player && player->bConnected && player->spawned && stream.Read(hand) && (hand == 1 || hand == 2) &&
+		stream.Read(handItem, 256) && stream.Empty())
 	{
-		int hand;
-		RakString handItem;
-		stream.Read(hand);
-		stream.Read(handItem);
-
 		if( hand == 1 )
 		{
 			player->leftHand = handItem;
-			//SPDLOG_TRACE("Player {} changed his left hand to {}", player->name.C_String(), player->leftHand.C_String());
+			//SPDLOG_TRACE("Player {} changed his left hand to {}", player->name.c_str(), player->leftHand.c_str());
 		}
 		else if( hand == 2 )
 		{
 			player->rightHand = handItem;
-			//SPDLOG_TRACE("Player {} changed his right hand to {}", player->name.C_String(), player->rightHand.C_String());
+			//SPDLOG_TRACE("Player {} changed his right hand to {}", player->name.c_str(), player->rightHand.c_str());
 		}
 
-		BitStream wStream;
-		wStream.Write((MessageID)GO_PLAYER);
-		wStream.Write((MessageID)ITEM_HAND);
+		PacketWriter wStream;
+		wStream.Write((std::uint8_t)GO_PLAYER);
+		wStream.Write((std::uint8_t)ITEM_HAND);
 		wStream.Write(player->playerId);
 		wStream.Write(hand);
 		wStream.Write(handItem);
 
-		core.GetNetwork()->SendToPlayersOnList(wStream,LOW_PRIORITY,RELIABLE_ORDERED, &player->streamedPlayers);
+		core.GetNetwork()->SendToPlayersOnList(wStream, &player->streamedPlayers, k_nSteamNetworkingSend_Reliable);
 
 	}
 };
 
-void PlayerRPC::ChangeLevel(Packet* packet, BitStream& stream)
+void PlayerRPC::ChangeLevel(HSteamNetConnection connection, PacketReader& stream)
 {
 
 	//SPDLOG_TRACE("PlayerRPC::ChangeLevel");
-	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
+	CPlayer* player = playerManager.GetPlayer(connection);
+	std::string world;
 
-	if( player && player->bConnected == true && player->spawned == true )
+	if (player && player->bConnected && player->spawned && stream.Read(world, 1024) && stream.Empty())
 	{
-		BitStream s;
-		s.Write((MessageID)GO_PLAYER);
-		s.Write((MessageID)DESTROY_PLAYER);
+		PacketWriter s;
+		s.Write((std::uint8_t)GO_PLAYER);
+		s.Write((std::uint8_t)DESTROY_PLAYER);
 		s.Write(player->GetID());
-		core.GetNetwork()->SendToPlayersOnList(s,MEDIUM_PRIORITY,RELIABLE, &player->streamedPlayers);
+		core.GetNetwork()->SendToPlayersOnList(s, &player->streamedPlayers, k_nSteamNetworkingSend_Reliable);
 
 		for (int i = 0; i < player->streamedPlayers.Num(); ++i)
 			player->streamedPlayers[i]->streamedPlayers.Remove(player);
@@ -259,14 +267,14 @@ void PlayerRPC::ChangeLevel(Packet* packet, BitStream& stream)
 		player->streamedPlayers.Clear();
 
 		player->spawned = false;
-		stream.Read(player->world);
+		player->world = std::move(world);
 	}
 };
 
-void PlayerRPC::EnterWorld(Packet* packet)
+void PlayerRPC::EnterWorld(HSteamNetConnection connection)
 {
 	//SPDLOG_TRACE("PlayerRPC::EnterWorld");
-	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
+	CPlayer* player = playerManager.GetPlayer(connection);
 	if( player && player->bConnected == true && player->spawned == false )
 	{
 		player->spawned = true;
@@ -276,29 +284,28 @@ void PlayerRPC::EnterWorld(Packet* packet)
 			SMobTrigger mob = core.mobList.GetElementByIndex(i);
 			if (mob.world == player->world)
 			{
-				BitStream s;
-				s.Write((MessageID)GO_PLAYER);
-				s.Write((MessageID)MOB_TRIGGER);
+				PacketWriter s;
+				s.Write((std::uint8_t)GO_PLAYER);
+				s.Write((std::uint8_t)MOB_TRIGGER);
 				s.Write(-1);
 				s.Write(true);
 				s.Write(mob.x);
 				s.Write(mob.y);
 				s.Write(mob.z);
 
-				core.GetNetwork()->GetPeer()->Send(&s, LOW_PRIORITY, RELIABLE, 0, packet->systemAddress, false);
+				core.GetNetwork()->Send(connection, s, k_nSteamNetworkingSend_Reliable);
 			}
 		}
 	}
 };
 
-void PlayerRPC::SetHealth(Packet* packet, BitStream& stream)
+void PlayerRPC::SetHealth(HSteamNetConnection connection, PacketReader& stream)
 {
-	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
+	CPlayer* player = playerManager.GetPlayer(connection);
+	int health = 0;
 
-	if( player && player->bConnected == true && player->spawned == true )
+	if (player && player->bConnected && player->spawned && stream.Read(health) && stream.Empty() && health >= 0)
 	{
-		int health;
-		stream.Read(health);
 		if (health == 0 && !player->isDead)
 		{
 			SEvent::PlayerDeath(player->GetID(), -1);
@@ -313,41 +320,42 @@ void PlayerRPC::SetHealth(Packet* packet, BitStream& stream)
 			
 		player->health = health;
 
-		BitStream s;
-		s.Write((MessageID)GO_PLAYER);
-		s.Write((MessageID)SET_HEALTH);
+		PacketWriter s;
+		s.Write((std::uint8_t)GO_PLAYER);
+		s.Write((std::uint8_t)SET_HEALTH);
 		s.Write(player->GetID());
 		s.Write(player->health);
 
-		core.GetNetwork()->SendToPlayersOnList(s,HIGH_PRIORITY,RELIABLE_ORDERED, &player->streamedPlayers);
+		core.GetNetwork()->SendToPlayersOnList(s, &player->streamedPlayers, k_nSteamNetworkingSend_Reliable);
 	}
 };
 
-void PlayerRPC::SetHealthMax(Packet* packet, BitStream& stream)
+void PlayerRPC::SetHealthMax(HSteamNetConnection connection, PacketReader& stream)
 {
-	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
+	CPlayer* player = playerManager.GetPlayer(connection);
+	int maxHealth = 0;
 
-	if( player && player->bConnected == true && player->spawned == true )
+	if (player && player->bConnected && player->spawned && stream.Read(maxHealth) && stream.Empty() && maxHealth > 0)
 	{
-		stream.Read(player->maxhealth);
+		player->maxhealth = maxHealth;
 
-		BitStream s;
-		s.Write((MessageID)GO_PLAYER);
-		s.Write((MessageID)SET_HEALTH_MAX);
+		PacketWriter s;
+		s.Write((std::uint8_t)GO_PLAYER);
+		s.Write((std::uint8_t)SET_HEALTH_MAX);
 		s.Write(player->GetID());
 		s.Write(player->maxhealth);
 
-		core.GetNetwork()->SendToPlayersOnList(s,LOW_PRIORITY,RELIABLE, &player->streamedPlayers);
+		core.GetNetwork()->SendToPlayersOnList(s, &player->streamedPlayers, k_nSteamNetworkingSend_Reliable);
 	}
 };
 
-void PlayerRPC::AttackHit(Packet* packet, BitStream& stream)
+void PlayerRPC::AttackHit(HSteamNetConnection connection, PacketReader& stream)
 {
-	int focusID;
-	int minushp;
-	stream.Read(focusID);
-	stream.Read(minushp);
-	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
+	int focusID = -1;
+	int minushp = 0;
+	if (!stream.Read(focusID) || !stream.Read(minushp) || !stream.Empty() || minushp < 0)
+		return;
+	CPlayer* player = playerManager.GetPlayer(connection);
 	CPlayer* focusPlayer = playerManager.GetPlayer(focusID);
 	if( player && player->bConnected == true && player->spawned == true )
 	{
@@ -378,182 +386,180 @@ void PlayerRPC::AttackHit(Packet* packet, BitStream& stream)
 			{
 				SEvent::PlayerHit(player->GetID(), focusID);
 
-				BitStream s;
-				s.Write((MessageID)GO_PLAYER);
-				s.Write((MessageID)ATTACK_HIT);
+				PacketWriter s;
+				s.Write((std::uint8_t)GO_PLAYER);
+				s.Write((std::uint8_t)ATTACK_HIT);
 				s.Write(player->playerId);
 				s.Write(minushp);
 
-				core.GetNetwork()->GetPeer()->Send(&s, HIGH_PRIORITY, RELIABLE_ORDERED, 0, focusPlayer->GetAddress(), false);
+				core.GetNetwork()->Send(focusPlayer->GetConnection(), s, k_nSteamNetworkingSend_Reliable);
 			}
 			else
 			{
-				BitStream s;
-				s.Write((MessageID)GO_PLAYER);
-				s.Write((MessageID)SET_HEALTH);
+				PacketWriter s;
+				s.Write((std::uint8_t)GO_PLAYER);
+				s.Write((std::uint8_t)SET_HEALTH);
 				s.Write(focusPlayer->playerId);
 				s.Write(focusPlayer->health);
-				core.GetNetwork()->GetPeer()->Send(&s, HIGH_PRIORITY, RELIABLE_ORDERED, 0, player->GetAddress(), false);
+				core.GetNetwork()->Send(player->GetConnection(), s, k_nSteamNetworkingSend_Reliable);
 			}
 		}
 	}
 };
 
-void PlayerRPC::AttackDead(Packet* packet, BitStream& stream)
+void PlayerRPC::AttackDead(HSteamNetConnection connection, PacketReader& stream)
 {
-	int focusID;
-	stream.Read(focusID);
+	int focusID = -1;
+	if (!stream.Read(focusID) || !stream.Empty())
+		return;
 	CPlayer* focusPlayer = playerManager.GetPlayer(focusID);
-	CPlayer* killerPlayer = playerManager.GetPlayer(packet->systemAddress);
+	CPlayer* killerPlayer = playerManager.GetPlayer(connection);
 	if (focusPlayer && focusPlayer->bConnected && focusPlayer->spawned && !focusPlayer->isDead &&
 		killerPlayer && killerPlayer->bConnected && killerPlayer->spawned && !killerPlayer->isDead)
 	{
 		focusPlayer->isDead = true;
 		SEvent::PlayerDeath(focusPlayer->GetID(), killerPlayer->GetID());
 
-		BitStream s;
-		s.Write((MessageID)GO_PLAYER);
-		s.Write((MessageID)ATTACK_DEAD);
+		PacketWriter s;
+		s.Write((std::uint8_t)GO_PLAYER);
+		s.Write((std::uint8_t)ATTACK_DEAD);
 
-		core.GetNetwork()->GetPeer()->Send(&s, LOW_PRIORITY, RELIABLE, 0, focusPlayer->GetAddress(), false);
+		core.GetNetwork()->Send(focusPlayer->GetConnection(), s, k_nSteamNetworkingSend_Reliable);
 	}
-	else if (killerPlayer->isDead)
+	else if (killerPlayer && focusPlayer && killerPlayer->isDead)
 	{
-		BitStream s;
-		s.Write((MessageID)GO_PLAYER);
-		s.Write((MessageID)FORCE_STANDUP);
+		PacketWriter s;
+		s.Write((std::uint8_t)GO_PLAYER);
+		s.Write((std::uint8_t)FORCE_STANDUP);
 		s.Write(focusID);
 		s.Write(focusPlayer->health);
 
-		core.GetNetwork()->GetPeer()->Send(&s, LOW_PRIORITY, RELIABLE, 0, packet->systemAddress, false);
+		core.GetNetwork()->Send(connection, s, k_nSteamNetworkingSend_Reliable);
 	}
 };
 
-void PlayerRPC::AttackUnconscious(Packet* packet, BitStream& stream)
+void PlayerRPC::AttackUnconscious(HSteamNetConnection connection, PacketReader& stream)
 {
-	int focusID;
-	stream.Read(focusID);
+	int focusID = -1;
+	if (!stream.Read(focusID) || !stream.Empty())
+		return;
 
 	CPlayer* focusPlayer = playerManager.GetPlayer(focusID);
-	CPlayer* killerPlayer = playerManager.GetPlayer(packet->systemAddress);
+	CPlayer* killerPlayer = playerManager.GetPlayer(connection);
 
 	if (focusPlayer && focusPlayer->bConnected && focusPlayer->spawned && !focusPlayer->isUnconscious &&
 		killerPlayer && killerPlayer->bConnected && killerPlayer->spawned && !killerPlayer->isUnconscious)
 	{
 		focusPlayer->isUnconscious = true;
-		SEvent::PlayerUnconscious(focusPlayer->GetID(), playerManager.GetPlayer(packet->systemAddress)->GetID());
+		SEvent::PlayerUnconscious(focusPlayer->GetID(), playerManager.GetPlayer(connection)->GetID());
 
-		BitStream s;
-		s.Write((MessageID)GO_PLAYER);
-		s.Write((MessageID)ATTACK_UNCONSCIOUS);
+		PacketWriter s;
+		s.Write((std::uint8_t)GO_PLAYER);
+		s.Write((std::uint8_t)ATTACK_UNCONSCIOUS);
 		s.Write(focusID);
 		s.Write(killerPlayer->GetID());
 
-		core.GetNetwork()->SendToPlayersOnList(s, LOW_PRIORITY, RELIABLE, &killerPlayer->streamedPlayers);
+		core.GetNetwork()->SendToPlayersOnList(s, &killerPlayer->streamedPlayers, k_nSteamNetworkingSend_Reliable);
 	}
-	else if (killerPlayer->isUnconscious)
+	else if (killerPlayer && focusPlayer && killerPlayer->isUnconscious)
 	{
-		BitStream s;
-		s.Write((MessageID)GO_PLAYER);
-		s.Write((MessageID)FORCE_STANDUP);
+		PacketWriter s;
+		s.Write((std::uint8_t)GO_PLAYER);
+		s.Write((std::uint8_t)FORCE_STANDUP);
 		s.Write(focusID);
 		s.Write(focusPlayer->health);
 
-		core.GetNetwork()->GetPeer()->Send(&s, LOW_PRIORITY, RELIABLE, 0, packet->systemAddress, false);
+		core.GetNetwork()->Send(connection, s, k_nSteamNetworkingSend_Reliable);
 	}
 };
 
-void PlayerRPC::StandUp(Packet* packet, BitStream& stream)
+void PlayerRPC::StandUp(HSteamNetConnection connection, PacketReader& stream)
 {
 	//SPDLOG_TRACE("PlayerRPC::StandUp");
-	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
+	CPlayer* player = playerManager.GetPlayer(connection);
 
-	if (player && player->bConnected == true && player->spawned == true && !player->isDead)
+	bool unconscious = false;
+	if (player && player->bConnected && player->spawned && !player->isDead &&
+		stream.Read(unconscious) && stream.Empty())
 	{
 		player->isUnconscious = false;
 		SEvent::PlayerStandUp(player->GetID());
 
-		bool unconscious;
-		stream.Read(unconscious);
-
-		BitStream s;
-		s.Write((MessageID)GO_PLAYER);
-		s.Write((MessageID)STAND_UP);
+		PacketWriter s;
+		s.Write((std::uint8_t)GO_PLAYER);
+		s.Write((std::uint8_t)STAND_UP);
 		s.Write(player->GetID());
 		s.Write(unconscious);
 
-		core.GetNetwork()->SendToPlayersOnList(s,LOW_PRIORITY,RELIABLE, &player->streamedPlayers);
+		core.GetNetwork()->SendToPlayersOnList(s, &player->streamedPlayers, k_nSteamNetworkingSend_Reliable);
 	}
 };
 
-void PlayerRPC::MagicSetup(Packet* packet, BitStream& stream)
+void PlayerRPC::MagicSetup(HSteamNetConnection connection, PacketReader& stream)
 {
 	//SPDLOG_TRACE("PlayerRPC::MagicSetup");
-	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
-	if( player && player->bConnected == true && player->spawned == true )
+	CPlayer* player = playerManager.GetPlayer(connection);
+	std::string magicItem;
+	if (player && player->bConnected && player->spawned && stream.Read(magicItem, 256) && stream.Empty())
 	{
-		stream.Read(player->magicItem);
+		player->magicItem = std::move(magicItem);
 
-		BitStream s;
-		s.Write((MessageID)GO_PLAYER);
-		s.Write((MessageID)MAGIC_SETUP);
+		PacketWriter s;
+		s.Write((std::uint8_t)GO_PLAYER);
+		s.Write((std::uint8_t)MAGIC_SETUP);
 		s.Write(player->GetID());
 		s.Write(player->magicItem);
 
-		core.GetNetwork()->SendToPlayersOnList(s,LOW_PRIORITY,RELIABLE, &player->streamedPlayers);
+		core.GetNetwork()->SendToPlayersOnList(s, &player->streamedPlayers, k_nSteamNetworkingSend_Reliable);
 	}
 };
 
-void PlayerRPC::MagicAttack(Packet* packet, BitStream& stream)
+void PlayerRPC::MagicAttack(HSteamNetConnection connection, PacketReader& stream)
 {
 	//SPDLOG_TRACE("PlayerRPC::MagicAttack");
-	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
-	if( player && player->bConnected == true && player->spawned == true )
+	CPlayer* player = playerManager.GetPlayer(connection);
+	int focusID = -1;
+	if (player && player->bConnected && player->spawned && stream.Read(focusID) && stream.Empty())
 	{
-		int focusID;
-		stream.Read(focusID);
-
-		BitStream s;
-		s.Write((MessageID)GO_PLAYER);
-		s.Write((MessageID)MAGIC_ATTACK);
+		PacketWriter s;
+		s.Write((std::uint8_t)GO_PLAYER);
+		s.Write((std::uint8_t)MAGIC_ATTACK);
 		s.Write(player->GetID());
 		s.Write(focusID);
 		
-		core.GetNetwork()->SendToPlayersOnList(s,LOW_PRIORITY, UNRELIABLE, &player->streamedPlayers);
+		core.GetNetwork()->SendToPlayersOnList(s, &player->streamedPlayers, k_nSteamNetworkingSend_UnreliableNoDelay);
 	}
 };
 /*
-void PlayerRPC::SetProtection(Packet* packet, BitStream& stream)
+void PlayerRPC::SetProtection(HSteamNetConnection connection, PacketReader& stream)
 {
-	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
+	CPlayer* player = playerManager.GetPlayer(connection);
 	if (player && player->bConnected == true && player->spawned == true)
 	{
 		int index;
 		stream.Read(index);
 		stream.Read(player->protection[index]);
 
-		BitStream s;
-		s.Write((MessageID)GO_PLAYER);
-		s.Write((MessageID)SET_PROTECTION);
+		PacketWriter s;
+		s.Write((std::uint8_t)GO_PLAYER);
+		s.Write((std::uint8_t)SET_PROTECTION);
 		s.Write(player->GetID());
 		s.Write(index);
 		s.Write(player->protection[index]);
 
-		core.GetNetwork()->SendToPlayersOnList(s, MEDIUM_PRIORITY, RELIABLE_ORDERED, &player->streamedPlayers);
+		core.GetNetwork()->SendToPlayersOnList(s, &player->streamedPlayers, k_nSteamNetworkingSend_Reliable);
 	}
 };
 */
 
-void PlayerRPC::SetOverlay(Packet* packet, BitStream& stream)
+void PlayerRPC::SetOverlay(HSteamNetConnection connection, PacketReader& stream)
 {
-	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
-	if (player && player->bConnected == true && player->spawned == true)
+	CPlayer* player = playerManager.GetPlayer(connection);
+	bool add = false;
+	std::string overlay;
+	if (player && player->bConnected && player->spawned && stream.Read(add) &&
+		stream.Read(overlay, 256) && stream.Empty())
 	{
-		bool add;
-		RakString overlay;
-		stream.Read(add);
-		stream.Read(overlay);
-
 		if (add)
 			player->overlaysList.PushBack(overlay);
 		else
@@ -562,58 +568,52 @@ void PlayerRPC::SetOverlay(Packet* packet, BitStream& stream)
 				return;
 		}
 			
-		BitStream s;
-		s.Write((MessageID)GO_PLAYER);
-		s.Write((MessageID)SET_OVERLAY);
+		PacketWriter s;
+		s.Write((std::uint8_t)GO_PLAYER);
+		s.Write((std::uint8_t)SET_OVERLAY);
 		s.Write(player->GetID());
 		s.Write(add);
 		s.Write(overlay);
 	
-		core.GetNetwork()->SendToPlayersOnList(s, MEDIUM_PRIORITY, RELIABLE, &player->streamedPlayers);
+		core.GetNetwork()->SendToPlayersOnList(s, &player->streamedPlayers, k_nSteamNetworkingSend_Reliable);
 	}
 }
 
-void PlayerRPC::SetTimedOverlay(Packet* packet, BitStream& stream)
+void PlayerRPC::SetTimedOverlay(HSteamNetConnection connection, PacketReader& stream)
 {
-	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
-	if (player && player->bConnected == true && player->spawned == true)
+	CPlayer* player = playerManager.GetPlayer(connection);
+	std::uint64_t time = 0;
+	std::string overlay;
+	if (player && player->bConnected && player->spawned && stream.Read(time) &&
+		stream.Read(overlay, 256) && stream.Empty())
 	{
-		TimeMS time;
-		RakString overlay;
-		stream.Read(time);
-		stream.Read(overlay);
+		const std::uint64_t delay = time > 300 ? time - 300 : 0;
+		player->timedOverlays.PushBack(STimedOverlay(g1o::network::NowMilliseconds() + delay, overlay));
 
-		player->timedOverlays.PushBack(STimedOverlay(GetTimeMS() + time - 300, overlay));
-
-		BitStream s;
-		s.Write((MessageID)GO_PLAYER);
-		s.Write((MessageID)SET_OVERLAY);
+		PacketWriter s;
+		s.Write((std::uint8_t)GO_PLAYER);
+		s.Write((std::uint8_t)SET_OVERLAY);
 		s.Write(player->GetID());
 		s.Write(true);
 		s.Write(overlay);
 
-		core.GetNetwork()->SendToPlayersOnList(s, MEDIUM_PRIORITY, RELIABLE, &player->streamedPlayers);
+		core.GetNetwork()->SendToPlayersOnList(s, &player->streamedPlayers, k_nSteamNetworkingSend_Reliable);
 	}
 }
 
-void PlayerRPC::MobTrigger(Packet* packet, BitStream& stream)
+void PlayerRPC::MobTrigger(HSteamNetConnection connection, PacketReader& stream)
 {
-	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
-	if (player && player->bConnected == true && player->spawned == true)
+	CPlayer* player = playerManager.GetPlayer(connection);
+	bool trigger = false;
+	float x = 0.0f, y = 0.0f, z = 0.0f;
+	std::string world;
+	if (player && player->bConnected && player->spawned && stream.Read(trigger) && stream.Read(world, 1024) &&
+		stream.Read(x) && stream.Read(y) && stream.Read(z) && stream.Empty() &&
+		std::isfinite(x) && std::isfinite(y) && std::isfinite(z))
 	{
-		bool trigger;
-		float x, y, z;
-		RakString world;
-		stream.Read(trigger);
-		stream.Read(world);
-		stream.Read(x);
-		stream.Read(y);
-		stream.Read(z);
-
 		SMobTrigger mobTrigger(x, y, z, world);
 		int index = core.mobList.FindIndex(mobTrigger);
-		if (trigger && index == -1 ||
-			!trigger && index != -1)
+		if ((trigger && index == -1) || (!trigger && index != -1))
 		{
 
 			if (index == -1)
@@ -621,39 +621,35 @@ void PlayerRPC::MobTrigger(Packet* packet, BitStream& stream)
 			else
 				core.mobList.RemoveIndex(index);
 
-			BitStream s;
-			s.Write((MessageID)GO_PLAYER);
-			s.Write((MessageID)MOB_TRIGGER);
+			PacketWriter s;
+			s.Write((std::uint8_t)GO_PLAYER);
+			s.Write((std::uint8_t)MOB_TRIGGER);
 			s.Write(player->GetID());
 			s.Write(trigger);
 			s.Write(x);
 			s.Write(y);
 			s.Write(z);
 
-			core.GetNetwork()->SendToAllInWorld(s, LOW_PRIORITY, RELIABLE_ORDERED, world, player);
+			core.GetNetwork()->SendToAllInWorld(s, world, player, k_nSteamNetworkingSend_Reliable);
 		}
 	}
 }
 
-void PlayerRPC::ShootArrow(Packet* packet, BitStream& stream)
+void PlayerRPC::ShootArrow(HSteamNetConnection connection, PacketReader& stream)
 {
-	CPlayer* player = playerManager.GetPlayer(packet->systemAddress);
-	if (player && player->bConnected == true && player->spawned == true)
+	CPlayer* player = playerManager.GetPlayer(connection);
+	int targetID = -1, aniID = 0, type = 0;
+	if (player && player->bConnected && player->spawned && stream.Read(targetID) && stream.Read(aniID) &&
+		stream.Read(type) && stream.Empty() && (type == 5 || type == 6)) // Bow or crossbow.
 	{
-		int targetID, aniID, type;
-
-		stream.Read(targetID);
-		stream.Read(aniID);
-		stream.Read(type);
-
-		BitStream s;
-		s.Write((MessageID)GO_PLAYER);
-		s.Write((MessageID)SHOOT_ARROW);
+		PacketWriter s;
+		s.Write((std::uint8_t)GO_PLAYER);
+		s.Write((std::uint8_t)SHOOT_ARROW);
 		s.Write(player->GetID());
 		s.Write(targetID);
 		s.Write(aniID);
 		s.Write(type);
 
-		core.GetNetwork()->SendToPlayersOnList(s, HIGH_PRIORITY, RELIABLE, &player->streamedPlayers);
+		core.GetNetwork()->SendToPlayersOnList(s, &player->streamedPlayers, k_nSteamNetworkingSend_Reliable);
 	}
 }

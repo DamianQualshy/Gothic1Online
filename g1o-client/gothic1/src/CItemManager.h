@@ -23,12 +23,12 @@ public:
 		return this->itemList.Num();
 	}
 
-	oCItem* CreateItem(RakString _itemInstance, zVEC3 _pos, size_t _amount, size_t _itemID);
+	oCItem* CreateItem(std::string _itemInstance, zVEC3 _pos, size_t _amount, size_t _itemID);
 	bool DestroyItem(size_t _itemID);
 
 	bool IsItemExist(size_t _itemID);
 
-	bool SendDropItem(RakString _itemInstance, zVEC3 _pos, size_t _amount);
+	bool SendDropItem(std::string _itemInstance, zVEC3 _pos, size_t _amount);
 	bool SendTakeItem(oCItem* item);
 
 	CItem* GetItem(oCItem* _item);

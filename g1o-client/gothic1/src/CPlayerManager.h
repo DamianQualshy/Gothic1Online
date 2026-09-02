@@ -28,8 +28,8 @@ public:
 		return this->playerList.Num();
 	}
 
-	CLocalPlayer* CreateLocalPlayer(int playerID, RakString playerName);
-	CPlayer* CreatePlayer(int playerID, RakString playerName);
+	CLocalPlayer* CreateLocalPlayer(int playerID, std::string playerName);
+	CPlayer* CreatePlayer(int playerID, std::string playerName);
 	bool DestroyPlayer(CPlayer* player);
 	bool IsPlayerSynchronised(oCNpc* npc); //Czy ten npc jest zsynchronizowany
 	void DestroyAllPlayers(); //Sync światów

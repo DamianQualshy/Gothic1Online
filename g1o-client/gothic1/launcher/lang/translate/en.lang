@@ -37,7 +37,6 @@ I_MASTER_CONNECTING	Connecting to Master Server
 
 # Network
 N_NAME				Network
-N_RAKNET_ERROR		Cannot init <b>RakNet</b>
 
 # Addons
 A_ERR_01			Cannot enable addon! Open GO Launcher with admin rights!

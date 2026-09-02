@@ -1,22 +1,22 @@
 #ifndef GOMESSAGES_H
 #define GOMESSAGES_H
 
-#define versionNumber 228
+#include <cstdint>
 
-enum EMultiplayerMessages
+inline constexpr std::uint32_t versionNumber = 229;
+
+enum EMultiplayerMessages : std::uint8_t
 {
-	GO_CONNECTION = ID_USER_PACKET_ENUM,
+	GO_CONNECTION = 1,
 	GO_LAUNCHER,
-	GO_MASTER_RESERVED,
 	GO_CHAT,
 	GO_PLAYER,
 	GO_ITEM,
-	GO_VOB,
-	GO_MOB,
-	GO_SCRIPT
+	GO_SCRIPT,
+	GO_FILE_TRANSFER
 };
 
-enum EConnectionRPC
+enum EConnectionRPC : std::uint8_t
 {
 	PLEASE_CONNECT,
 	ACCEPT_CONNECTION,
@@ -26,13 +26,13 @@ enum EConnectionRPC
 	CLOSED_CONNECTION_REASON //Ban/kick	
 };
 
-enum EChatRPC
+enum EChatRPC : std::uint8_t
 {
 	CHAT_MESSAGE,
 	MESSAGE_RGB
 };
 
-enum EPlayerRPC
+enum EPlayerRPC : std::uint8_t
 {
 	CREATE_PLAYER,
 	CREATE_AND_SPAWN,
@@ -66,16 +66,14 @@ enum EPlayerRPC
 	PLAYER_LIST //Lista graczy onlajn
 };
 
-enum EItemRPC
+enum EItemRPC : std::uint8_t
 {
 	CREATE_ITEM,
 	DESTROY_ITEM
 };
 
-enum EScriptRPC
+enum EScriptRPC : std::uint8_t
 {
-	SCRIPT_RESOURCE_RESERVED, // Retains the removed client-resource wire ID.
-	SCRIPT_PACKET_RESERVED,   // Retains the removed client-script packet wire ID.
 	SCRIPT_UNCONSCIOUS,
 	SCRIPT_VISUAL,
 	SCRIPT_OVERLAY,
@@ -83,7 +81,7 @@ enum EScriptRPC
 	SCRIPT_CLIENT_EVENT
 };
 
-enum EClientScriptEvent
+enum EClientScriptEvent : std::uint8_t
 {
 	CLIENT_EVENT_KEY_DOWN,
 	CLIENT_EVENT_MOUSE_DOWN,
@@ -94,6 +92,18 @@ enum EClientScriptEvent
 	CLIENT_EVENT_MOB_TRIGGER,
 	CLIENT_EVENT_MOB_UNTRIGGER,
 	CLIENT_EVENT_USE_ITEM
+};
+
+enum EFileTransferRPC : std::uint8_t
+{
+	FILE_MANIFEST_REQUEST,
+	FILE_MANIFEST,
+	FILE_REQUEST,
+	FILE_BEGIN_, //can't use "FILE_BEGIN" because of conflict with FILE_BEGIN macro in windows.h
+	FILE_CHUNK,
+	FILE_END_, //same issue as "FILE_BEGIN"
+	FILE_COMPLETE,
+	FILE_ERROR
 };
 
 #endif //GOMESSAGES_H

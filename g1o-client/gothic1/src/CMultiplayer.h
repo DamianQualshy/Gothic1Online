@@ -3,11 +3,11 @@
 
 struct STriggerSync
 {
-	unsigned int time;
+	std::uint64_t time;
 	oCNpc *npc;
 	oCMobInter *mob;
 
-	STriggerSync(int _time, oCNpc *_npc, oCMobInter *_mob) : time(_time), npc(_npc), mob(_mob) {}
+	STriggerSync(std::uint64_t _time, oCNpc *_npc, oCMobInter *_mob) : time(_time), npc(_npc), mob(_mob) {}
 };
 
 class CMultiplayer
@@ -16,7 +16,7 @@ private:
 	bool bInitiated;
 public:
 	std::queue<STriggerSync> triggerQueue;
-	RakString hostName;
+	std::string hostName;
 	int myID;
 
 	CMultiplayer();
@@ -24,7 +24,7 @@ public:
 
 	int GetMyID() const{ return this->myID;};
 	bool IsInitiated() const{ return this->bInitiated;};
-	bool InitMultiplayer(RakString hostname, int myid);
+	bool InitMultiplayer(std::string hostname, int myid);
 	void RepairDoor();
 };
 

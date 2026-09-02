@@ -272,7 +272,7 @@ def should_scan(path: Path) -> bool:
     if any(part.lower() in EXCLUDED_PARTS for part in relative.parts):
         return False
     lowered = relative.as_posix().lower()
-    return "g1o-client/gothic1/lib/" not in lowered and "shared/raknet/" not in lowered and "shared/tinyxml/" not in lowered
+    return "g1o-client/gothic1/lib/" not in lowered and "shared/tinyxml/" not in lowered
 
 
 def scan() -> list[DocumentationBlock]:

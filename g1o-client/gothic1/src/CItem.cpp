@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-CItem::CItem(RakString _instanceName, oCItem *_gameItem, size_t _amount, zVEC3 _pos, size_t _id)
+CItem::CItem(std::string _instanceName, oCItem *_gameItem, size_t _amount, zVEC3 _pos, size_t _id)
 {
 	id = _id;
 	instanceName = _instanceName;
@@ -11,7 +11,7 @@ CItem::CItem(RakString _instanceName, oCItem *_gameItem, size_t _amount, zVEC3 _
 
 CItem::~CItem()
 {
-	instanceName.FreeMemory();
+	instanceName.clear();
 	if( gameItem )
 	{
 		oCNpc* hero = oCNpc::GetHero();

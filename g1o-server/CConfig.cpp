@@ -3,9 +3,12 @@
 #include <algorithm>
 #include <array>
 #include <cctype>
+#include <charconv>
 #include <cstring>
 #include <filesystem>
+#include <limits>
 #include <stdexcept>
+#include <system_error>
 #include <unordered_set>
 
 #include <sodium.h>
@@ -137,20 +140,28 @@ namespace
 				throw std::runtime_error("script resource mixes Squirrel and Lua files");
 	}
 
-	bool IsValidServerIdentitySeed(const RakString& encodedSeed)
+	bool IsIntegerInRange(const std::string& text, int minimum, int maximum)
 	{
-		if (encodedSeed.IsEmpty())
+		int value = 0;
+		const auto result = std::from_chars(text.data(), text.data() + text.size(), value);
+		return result.ec == std::errc{} && result.ptr == text.data() + text.size() &&
+			value >= minimum && value <= maximum;
+	}
+
+	bool IsValidServerIdentitySeed(const std::string& encodedSeed)
+	{
+		if (encodedSeed.empty())
 			return false;
 
 		std::array<unsigned char, crypto_sign_SEEDBYTES> decodedSeed{};
 		std::size_t decodedLength = 0;
 		return sodium_base642bin(
-			decodedSeed.data(), decodedSeed.size(), encodedSeed.C_String(), encodedSeed.GetLength(),
+			decodedSeed.data(), decodedSeed.size(), encodedSeed.c_str(), encodedSeed.size(),
 			nullptr, &decodedLength, nullptr, sodium_base64_VARIANT_ORIGINAL) == 0 &&
 			decodedLength == decodedSeed.size();
 	}
 
-	RakString GenerateServerIdentitySeed()
+	std::string GenerateServerIdentitySeed()
 	{
 		std::array<unsigned char, crypto_sign_SEEDBYTES> seed{};
 		randombytes_buf(seed.data(), seed.size());
@@ -159,10 +170,10 @@ namespace
 		std::string encoded(encodedLength, '\0');
 		sodium_bin2base64(encoded.data(), encoded.size(), seed.data(), seed.size(), sodium_base64_VARIANT_ORIGINAL);
 		encoded.resize(std::strlen(encoded.c_str()));
-		return RakString(encoded.c_str());
+		return std::string(encoded.c_str());
 	}
 
-	bool SaveServerIdentitySeed(const fs::path& configPath, const RakString& seed)
+	bool SaveServerIdentitySeed(const fs::path& configPath, const std::string& seed)
 	{
 		TiXmlDocument document(configPath.string().c_str());
 		if (!document.LoadFile())
@@ -179,7 +190,7 @@ namespace
 			root->LinkEndChild(config);
 		}
 
-		config->SetAttribute("server_identity_seed", seed.C_String());
+		config->SetAttribute("server_identity_seed", seed.c_str());
 		return document.SaveFile(configPath.string().c_str());
 	}
 }
@@ -198,12 +209,12 @@ CConfig::CConfig()
 
 CConfig::~CConfig() = default;
 
-bool CConfig::LoadConfigFromFile(RakString fileName)
+bool CConfig::LoadConfigFromFile(std::string fileName)
 {
 	valid = false;
 	try
 	{
-		const fs::path configPath = fs::weakly_canonical(fileName.C_String());
+		const fs::path configPath = fs::weakly_canonical(fileName.c_str());
 		TiXmlDocument document(configPath.string().c_str());
 		if (!document.LoadFile())
 		{
@@ -219,12 +230,12 @@ bool CConfig::LoadConfigFromFile(RakString fileName)
 		}
 
 		bool parsedPublic = serverPublic;
-		RakString parsedName = serverName;
-		RakString parsedDescription = serverDescription;
-		RakString parsedIdentitySeed = serverIdentitySeed;
-		RakString parsedPort = serverPort;
-		RakString parsedSlots = maxSlots;
-		RakString parsedPassword = adminPassword;
+		std::string parsedName = serverName;
+		std::string parsedDescription = serverDescription;
+		std::string parsedIdentitySeed = serverIdentitySeed;
+		std::string parsedPort = serverPort;
+		std::string parsedSlots = maxSlots;
+		std::string parsedPassword = adminPassword;
 		if (TiXmlElement* config = root->FirstChildElement("config"))
 		{
 			if (const char* value = config->Attribute("public"); value && !ReadBool(value, parsedPublic))
@@ -238,9 +249,15 @@ bool CConfig::LoadConfigFromFile(RakString fileName)
 		if (TiXmlElement* description = root->FirstChildElement("description"))
 		{
 			parsedDescription = description->GetText() ? description->GetText() : "";
-			if (parsedDescription.GetLength() > CConfig::MAX_DESCRIPTION_LENGTH)
+			if (parsedDescription.size() > CConfig::MAX_DESCRIPTION_LENGTH)
 				throw std::runtime_error("description is longer than 400 bytes");
 		}
+		if (!IsIntegerInRange(parsedPort, 1, 65535))
+			throw std::runtime_error("config.port must be between 1 and 65535");
+		if (!IsIntegerInRange(parsedSlots, 1, std::numeric_limits<int>::max()))
+			throw std::runtime_error("config.max_slots must be a positive integer");
+		if (parsedName.empty() || parsedName.size() > 256)
+			throw std::runtime_error("config.host_name must contain between 1 and 256 bytes");
 
 		ParsedScripts parsed;
 		ReadScriptDocument(configPath, configPath.parent_path(), parsed, false);
@@ -256,7 +273,7 @@ bool CConfig::LoadConfigFromFile(RakString fileName)
 		scripts = std::move(parsed.scripts);
 		if (!IsValidServerIdentitySeed(serverIdentitySeed))
 		{
-			if (!serverIdentitySeed.IsEmpty())
+			if (!serverIdentitySeed.empty())
 				SPDLOG_WARN("Configured server identity seed is invalid; generating a replacement");
 			serverIdentitySeed = GenerateServerIdentitySeed();
 			if (!SaveServerIdentitySeed(configPath, serverIdentitySeed))
@@ -275,7 +292,7 @@ bool CConfig::LoadConfigFromFile(RakString fileName)
 	}
 }
 
-void CConfig::SaveConfigToFile(RakString fileName)
+void CConfig::SaveConfigToFile(std::string fileName)
 {
 	TiXmlDocument document;
 	document.LinkEndChild(new TiXmlDeclaration("1.0", "UTF-8", ""));
@@ -284,14 +301,14 @@ void CConfig::SaveConfigToFile(RakString fileName)
 	document.LinkEndChild(root);
 	auto* config = new TiXmlElement("config");
 	config->SetAttribute("public", serverPublic ? "true" : "false");
-	config->SetAttribute("host_name", serverName.C_String());
-	config->SetAttribute("port", serverPort.C_String());
-	config->SetAttribute("max_slots", maxSlots.C_String());
-	config->SetAttribute("rcon_pass", adminPassword.C_String());
-	config->SetAttribute("server_identity_seed", serverIdentitySeed.C_String());
+	config->SetAttribute("host_name", serverName.c_str());
+	config->SetAttribute("port", serverPort.c_str());
+	config->SetAttribute("max_slots", maxSlots.c_str());
+	config->SetAttribute("rcon_pass", adminPassword.c_str());
+	config->SetAttribute("server_identity_seed", serverIdentitySeed.c_str());
 	root->LinkEndChild(config);
 	auto* description = new TiXmlElement("description");
-	auto* descriptionText = new TiXmlText(serverDescription.C_String());
+	auto* descriptionText = new TiXmlText(serverDescription.c_str());
 	descriptionText->SetCDATA(true);
 	description->LinkEndChild(descriptionText);
 	root->LinkEndChild(description);
@@ -301,8 +318,8 @@ void CConfig::SaveConfigToFile(RakString fileName)
 		element->SetAttribute("src", script.c_str());
 		root->LinkEndChild(element);
 	}
-	if (!document.SaveFile(fileName.C_String()))
-		SPDLOG_ERROR("Cannot create config file {}", fileName.C_String());
+	if (!document.SaveFile(fileName.c_str()))
+		SPDLOG_ERROR("Cannot create config file {}", fileName.c_str());
 }
 
 void CConfig::SetDefault()

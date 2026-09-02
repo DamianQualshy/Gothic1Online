@@ -79,12 +79,19 @@ void CGothicGame::InitGame() //Uruchamianie z hooka na pokazanie menu :)
 		//Inicjalizacja czatu i kilka wiadomości informacyjnych
 		chat -> InitChat();
 		chat -> Show(true);
-		chat->AddLine(RakString("Gothic Online %s", versionString), zCOLOR(255, 196, 0, 255));
+		chat->AddLine(std::string("Gothic Online ") + versionString, zCOLOR(255, 196, 0, 255));
 		//Nawiązywanie połączenia z serwerem
 		if( net->InitNetwork() == true ) //Inicjacja sieci
 		{
 			const std::string serverPort = std::to_string(session.serverPort);
-			chat -> AddLine(RakString(ClientLanguage::Get(EClientText::EstablishingConnection, config->GetLanguage()), session.serverAddress.c_str(), serverPort.c_str()), zCOLOR(255, 196, 0, 255));
+			std::string message = ClientLanguage::Get(EClientText::EstablishingConnection, config->GetLanguage());
+			const auto addressPlaceholder = message.find("%s");
+			if (addressPlaceholder != std::string::npos)
+				message.replace(addressPlaceholder, 2, session.serverAddress);
+			const auto portPlaceholder = message.find("%s");
+			if (portPlaceholder != std::string::npos)
+				message.replace(portPlaceholder, 2, serverPort);
+			chat->AddLine(message, zCOLOR(255, 196, 0, 255));
 			//net -> Connect() przeniesione do pierwszej klatki rendera
 		}	
 	}

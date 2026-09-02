@@ -4,7 +4,7 @@
 class CPlayerList
 {
 private:
-	RakString* playerList;
+	std::string* playerList;
 	zCView* texture;
 	bool isShowing;
 	//Singletone
@@ -19,7 +19,7 @@ public:
 	}
 
 	void Render();
-	RakString* GetList(){ return this->playerList; };
+	std::string* GetList(){ return this->playerList; };
 };
 
 

@@ -1,12 +1,12 @@
 #include "..\\stdafx.h"
 
-CDraw::CDraw(RakString txt, RakString fnt, int x, int y, zCOLOR clr)
+CDraw::CDraw(std::string txt, std::string fnt, int x, int y, zCOLOR clr)
 {
 	isVisible = false;
 	pos[1] = x;
 	pos[2] = y;
-	text = zSTRING(txt.C_String());
-	font = zSTRING(fnt.C_String());
+	text = zSTRING(txt.c_str());
+	font = zSTRING(fnt.c_str());
 	color = clr;
 
 	zCursor::GetCursor().Top();

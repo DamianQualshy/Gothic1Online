@@ -3,7 +3,7 @@
 
 namespace LauncherRPC
 {
-	void HandleLauncherRPC(CNetwork* network, Packet* packet);
-};
+	void HandleLauncherRPC(CNetwork* network, HSteamNetConnection connection, PacketReader& packet);
+}
 
-#endif //LAUNCHERRPC_H
+#endif

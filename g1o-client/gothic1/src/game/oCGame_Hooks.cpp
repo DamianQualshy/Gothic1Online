@@ -58,7 +58,7 @@ void oCGame::Hook_ChangeLevel(zSTRING const & map1, const zSTRING & map2)
 		if( net->IsInitiated() == true && net->IsConnected() == true )
 		{
 			playerManager.DestroyAllPlayers();
-			playerManager.GetLocalPlayer()->SendChangeLevel(RakString(zSTRING(map1).ToChar()));
+			playerManager.GetLocalPlayer()->SendChangeLevel(std::string(zSTRING(map1).ToChar()));
 		}
 		this->ChangeLevel(map1, map2);
 	g1o::hooking::GetHookManager().Install(0x0063CD60, &oCGame::Hook_ChangeLevel);

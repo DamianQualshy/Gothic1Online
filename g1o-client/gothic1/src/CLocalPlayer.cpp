@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-CLocalPlayer::CLocalPlayer(int playerID, RakString playerName) 
+CLocalPlayer::CLocalPlayer(int playerID, std::string playerName)
 : CPlayer(playerID, playerName)
 {
 	SPDLOG_TRACE("CLocalPlayer::CLocalPlayer()");
@@ -19,7 +19,6 @@ CLocalPlayer::CLocalPlayer(int playerID, RakString playerName)
 	skillWeaponBroadcastTimer = 0;
 	lastDeathTimer = 0;
 	aniBroadcastTimer = 0;
-	pingTimer = 0;
 	focusTimer = 0;
 
 	isDead = false;
@@ -64,32 +63,31 @@ void CLocalPlayer::Pulse()
 	this->Respawn();
 	this->Unconscious();
 	this->HandleFocus();
-	this->PingSelf();
 };
 
 void CLocalPlayer::SendPosition()
 {
 	zVEC3 playerPos = oCNpc::GetHero()->GetPosition();
-	if( posBroadcastTimer < GetTimeMS() )
+	if( posBroadcastTimer < g1o::network::NowMilliseconds() )
 	{
 		int dist = goMath::GetDistance3D(playerPos[0], playerPos[1], playerPos[2], pos[0], pos[1], pos[2]);
-		if (dist > 25 && core.GetNetwork()->GetPeer()->GetLastPing(core.GetNetwork()->GetServerAddress()) < PING_SYNC_LIMIT)
+		if (dist > 25 && core.GetNetwork()->GetPing() < PING_SYNC_LIMIT)
 		{
-			BitStream stream;
-			stream.Write((MessageID)GO_PLAYER);
-			stream.Write((MessageID)SET_POSITION);
+			PacketWriter stream;
+			stream.Write((std::uint8_t)GO_PLAYER);
+			stream.Write((std::uint8_t)SET_POSITION);
 			stream.Write(playerPos[0]);
 			stream.Write(playerPos[1]);
 			stream.Write(playerPos[2]);
 			CNetwork* net = core.GetNetwork();
-			net->GetPeer()->Send(&stream, LOW_PRIORITY, UNRELIABLE, 0, net->GetServerAddress(), false);
+			net->Send(stream, k_nSteamNetworkingSend_UnreliableNoDelay);
 
 			pos = playerPos;
 		}
 		else if (dist > 25)
 			oCNpc::GetHero()->SetPosition(pos[0], pos[1], pos[2]);
 
-		posBroadcastTimer = GetTimeMS() + 200;
+		posBroadcastTimer = g1o::network::NowMilliseconds() + 200;
 	}
 };
 
@@ -97,30 +95,30 @@ void CLocalPlayer::SendAngle()
 {
 	float playerAngle = oCNpc::GetHero()->GetHeading();
 
-	if( angleBroadcastTimer < GetTimeMS() )
+	if( angleBroadcastTimer < g1o::network::NowMilliseconds() )
 	{
 		if( playerAngle != angle )
 		{
-			BitStream stream;
-			stream.Write((MessageID)GO_PLAYER);
-			stream.Write((MessageID)SET_ROTATION);
+			PacketWriter stream;
+			stream.Write((std::uint8_t)GO_PLAYER);
+			stream.Write((std::uint8_t)SET_ROTATION);
 			stream.Write(playerAngle);
 			CNetwork* net = core.GetNetwork();
-			net->GetPeer()->Send(&stream, LOW_PRIORITY, UNRELIABLE, 0, net->GetServerAddress(), false);
+			net->Send(stream, k_nSteamNetworkingSend_UnreliableNoDelay);
 
 			angle = playerAngle;
 		}
-		angleBroadcastTimer = GetTimeMS() + 160;
+		angleBroadcastTimer = g1o::network::NowMilliseconds() + 160;
 	}
 };
 
 void CLocalPlayer::SendChangeWeaponMode()
 {
-	if( weaponModeBroadcastTimer < GetTimeMS() )
+	if( weaponModeBroadcastTimer < g1o::network::NowMilliseconds() )
 	{
 		int wm = oCNpc::GetHero()->GetWeaponMode();
 		if( wm != this->weaponMode )
-		{	
+		{
 			if( wm != NPC_WEAPON_NONE )
 			{
 				oCItem* item = reinterpret_cast<oCItem*>(oCNpc::GetHero()->GetLeftHand());
@@ -132,21 +130,21 @@ void CLocalPlayer::SendChangeWeaponMode()
 				}
 			}
 			SPDLOG_TRACE("CLocalPlayer::SendChangeWeaponMode()");
-			BitStream stream;
-			stream.Write((MessageID)GO_PLAYER);
-			stream.Write((MessageID)CHANGE_WEAPONMODE);
+			PacketWriter stream;
+			stream.Write((std::uint8_t)GO_PLAYER);
+			stream.Write((std::uint8_t)CHANGE_WEAPONMODE);
 			stream.Write(wm);
 			CNetwork* net = core.GetNetwork();
-			net->GetPeer()->Send(&stream, LOW_PRIORITY, RELIABLE, 0, net->GetServerAddress(), false);
+			net->Send(stream, k_nSteamNetworkingSend_Reliable);
 			this->weaponMode = wm;
 		}
-		weaponModeBroadcastTimer = GetTimeMS() + 300;
+		weaponModeBroadcastTimer = g1o::network::NowMilliseconds() + 300;
 	}
 };
 
-void CLocalPlayer::SendPlayAnimation()	//Tym razem nie powinno być przepełnienia bufora raknetu
+void CLocalPlayer::SendPlayAnimation()
 {
-	if( aniBroadcastTimer < GetTimeMS() )
+	if( aniBroadcastTimer < g1o::network::NowMilliseconds() )
 	{
 		if( playerManager.GetNumberOfPlayers() > 1 )
 		{
@@ -159,65 +157,65 @@ void CLocalPlayer::SendPlayAnimation()	//Tym razem nie powinno być przepełnien
 					int aniID = ani->GetAniID();
 					if( this->animationId != aniID )
 					{
-						BitStream stream;
-						stream.Write((MessageID)GO_PLAYER);
-						stream.Write((MessageID)PLAY_ANIMATION);
+						PacketWriter stream;
+						stream.Write((std::uint8_t)GO_PLAYER);
+						stream.Write((std::uint8_t)PLAY_ANIMATION);
 						stream.Write(aniID);
 						CNetwork* net = core.GetNetwork();
-						net->GetPeer()->Send(&stream, HIGH_PRIORITY, UNRELIABLE, 0, net->GetServerAddress(), false);
+						net->Send(stream, k_nSteamNetworkingSend_UnreliableNoDelay);
 						this->animationId = aniID;
 					}
 				}
 			}
 		}
-		aniBroadcastTimer = GetTimeMS() + 200;
+		aniBroadcastTimer = g1o::network::NowMilliseconds() + 200;
 	}
 };
 
 void CLocalPlayer::SendWearArmor()
 {
-	if( armorBroadcastTimer < GetTimeMS() )
+	if( armorBroadcastTimer < g1o::network::NowMilliseconds() )
 	{
 		oCNpc* hero = oCNpc::GetHero();
 		if( hero )
-		{	
+		{
 			CNetwork* net = core.GetNetwork();
 			oCItem* armor = hero->GetEquippedArmor();
 			if( armor )
 			{
-				if (strcmp(armor->GetInstanceName().ToChar(), this->armorInstance.C_String()) != 0) //Są różne
+				if (strcmp(armor->GetInstanceName().ToChar(), this->armorInstance.c_str()) != 0) //Są różne
 				{
 					this->armorInstance = armor->GetInstanceName().ToChar();
 					//Wyslanie nowej instancji do serwera
-					BitStream stream;
-					stream.Write((MessageID)GO_PLAYER);
-					stream.Write((MessageID)WEAR_ARMOR);
+					PacketWriter stream;
+					stream.Write((std::uint8_t)GO_PLAYER);
+					stream.Write((std::uint8_t)WEAR_ARMOR);
 					stream.Write(this->armorInstance);
-					net->GetPeer()->Send(&stream, LOW_PRIORITY, RELIABLE, 0, net->GetServerAddress(), false);
+					net->Send(stream, k_nSteamNetworkingSend_Reliable);
 				}
 
 			}
 			else //Gdy jest rowne null
 			{
-				if (strcmp("NULL", this->armorInstance.C_String()) != 0) //Są różne
+				if (strcmp("NULL", this->armorInstance.c_str()) != 0) //Są różne
 				{
 					//Wyslanie nullwoej instancji do serwera
 					this->armorInstance = "NULL";
-					BitStream stream;
-					stream.Write((MessageID)GO_PLAYER);
-					stream.Write((MessageID)WEAR_ARMOR);
+					PacketWriter stream;
+					stream.Write((std::uint8_t)GO_PLAYER);
+					stream.Write((std::uint8_t)WEAR_ARMOR);
 					stream.Write(this->armorInstance);
-					net->GetPeer()->Send(&stream, LOW_PRIORITY, RELIABLE, 0, net->GetServerAddress(), false);
+					net->Send(stream, k_nSteamNetworkingSend_Reliable);
 				}
 			}
 		}
-		armorBroadcastTimer = GetTimeMS() + 1000;
+		armorBroadcastTimer = g1o::network::NowMilliseconds() + 1000;
 	}
 };
 
 void CLocalPlayer::SendEquipWeapon()
 {
-	if( weaponBroadcastTimer < GetTimeMS() )
+	if( weaponBroadcastTimer < g1o::network::NowMilliseconds() )
 	{
 		oCNpc* hero = oCNpc::GetHero();
 		if( hero )
@@ -228,87 +226,87 @@ void CLocalPlayer::SendEquipWeapon()
 
 			if( meleeWeapon )
 			{
-				if(strcmp(meleeWeapon->GetInstanceName().ToChar(), this->meleeWeaponInstance.C_String()) != 0) //Są różne
+				if(strcmp(meleeWeapon->GetInstanceName().ToChar(), this->meleeWeaponInstance.c_str()) != 0) //Są różne
 				{
 					this->meleeWeaponInstance = meleeWeapon->GetInstanceName().ToChar();
 					//Wysłanie nowej instancji
-					BitStream s1;
-					s1.Write((MessageID)GO_PLAYER);
-					s1.Write((MessageID)EQUIP_WEAPON);
+					PacketWriter s1;
+					s1.Write((std::uint8_t)GO_PLAYER);
+					s1.Write((std::uint8_t)EQUIP_WEAPON);
 					s1.Write(1); //1 - melee | 2 - ranged
 					s1.Write(this->meleeWeaponInstance);
-					net->GetPeer()->Send(&s1, LOW_PRIORITY, RELIABLE, 0, net->GetServerAddress(), false);
+					net->Send(s1, k_nSteamNetworkingSend_Reliable);
 				}
 			}
 			else if( !meleeWeapon )
 			{
-				if(strcmp(this->meleeWeaponInstance.C_String(), "NULL") != 0 )
+				if(strcmp(this->meleeWeaponInstance.c_str(), "NULL") != 0 )
 				{
 					this->meleeWeaponInstance = "NULL";
-					BitStream s1;
-					s1.Write((MessageID)GO_PLAYER);
-					s1.Write((MessageID)EQUIP_WEAPON);
+					PacketWriter s1;
+					s1.Write((std::uint8_t)GO_PLAYER);
+					s1.Write((std::uint8_t)EQUIP_WEAPON);
 					s1.Write(1); //1 - melee | 2 - ranged
 					s1.Write(this->meleeWeaponInstance);
-					net->GetPeer()->Send(&s1, LOW_PRIORITY, RELIABLE, 0, net->GetServerAddress(), false);
+					net->Send(s1, k_nSteamNetworkingSend_Reliable);
 				}
 			}
 
 			if( rangedWeapon )
 			{
-				if(strcmp(rangedWeapon->GetInstanceName().ToChar(), this->rangedWeaponInstance.C_String()) != 0)
+				if(strcmp(rangedWeapon->GetInstanceName().ToChar(), this->rangedWeaponInstance.c_str()) != 0)
 				{
 					this->rangedWeaponInstance = rangedWeapon->GetInstanceName().ToChar();
 					//Wysłanie nowej instancji
-					BitStream s2;
-					s2.Write((MessageID)GO_PLAYER);
-					s2.Write((MessageID)EQUIP_WEAPON);
+					PacketWriter s2;
+					s2.Write((std::uint8_t)GO_PLAYER);
+					s2.Write((std::uint8_t)EQUIP_WEAPON);
 					s2.Write(2); //1 - melee | 2 - ranged
 					s2.Write(this->rangedWeaponInstance);
-					net->GetPeer()->Send(&s2, LOW_PRIORITY, RELIABLE, 0, net->GetServerAddress(), false);
+					net->Send(s2, k_nSteamNetworkingSend_Reliable);
 				}
 			}
 			else if( !rangedWeapon )
 			{
-				if(strcmp(this->rangedWeaponInstance.C_String(), "NULL") != 0)
+				if(strcmp(this->rangedWeaponInstance.c_str(), "NULL") != 0)
 				{
 					this->rangedWeaponInstance = "NULL";
 					//Wysłanie nowej instancji
-					BitStream s2;
-					s2.Write((MessageID)GO_PLAYER);
-					s2.Write((MessageID)EQUIP_WEAPON);
+					PacketWriter s2;
+					s2.Write((std::uint8_t)GO_PLAYER);
+					s2.Write((std::uint8_t)EQUIP_WEAPON);
 					s2.Write(2); //1 - melee | 2 - ranged
 					s2.Write(this->rangedWeaponInstance);
-					net->GetPeer()->Send(&s2, LOW_PRIORITY, RELIABLE, 0, net->GetServerAddress(), false);		
+					net->Send(s2, k_nSteamNetworkingSend_Reliable);
 				}
 			}
 		}
 
-		weaponBroadcastTimer = GetTimeMS() + 1000;
+		weaponBroadcastTimer = g1o::network::NowMilliseconds() + 1000;
 	}
 };
 
 void CLocalPlayer::SendInstanceChange()
 {
-	if( instanceBroadcastTimer < GetTimeMS() )
+	if( instanceBroadcastTimer < g1o::network::NowMilliseconds() )
 	{
 		oCNpc* hero = oCNpc::GetHero();
 		if( hero )
 		{
 			CNetwork* net = core.GetNetwork();
 			zSTRING instance = hero->GetInstanceName();
-			if( strcmp(instance.ToChar(), this->instance.C_String()) != 0 )
+			if( strcmp(instance.ToChar(), this->instance.c_str()) != 0 )
 			{
 				SPDLOG_TRACE("CLocalPlayer::SendInstanceChange()");
 				this->instance = instance.ToChar();
 
-				BitStream stream;
-				stream.Write((MessageID)GO_PLAYER);
-				stream.Write((MessageID)CHANGE_INSTANCE);
+				PacketWriter stream;
+				stream.Write((std::uint8_t)GO_PLAYER);
+				stream.Write((std::uint8_t)CHANGE_INSTANCE);
 				stream.Write(this->instance);
-				net->GetPeer()->Send(&stream, LOW_PRIORITY, RELIABLE, 0, net->GetServerAddress(), false);
-				
-				instanceBroadcastTimer = GetTimeMS() + 3000; //co 5 sekund xd | OK, ale lepiej co 3 xD
+				net->Send(stream, k_nSteamNetworkingSend_Reliable);
+
+				instanceBroadcastTimer = g1o::network::NowMilliseconds() + 3000; //co 5 sekund xd | OK, ale lepiej co 3 xD
 			}
 		}
 	}
@@ -316,7 +314,7 @@ void CLocalPlayer::SendInstanceChange()
 
 void CLocalPlayer::SendHand()
 {
-	if( this->handBroadcastTimer < GetTimeMS() )
+	if( this->handBroadcastTimer < g1o::network::NowMilliseconds() )
 	{
 		oCNpc* hero = oCNpc::GetHero();
 		if( hero )
@@ -326,103 +324,103 @@ void CLocalPlayer::SendHand()
 			oCItem* rightHandIt = (oCItem*)hero->GetRightHand();
 			if( leftHandIt )
 			{
-				if( strcmp(this->leftHand.C_String(), leftHandIt->GetInstanceName().ToChar()) != 0 )
+				if( strcmp(this->leftHand.c_str(), leftHandIt->GetInstanceName().ToChar()) != 0 )
 				{
 					this->leftHand = leftHandIt->GetInstanceName().ToChar();
-					//core.GetChat()->AddLine(RakString("L+ %s", this->leftHand.C_String()), zCOLOR(255, 0, 0));
-					SPDLOG_TRACE("Left hand: {}", this->leftHand.C_String());
-					CEvent::UseItem(leftHand.C_String(), leftHandIt->GetAmount(), 0);
+					//core.GetChat()->AddLine(std::string("L+ %s", this->leftHand.c_str()), zCOLOR(255, 0, 0));
+					SPDLOG_TRACE("Left hand: {}", this->leftHand.c_str());
+					CEvent::UseItem(leftHand.c_str(), leftHandIt->GetAmount(), 0);
 
-					BitStream stream;
-					stream.Write((MessageID)GO_PLAYER);
-					stream.Write((MessageID)ITEM_HAND);
+					PacketWriter stream;
+					stream.Write((std::uint8_t)GO_PLAYER);
+					stream.Write((std::uint8_t)ITEM_HAND);
 					stream.Write(1); //Left hand
 					stream.Write(this->leftHand);
 
-					net->GetPeer()->Send(&stream, LOW_PRIORITY, RELIABLE, 0, net->GetServerAddress(), false);
+					net->Send(stream, k_nSteamNetworkingSend_Reliable);
 				}
 			}
 			else if( !leftHandIt )
 			{
-				if( strcmp(this->leftHand.C_String(), "NULL") != 0 )
+				if( strcmp(this->leftHand.c_str(), "NULL") != 0 )
 				{
 					this->leftHand = "NULL";
-					//core.GetChat()->AddLine(RakString("L- %s", this->leftHand.C_String()), zCOLOR(255, 0, 0));
-					SPDLOG_TRACE("Left hand: {}", this->leftHand.C_String());
+					//core.GetChat()->AddLine(std::string("L- %s", this->leftHand.c_str()), zCOLOR(255, 0, 0));
+					SPDLOG_TRACE("Left hand: {}", this->leftHand.c_str());
 					CEvent::UseItem("", 0, 0);
 
-					BitStream stream;
-					stream.Write((MessageID)GO_PLAYER);
-					stream.Write((MessageID)ITEM_HAND);
+					PacketWriter stream;
+					stream.Write((std::uint8_t)GO_PLAYER);
+					stream.Write((std::uint8_t)ITEM_HAND);
 					stream.Write(1);
 					stream.Write(this->leftHand);
 
-					net->GetPeer()->Send(&stream, LOW_PRIORITY, RELIABLE, 0, net->GetServerAddress(), false);
+					net->Send(stream, k_nSteamNetworkingSend_Reliable);
 				}
 			}
 			if( rightHandIt )
 			{
-				if( strcmp(this->rightHand.C_String(), rightHandIt->GetInstanceName().ToChar()) != 0 )
+				if( strcmp(this->rightHand.c_str(), rightHandIt->GetInstanceName().ToChar()) != 0 )
 				{
 					this->rightHand = rightHandIt->GetInstanceName().ToChar();
-					//core.GetChat()->AddLine(RakString("R+ %s", this->rightHand.C_String()), zCOLOR(255, 0, 0));
-					SPDLOG_TRACE("Right hand:{}", this->rightHand.C_String());
-					CEvent::UseItem(rightHand.C_String(), rightHandIt->GetAmount(), 1);
+					//core.GetChat()->AddLine(std::string("R+ %s", this->rightHand.c_str()), zCOLOR(255, 0, 0));
+					SPDLOG_TRACE("Right hand:{}", this->rightHand.c_str());
+					CEvent::UseItem(rightHand.c_str(), rightHandIt->GetAmount(), 1);
 
-					BitStream stream;
-					stream.Write((MessageID)GO_PLAYER);
-					stream.Write((MessageID)ITEM_HAND);
+					PacketWriter stream;
+					stream.Write((std::uint8_t)GO_PLAYER);
+					stream.Write((std::uint8_t)ITEM_HAND);
 					stream.Write(2);
 					stream.Write(this->rightHand);
 
-					net->GetPeer()->Send(&stream, LOW_PRIORITY, RELIABLE, 0, net->GetServerAddress(), false);
+					net->Send(stream, k_nSteamNetworkingSend_Reliable);
 				}
 			}
 			else if( !rightHandIt )
 			{
-				if( strcmp(this->rightHand.C_String(), "NULL") != 0 )
+				if( strcmp(this->rightHand.c_str(), "NULL") != 0 )
 				{
 					this->rightHand = "NULL";
-					//core.GetChat()->AddLine(RakString("R- %s", this->rightHand.C_String()), zCOLOR(255, 0, 0));
-					SPDLOG_TRACE("Right hand:{}", this->rightHand.C_String());
+					//core.GetChat()->AddLine(std::string("R- %s", this->rightHand.c_str()), zCOLOR(255, 0, 0));
+					SPDLOG_TRACE("Right hand:{}", this->rightHand.c_str());
 					CEvent::UseItem("", 0, 1);
 
-					BitStream stream;
-					stream.Write((MessageID)GO_PLAYER);
-					stream.Write((MessageID)ITEM_HAND);
+					PacketWriter stream;
+					stream.Write((std::uint8_t)GO_PLAYER);
+					stream.Write((std::uint8_t)ITEM_HAND);
 					stream.Write(2);
 					stream.Write(this->rightHand);
-					net->GetPeer()->Send(&stream, LOW_PRIORITY, RELIABLE, 0, net->GetServerAddress(), false);
+					net->Send(stream, k_nSteamNetworkingSend_Reliable);
 
 				}
 			}
 		}
-		this->handBroadcastTimer = GetTimeMS() + 700;
+		this->handBroadcastTimer = g1o::network::NowMilliseconds() + 700;
 	}
 };
 
-void CLocalPlayer::SendChangeLevel(RakString levelName)
+void CLocalPlayer::SendChangeLevel(std::string levelName)
 {
 	//Brak timera bo zmianą worldu nie da sie spamowac
 	this->world = levelName;
-	BitStream s;
-	s.Write((MessageID)GO_PLAYER);
-	s.Write((MessageID)CHANGE_LEVEL);
+	PacketWriter s;
+	s.Write((std::uint8_t)GO_PLAYER);
+	s.Write((std::uint8_t)CHANGE_LEVEL);
 	s.Write(this->world);
 
 	CNetwork* n = core.GetNetwork();	//Ustawilem unreliable, bo watek odbierajacy pakiety w tym momencie jest nieaktywny
-	n->GetPeer()->Send(&s, LOW_PRIORITY, UNRELIABLE, 0, n->GetServerAddress(), false);
+	n->Send(s, k_nSteamNetworkingSend_UnreliableNoDelay);
 };
 
 void CLocalPlayer::SendEnterWorld()
 {
 	//Brak timera
-	BitStream s;
-	s.Write((MessageID)GO_PLAYER);
-	s.Write((MessageID)ENTER_WORLD);
+	PacketWriter s;
+	s.Write((std::uint8_t)GO_PLAYER);
+	s.Write((std::uint8_t)ENTER_WORLD);
 
 	CNetwork* n = core.GetNetwork(); //Jak bedzie gubic pakiety to ustawic na RELIABLE_OREDERED
-	n->GetPeer()->Send(&s, LOW_PRIORITY, UNRELIABLE, 0, n->GetServerAddress(), false);
+	n->Send(s, k_nSteamNetworkingSend_UnreliableNoDelay);
 };
 
 void CLocalPlayer::SendHealth()
@@ -432,13 +430,13 @@ void CLocalPlayer::SendHealth()
 	{
 		if( hero->GetAttribute(NPC_ATR_HITPOINTS) != this->health )
 		{
-			BitStream stream;
-			stream.Write((MessageID)GO_PLAYER);
-			stream.Write((MessageID)SET_HEALTH);
+			PacketWriter stream;
+			stream.Write((std::uint8_t)GO_PLAYER);
+			stream.Write((std::uint8_t)SET_HEALTH);
 			stream.Write(hero->GetAttribute(NPC_ATR_HITPOINTS));
 
 			CNetwork* net = core.GetNetwork();
-			net->GetPeer()->Send(&stream, HIGH_PRIORITY, RELIABLE, 0, net->GetServerAddress(), false);
+			net->Send(stream, k_nSteamNetworkingSend_Reliable);
 
 			this->health = hero->GetAttribute(NPC_ATR_HITPOINTS);
 		}
@@ -452,13 +450,13 @@ void CLocalPlayer::SendMaxHealth()
 	{
 		if( hero->GetAttribute(NPC_ATR_HITPOINTS_MAX) != this->maxhealth )
 		{
-			BitStream stream;
-			stream.Write((MessageID)GO_PLAYER);
-			stream.Write((MessageID)SET_HEALTH_MAX);
+			PacketWriter stream;
+			stream.Write((std::uint8_t)GO_PLAYER);
+			stream.Write((std::uint8_t)SET_HEALTH_MAX);
 			stream.Write(hero->GetAttribute(NPC_ATR_HITPOINTS_MAX));
 
 			CNetwork* net = core.GetNetwork();
-			net->GetPeer()->Send(&stream, LOW_PRIORITY, RELIABLE, 0, net->GetServerAddress(), false);
+			net->Send(stream, k_nSteamNetworkingSend_Reliable);
 
 			this->maxhealth = hero->GetAttribute(NPC_ATR_HITPOINTS_MAX);
 		}
@@ -472,7 +470,7 @@ void CLocalPlayer::SendHitFocus(oCNpc *target)
 	{
 		CNetwork* net = core.GetNetwork();
 		CPlayer* focusPlayer = playerManager.GetPlayer(target);
-		if (focusPlayer && net->GetPeer()->GetLastPing(core.GetNetwork()->GetServerAddress()) < PING_SYNC_LIMIT)
+		if (focusPlayer && net->GetPing() < PING_SYNC_LIMIT)
 		{
 			if (target->GetAttribute(NPC_ATR_HITPOINTS) < focusPlayer->health)
 			{
@@ -487,24 +485,24 @@ void CLocalPlayer::SendHitFocus(oCNpc *target)
 						{
 							if (!target->IsUnconscious() && minushp > 0)
 							{
-								BitStream stream;
-								stream.Write((MessageID)GO_PLAYER);
-								stream.Write((MessageID)ATTACK_HIT);
+								PacketWriter stream;
+								stream.Write((std::uint8_t)GO_PLAYER);
+								stream.Write((std::uint8_t)ATTACK_HIT);
 								stream.Write(focusPlayer->GetID());
 								stream.Write(minushp);
 
-								net->GetPeer()->Send(&stream, HIGH_PRIORITY, RELIABLE, 0, net->GetServerAddress(), false);
+								net->Send(stream, k_nSteamNetworkingSend_Reliable);
 
 								focusPlayer->health = target->GetAttribute(NPC_ATR_HITPOINTS);
 							}
 							else if (!hero->IsHuman() || !target->IsHuman())
 							{
-								BitStream stream;
-								stream.Write((MessageID)GO_PLAYER);
-								stream.Write((MessageID)ATTACK_DEAD);
+								PacketWriter stream;
+								stream.Write((std::uint8_t)GO_PLAYER);
+								stream.Write((std::uint8_t)ATTACK_DEAD);
 								stream.Write(focusPlayer->GetID());
 
-								net->GetPeer()->Send(&stream, MEDIUM_PRIORITY, RELIABLE, 0, net->GetServerAddress(), false);
+								net->Send(stream, k_nSteamNetworkingSend_Reliable);
 								if (target->IsUnconscious())
 									target->DoDie(nullptr);
 
@@ -512,23 +510,23 @@ void CLocalPlayer::SendHitFocus(oCNpc *target)
 							}
 							else if (!focusPlayer->unconscious)
 							{
-								BitStream stream;
-								stream.Write((MessageID)GO_PLAYER);
-								stream.Write((MessageID)ATTACK_UNCONSCIOUS);
+								PacketWriter stream;
+								stream.Write((std::uint8_t)GO_PLAYER);
+								stream.Write((std::uint8_t)ATTACK_UNCONSCIOUS);
 								stream.Write(focusPlayer->GetID());
 
-								net->GetPeer()->Send(&stream, MEDIUM_PRIORITY, RELIABLE, 0, net->GetServerAddress(), false);
+								net->Send(stream, k_nSteamNetworkingSend_Reliable);
 								focusPlayer->unconscious = true;
 							}
 						}
 						else
 						{
-							BitStream stream;
-							stream.Write((MessageID)GO_PLAYER);
-							stream.Write((MessageID)ATTACK_DEAD);
+							PacketWriter stream;
+							stream.Write((std::uint8_t)GO_PLAYER);
+							stream.Write((std::uint8_t)ATTACK_DEAD);
 							stream.Write(focusPlayer->GetID());
 
-							net->GetPeer()->Send(&stream, MEDIUM_PRIORITY, RELIABLE, 0, net->GetServerAddress(), false);
+							net->Send(stream, k_nSteamNetworkingSend_Reliable);
 
 							if (target->IsUnconscious())
 								target->DoDie(nullptr);
@@ -539,12 +537,12 @@ void CLocalPlayer::SendHitFocus(oCNpc *target)
 			}
 			else if (focusPlayer->npc->IsUnconscious() && focusPlayer->unconscious == false)
 			{
-				BitStream stream;
-				stream.Write((MessageID)GO_PLAYER);
-				stream.Write((MessageID)ATTACK_UNCONSCIOUS);
+				PacketWriter stream;
+				stream.Write((std::uint8_t)GO_PLAYER);
+				stream.Write((std::uint8_t)ATTACK_UNCONSCIOUS);
 				stream.Write(focusPlayer->GetID());
 
-				net->GetPeer()->Send(&stream, MEDIUM_PRIORITY, RELIABLE, 0, net->GetServerAddress(), false);
+				net->Send(stream, k_nSteamNetworkingSend_Reliable);
 				focusPlayer->unconscious = true;
 			}
 		}
@@ -553,7 +551,7 @@ void CLocalPlayer::SendHitFocus(oCNpc *target)
 
 void CLocalPlayer::SendStandUp()
 {
-	if( this->standUpTimer < GetTimeMS() )
+	if( this->standUpTimer < g1o::network::NowMilliseconds() )
 	{
 		oCNpc* hero = oCNpc::GetHero();
 		if( hero )
@@ -564,11 +562,11 @@ void CLocalPlayer::SendStandUp()
 				{
 					this->unconscious = false;
 					//Wysłanie że wstaje
-					BitStream stream;
-					stream.Write((MessageID)GO_PLAYER);
-					stream.Write((MessageID)STAND_UP);
+					PacketWriter stream;
+					stream.Write((std::uint8_t)GO_PLAYER);
+					stream.Write((std::uint8_t)STAND_UP);
 					stream.Write(false); //Że wstaje, true - że pada
-					core.GetNetwork()->GetPeer()->Send(&stream, LOW_PRIORITY, RELIABLE, 0, core.GetNetwork()->GetServerAddress(), false);
+					core.GetNetwork()->Send(stream, k_nSteamNetworkingSend_Reliable);
 				}
 			}
 			else
@@ -580,12 +578,12 @@ void CLocalPlayer::SendStandUp()
 				}
 			}
 		}
-		this->standUpTimer = GetTimeMS() + 1000;
+		this->standUpTimer = g1o::network::NowMilliseconds() + 1000;
 	}
 };
 
 void CLocalPlayer::SendMagicSetup()
-{							
+{
 	oCNpc* hero = oCNpc::GetHero();
 	if( !hero ) return;
 	if( hero->GetWeaponMode() == NPC_WEAPON_MAG )
@@ -598,7 +596,7 @@ void CLocalPlayer::SendMagicSetup()
 			{
 				oCItem* item = book->GetSpellItem(mag_spellID);
 				if( item )
-				{	
+				{
 					//Bo buguje gre
 					if(strcmp(item->GetInstanceName().ToChar(), "ITARRUNECONTROL") == 0)
 					{
@@ -607,12 +605,12 @@ void CLocalPlayer::SendMagicSetup()
 						item->RemoveVobFromWorld();
 						return;
 					} //Wymuszone usunięcie spela
-					BitStream stream;
-					stream.Write((MessageID)GO_PLAYER);
-					stream.Write((MessageID)MAGIC_SETUP);
-					stream.Write(RakString(item->GetInstanceName().ToChar()));
+					PacketWriter stream;
+					stream.Write((std::uint8_t)GO_PLAYER);
+					stream.Write((std::uint8_t)MAGIC_SETUP);
+					stream.Write(std::string(item->GetInstanceName().ToChar()));
 					CNetwork* net = core.GetNetwork();
-					net->GetPeer()->Send(&stream,LOW_PRIORITY,RELIABLE,0,net->GetServerAddress(), false);
+					net->Send(stream, k_nSteamNetworkingSend_Reliable);
 					//Wysłanie
 					this->spellID = mag_spellID;
 				}
@@ -624,12 +622,12 @@ void CLocalPlayer::SendMagicSetup()
 		if( this->spellID >= 0 )
 		{
 			//Wysłanie null
-			BitStream stream;
-			stream.Write((MessageID)GO_PLAYER);
-			stream.Write((MessageID)MAGIC_SETUP);
-			stream.Write(RakString("NULL"));
+			PacketWriter stream;
+			stream.Write((std::uint8_t)GO_PLAYER);
+			stream.Write((std::uint8_t)MAGIC_SETUP);
+			stream.Write(std::string("NULL"));
 			CNetwork* net = core.GetNetwork();
-			net->GetPeer()->Send(&stream,LOW_PRIORITY,RELIABLE,0,net->GetServerAddress(), false);
+			net->Send(stream, k_nSteamNetworkingSend_Reliable);
 			//Wysłanie
 			this->spellID = -1;
 		}
@@ -647,76 +645,75 @@ void CLocalPlayer::SendMagicAttack()
 			CPlayer* focusPlayer = playerManager.GetPlayer(focus);
 			if( focusPlayer )
 			{
-				BitStream stream;
-				stream.Write((MessageID)GO_PLAYER);
-				stream.Write((MessageID)MAGIC_ATTACK);
+				PacketWriter stream;
+				stream.Write((std::uint8_t)GO_PLAYER);
+				stream.Write((std::uint8_t)MAGIC_ATTACK);
 				stream.Write(focusPlayer->GetID());
 				CNetwork* net = core.GetNetwork();
-				net->GetPeer()->Send(&stream,LOW_PRIORITY,UNRELIABLE,0,net->GetServerAddress(),false);
+				net->Send(stream, k_nSteamNetworkingSend_UnreliableNoDelay);
 			}
 			else
 			{
 				//brak celu
-				BitStream stream;
-				stream.Write((MessageID)GO_PLAYER);
-				stream.Write((MessageID)MAGIC_ATTACK);
+				PacketWriter stream;
+				stream.Write((std::uint8_t)GO_PLAYER);
+				stream.Write((std::uint8_t)MAGIC_ATTACK);
 				stream.Write(-1);
 				CNetwork* net = core.GetNetwork();
-				net->GetPeer()->Send(&stream,LOW_PRIORITY,UNRELIABLE,0,net->GetServerAddress(),false);
+				net->Send(stream, k_nSteamNetworkingSend_UnreliableNoDelay);
 			}
 		}
 		else
 		{
 			//brak celu
-			BitStream stream;
-			stream.Write((MessageID)GO_PLAYER);
-			stream.Write((MessageID)MAGIC_ATTACK);
+			PacketWriter stream;
+			stream.Write((std::uint8_t)GO_PLAYER);
+			stream.Write((std::uint8_t)MAGIC_ATTACK);
 			stream.Write(-1);
 			CNetwork* net = core.GetNetwork();
-			net->GetPeer()->Send(&stream,LOW_PRIORITY,UNRELIABLE,0,net->GetServerAddress(),false);
+			net->Send(stream, k_nSteamNetworkingSend_UnreliableNoDelay);
 		}
 	}
 };
 
-void CLocalPlayer::SendOverlay(bool add, RakString overlay)
+void CLocalPlayer::SendOverlay(bool add, std::string overlay)
 {
 	if (overlay != "HUMANS_TORCH.MDS")
 	{
-		BitStream stream;
-		stream.Write((MessageID)GO_PLAYER);
-		stream.Write((MessageID)SET_OVERLAY);
+		PacketWriter stream;
+		stream.Write((std::uint8_t)GO_PLAYER);
+		stream.Write((std::uint8_t)SET_OVERLAY);
 		stream.Write(add);
 		stream.Write(overlay);
 
-		core.GetNetwork()->GetPeer()->Send(&stream, LOW_PRIORITY, RELIABLE, 0, core.GetNetwork()->GetServerAddress(), false);
+		core.GetNetwork()->Send(stream, k_nSteamNetworkingSend_Reliable);
 	}
 }
-
-void CLocalPlayer::SendTimedOverlay(TimeMS time, RakString overlay)
+void CLocalPlayer::SendTimedOverlay(std::uint64_t time, std::string overlay)
 {
-	BitStream stream;
-	stream.Write((MessageID)GO_PLAYER);
-	stream.Write((MessageID)SET_TIMED_OVERLAY);
+	PacketWriter stream;
+	stream.Write((std::uint8_t)GO_PLAYER);
+	stream.Write((std::uint8_t)SET_TIMED_OVERLAY);
 	stream.Write(time);
 	stream.Write(overlay);
 
-	core.GetNetwork()->GetPeer()->Send(&stream, LOW_PRIORITY, RELIABLE, 0, core.GetNetwork()->GetServerAddress(), false);
+	core.GetNetwork()->Send(stream, k_nSteamNetworkingSend_Reliable);
 }
 
 void CLocalPlayer::SendMobTrigger(bool trigger, oCMobInter *mob)
 {
 	zVEC3 pos = mob->GetPositionWorld();
 
-	BitStream stream;
-	stream.Write((MessageID)GO_PLAYER);
-	stream.Write((MessageID)MOB_TRIGGER);
+	PacketWriter stream;
+	stream.Write((std::uint8_t)GO_PLAYER);
+	stream.Write((std::uint8_t)MOB_TRIGGER);
 	stream.Write(trigger);
 	stream.Write(this->world);
 	stream.Write(pos[0]);
 	stream.Write(pos[1]);
 	stream.Write(pos[2]);
 
-	core.GetNetwork()->GetPeer()->Send(&stream, MEDIUM_PRIORITY, RELIABLE, 0, core.GetNetwork()->GetServerAddress(), false);
+	core.GetNetwork()->Send(stream, k_nSteamNetworkingSend_Reliable);
 }
 
 void CLocalPlayer::SendArrow()
@@ -737,33 +734,33 @@ void CLocalPlayer::SendArrow()
 	aniID = hero->GetAnimationID();
 	type = hero->GetWeaponMode();
 
-	BitStream stream;
-	stream.Write((MessageID)GO_PLAYER);
-	stream.Write((MessageID)SHOOT_ARROW);
+	PacketWriter stream;
+	stream.Write((std::uint8_t)GO_PLAYER);
+	stream.Write((std::uint8_t)SHOOT_ARROW);
 	stream.Write(targetID);
 	stream.Write(aniID);
 	stream.Write(type);
 
-	core.GetNetwork()->GetPeer()->Send(&stream, HIGH_PRIORITY, RELIABLE, 0, core.GetNetwork()->GetServerAddress(), false);
+	core.GetNetwork()->Send(stream, k_nSteamNetworkingSend_Reliable);
 }
 
 void CLocalPlayer::SendFocus(int focusID, bool taken)
 {
-	BitStream stream;
-	stream.Write((MessageID)GO_SCRIPT);
-	stream.Write((MessageID)SCRIPT_FOCUS);
+	PacketWriter stream;
+	stream.Write((std::uint8_t)GO_SCRIPT);
+	stream.Write((std::uint8_t)SCRIPT_FOCUS);
 	stream.Write(taken);
 	stream.Write(focusID);
 
-	core.GetNetwork()->GetPeer()->Send(&stream, LOW_PRIORITY, RELIABLE, 0, core.GetNetwork()->GetServerAddress(), false);
+	core.GetNetwork()->Send(stream, k_nSteamNetworkingSend_Reliable);
 }
 /*
 void CLocalPlayer::SendProtection()
 {
-	if (this->protectionBroadcastTimer < GetTimeMS())
+	if (this->protectionBroadcastTimer < g1o::network::NowMilliseconds())
 	{
 		oCNpc *hero = oCNpc::GetHero();
-		
+
 		int protWeapon = hero->GetProtection(PROT_WEAPON);
 		int protArrow = hero->GetProtection(PROT_ARROW);
 		int protFire = hero->GetProtection(PROT_FIRE);
@@ -773,93 +770,93 @@ void CLocalPlayer::SendProtection()
 
 		if (protWeapon != protection[0])
 		{
-			BitStream stream;
-			stream.Write((MessageID)GO_PLAYER);
-			stream.Write((MessageID)SET_PROTECTION);
+			PacketWriter stream;
+			stream.Write((std::uint8_t)GO_PLAYER);
+			stream.Write((std::uint8_t)SET_PROTECTION);
 			stream.Write(0);
 			stream.Write(protWeapon);
-			
-			net->GetPeer()->Send(&stream, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, net->GetServerAddress(), false);
+
+			net->Send(stream, k_nSteamNetworkingSend_Reliable);
 
 			protection[0] = protWeapon;
 		}
 
 		if (protArrow != protection[1])
 		{
-			BitStream stream;
-			stream.Write((MessageID)GO_PLAYER);
-			stream.Write((MessageID)SET_PROTECTION);
+			PacketWriter stream;
+			stream.Write((std::uint8_t)GO_PLAYER);
+			stream.Write((std::uint8_t)SET_PROTECTION);
 			stream.Write(1);
 			stream.Write(protArrow);
 
-			net->GetPeer()->Send(&stream, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, net->GetServerAddress(), false);
+			net->Send(stream, k_nSteamNetworkingSend_Reliable);
 
 			protection[1] = protArrow;
 		}
 
 		if (protFire != protection[2])
 		{
-			BitStream stream;
-			stream.Write((MessageID)GO_PLAYER);
-			stream.Write((MessageID)SET_PROTECTION);
+			PacketWriter stream;
+			stream.Write((std::uint8_t)GO_PLAYER);
+			stream.Write((std::uint8_t)SET_PROTECTION);
 			stream.Write(2);
 			stream.Write(protFire);
 
-			net->GetPeer()->Send(&stream, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, net->GetServerAddress(), false);
+			net->Send(stream, k_nSteamNetworkingSend_Reliable);
 
 			protection[2] = protFire;
 		}
 
 		if (protMagic != protection[3])
 		{
-			BitStream stream;
-			stream.Write((MessageID)GO_PLAYER);
-			stream.Write((MessageID)SET_PROTECTION);
+			PacketWriter stream;
+			stream.Write((std::uint8_t)GO_PLAYER);
+			stream.Write((std::uint8_t)SET_PROTECTION);
 			stream.Write(3);
 			stream.Write(protMagic);
 
-			net->GetPeer()->Send(&stream, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, net->GetServerAddress(), false);
+			net->Send(stream, k_nSteamNetworkingSend_Reliable);
 
 			protection[3] = protMagic;
 		}
 
-		this->protectionBroadcastTimer = GetTimeMS() + 1200;
+		this->protectionBroadcastTimer = g1o::network::NowMilliseconds() + 1200;
 	}
 };
 */
 
 void CLocalPlayer::BroadcastWorld()
 {
-	if( this->worldBroadcastTimer < GetTimeMS() )
+	if( this->worldBroadcastTimer < g1o::network::NowMilliseconds() )
 	{
 		oCWorld* zworld = oCGame::GetGame()->GetGameWorld();
 		if( zworld )
 		{
-			RakString worldName = RakString("%s.ZEN", zworld->GetWorldName().ToChar());
-			if( strcmp(this->world.C_String(), worldName.C_String()) != 0 )
+			std::string worldName = std::string(zworld->GetWorldName().ToChar()) + ".ZEN";
+			if( strcmp(this->world.c_str(), worldName.c_str()) != 0 )
 			{
 				playerManager.DestroyAllPlayers();
 				this->SendChangeLevel(worldName);
 				this->SendEnterWorld();
 			}
-			worldName.FreeMemory();
+			worldName.clear();
 		}
-		this->worldBroadcastTimer = GetTimeMS() + 800;
+		this->worldBroadcastTimer = g1o::network::NowMilliseconds() + 800;
 	}
 };
 
 void CLocalPlayer::Respawn()
 {
-	if( lastDeathTimer < GetTimeMS() )
+	if( lastDeathTimer < g1o::network::NowMilliseconds() )
 	{
 		oCNpc* hero = oCNpc::GetHero();
 		if( hero->IsDead() )
 		{
 			if( isDead == false )
 			{
-				lastDeathTimer = GetTimeMS() + 5000;
+				lastDeathTimer = g1o::network::NowMilliseconds() + 5000;
 				isDead = true;
-				
+
 				if (hero->IsHuman())
 				{
 					// Unequip weapons
@@ -915,7 +912,7 @@ void CLocalPlayer::Respawn()
 		}
 		else
 			isDead = false;
-		lastDeathTimer = GetTimeMS() + 300;
+		lastDeathTimer = g1o::network::NowMilliseconds() + 300;
 	}
 };
 
@@ -953,7 +950,7 @@ void CLocalPlayer::HandleFocus()
 	static oCNpc *hasFocus = NULL;
 	static int focusID = -1;
 
-	if (focusTimer < GetTimeMS())
+	if (focusTimer < g1o::network::NowMilliseconds())
 	{
 		oCNpc *focus = oCNpc::GetHero()->GetFocusNpc();
 		if (focus)
@@ -975,7 +972,7 @@ void CLocalPlayer::HandleFocus()
 				hasFocus = focus;
 
 				CPlayer *player = playerManager.GetPlayer(focus);
-				
+
 				focusID = player ? player->GetID() : -1;
 
 				SendFocus(focusID, true);
@@ -987,15 +984,6 @@ void CLocalPlayer::HandleFocus()
 			SendFocus(focusID, false);
 		}
 
-		focusTimer = GetTimeMS() + 50;
+		focusTimer = g1o::network::NowMilliseconds() + 50;
 	}
 }
-
-void CLocalPlayer::PingSelf()
-{
-	if( pingTimer < GetTimeMS() )
-	{
-		core.GetNetwork()->GetPeer()->Ping(core.GetNetwork()->GetServerAddress());
-		pingTimer = GetTimeMS() + 3000;
-	}
-};

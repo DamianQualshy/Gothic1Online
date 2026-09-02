@@ -42,13 +42,13 @@ CCreature::CCreature()
 CCreature::~CCreature()
 {
 	SPDLOG_TRACE("CCreature::~CCreature() ID = {}", this->id);
-	instance.FreeMemory();
-	world.FreeMemory();
-	armorInstance.FreeMemory();
-	meleeWeaponInstance.FreeMemory();
-	rangedWeaponInstance.FreeMemory();
-	rightHand.FreeMemory();
-	leftHand.FreeMemory();
+	instance.clear();
+	world.clear();
+	armorInstance.clear();
+	meleeWeaponInstance.clear();
+	rangedWeaponInstance.clear();
+	rightHand.clear();
+	leftHand.clear();
 };
 
 void CCreature::GetAdditionalVisuals(zSTRING &_bodyModel, int &_bodyTexture, zSTRING &_headModel, int &_headTexture)

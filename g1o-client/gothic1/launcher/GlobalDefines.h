@@ -11,7 +11,6 @@
 #define CLIENT_VERSIONS_PATH        "../versions"
 #define CLIENT_LOG_PATH             "../logs"
 
-#define UPLOAD_FILE_PATH            "download"
 #define DOWNLOAD_FILE_PATH          "../../Data"
 
 #define INJECT_APP_NAME             "../../System/GothicMod.exe"
@@ -19,7 +18,6 @@
 #define FILE_URL_MASTER_LIST        0
 #define FILE_URL_VERSION            1
 
-#define RAKNET_PASSWORD             "TEMPORARY_PASSWORD"
 #ifndef G1O_VERSION
 #define G1O_VERSION                 "0.5.0"
 #endif

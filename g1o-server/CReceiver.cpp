@@ -1,41 +1,49 @@
 #include "stdafx.h"
 
-CReceiver::CReceiver()
-{
-	//SPDLOG_TRACE("CReceiver::CReceiver()");
-};
+CReceiver::CReceiver() = default;
+CReceiver::~CReceiver() = default;
 
-CReceiver::~CReceiver()
+void CReceiver::ReceivePackets(CNetwork* network)
 {
-	//SPDLOG_TRACE("CReceiver::~CReceiver()");
-};
-
-void CReceiver::ReceivePackets(CNetwork *network)
-{
-	for( Packet* packet = network->GetPeer()->Receive(); packet; network->GetPeer()->DeallocatePacket(packet), packet = network->GetPeer()->Receive() )
+	while (true)
 	{
-		switch(packet->data[0])
-		{
-		case GO_CONNECTION: 
-			ConnectionRPC::HandleConnectionRPC(network,packet); break;
-		case GO_LAUNCHER:
-			LauncherRPC::HandleLauncherRPC(network,packet); break;
-		case GO_CHAT:
-			ChatRPC::HandleChatRPC(network,packet); break;
-		case GO_PLAYER:
-			PlayerRPC::HandlePlayerRPC(network,packet); break;
-		case GO_ITEM:
-			ItemRPC::HandleItemRPC(network,packet); break;
-		case GO_SCRIPT:
-			ScriptRPC::HandleScriptRPC(network,packet); break;
+		ISteamNetworkingMessage* message = nullptr;
+		const int received = network->GetSockets()->ReceiveMessagesOnPollGroup(network->GetPollGroup(), &message, 1);
+		if (received <= 0)
+			break;
 
-		//RakNetowskie, od połączenia
-		case ID_NEW_INCOMING_CONNECTION:
-			ConnectionRPC::CatchConnection(network,packet); break;
-		case ID_CONNECTION_LOST:
-			ConnectionRPC::LostConnection(network,packet); break;
-		case ID_DISCONNECTION_NOTIFICATION:
-			ConnectionRPC::Disconnection(network,packet); break;
+		PacketReader packet(message->m_pData, message->m_cbSize);
+		EMultiplayerMessages kind{};
+		if (packet.Read(kind))
+		{
+			switch (kind)
+			{
+			case GO_CONNECTION:
+				ConnectionRPC::HandleConnectionRPC(network, message->m_conn, packet);
+				break;
+			case GO_LAUNCHER:
+				LauncherRPC::HandleLauncherRPC(network, message->m_conn, packet);
+				break;
+			case GO_CHAT:
+				ChatRPC::HandleChatRPC(network, message->m_conn, packet);
+				break;
+			case GO_PLAYER:
+				PlayerRPC::HandlePlayerRPC(network, message->m_conn, packet);
+				break;
+			case GO_ITEM:
+				ItemRPC::HandleItemRPC(network, message->m_conn, packet);
+				break;
+			case GO_SCRIPT:
+				ScriptRPC::HandleScriptRPC(network, message->m_conn, packet);
+				break;
+			case GO_FILE_TRANSFER:
+				core.GetScriptDownload()->HandleRequest(network, message->m_conn, packet);
+				break;
+			default:
+				break;
+			}
 		}
+		message->Release();
 	}
-};
+	network->PollCallbacks();
+}

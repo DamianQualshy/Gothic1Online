@@ -10,11 +10,11 @@ CAnimation::~CAnimation()
 	SPDLOG_TRACE("CAnimation::~CAnimation()");
 };
 
-bool CAnimation::IsAnimationTurning(RakString aniName)
+bool CAnimation::IsAnimationTurning(std::string aniName)
 {
 	for( unsigned int i = 0; i < 44; i++ )
 	{
-		if( strcmp(AnimationTurning[i], aniName.C_String()) == 0 )
+		if( strcmp(AnimationTurning[i], aniName.c_str()) == 0 )
 			return true;
 	}
 	return false;

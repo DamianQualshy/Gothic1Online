@@ -2,10 +2,10 @@
 #define CRPC_FAVORITE_H
 
 #include <QObject>
-#include <QQueue>
+#include <QString>
 #include <QTimer>
 
-#include "RakNetInclude.h"
+#include <Network/Packet.h>
 
 class CRPCFavorite : public QObject
 {
@@ -18,39 +18,14 @@ signals:
 
 public:
     CRPCFavorite();
-
-    void handlePacket(RakNet::Packet *packet);
     void enableRefreshTimer(bool value);
-
-    // RakNet messages
-    void connectionFailed(RakNet::Packet *packet);
-    void connectionRequest(RakNet::Packet *packet);
-    void disconnected(RakNet::Packet *packet);
-    void serverReached(RakNet::Packet *packet);
-
-    // GO messages
-    void serverInformation(RakNet::Packet *packet);
+    void serverInformation(const QString& ipAddress, int port, int ping, PacketReader& packet);
 
 private:
-    void initConnections();
-    void getInformation();
-    void finishGettingInformation();
-
-    struct Server
-    {
-        QString m_IP;
-        int     m_Port;
-
-        Server() {}
-        Server(QString ipAdress, int port) : m_IP(ipAdress), m_Port(port) {}
-    };
-
-    QQueue<Server> m_ServerQueue;
     QTimer m_TimerRefresh;
-    bool m_CheckingServer;
 
 private slots:
     void onTimerRefresh();
 };
 
-#endif // CRPC_H
+#endif

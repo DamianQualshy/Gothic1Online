@@ -4,26 +4,12 @@ target("G1O.Shared")
 
     add_includedirs(".", {public = true})
     add_includedirs(
-        "RakNet",
         "../dependencies/squirrel/include",
         "../dependencies/squirrel/squirrel",
         "../dependencies/squirrel/sqstdlib",
         "../dependencies/sqrat/include",
         {public = true})
-    add_packages("libsodium", "lua", "sol2", {public = true})
-
-    add_files("RakNet/*.cpp")
-    remove_files(
-        "RakNet/BitStream_NoTemplate.cpp",
-        "RakNet/FileListTransfer_original.cpp",
-        "RakNet/RakNetSocket2_360_720.cpp",
-        "RakNet/RakNetSocket2_NativeClient.cpp",
-        "RakNet/RakNetSocket2_PS3_PS4.cpp",
-        "RakNet/RakNetSocket2_PS4.cpp",
-        "RakNet/RakNetSocket2_Vita.cpp",
-        "RakNet/RakNetSocket2_WindowsStore8.cpp",
-        "RakNet/VitaIncludes.cpp",
-        "RakNet/PS4Includes.cpp")
+    add_packages("gamenetworkingsockets", "libsodium", "lua", "sol2", {public = true})
 
     add_files(
         "../dependencies/squirrel/squirrel/*.cpp",

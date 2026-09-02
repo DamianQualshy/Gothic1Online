@@ -11,9 +11,9 @@ CPlayer::CPlayer()
 	timerHealth = 0;
 };
 
-CPlayer::CPlayer(int playerID, RakString playerName)
+CPlayer::CPlayer(int playerID, std::string playerName)
 {
-	SPDLOG_TRACE("CPlayer::CPlayer({}, {})", playerID,playerName.C_String());
+	SPDLOG_TRACE("CPlayer::CPlayer({}, {})", playerID,playerName.c_str());
 
 	id = playerID;
 	name = playerName;
@@ -36,18 +36,18 @@ CPlayer::~CPlayer()
 	}
 };
 
-void CPlayer::Spawn(float x, float y, float z, RakString instance)
+void CPlayer::Spawn(float x, float y, float z, std::string instance)
 {
 	SPDLOG_TRACE("CPlayer::Spawn({:f}, {:f}, {:f})", x, y, z);
 
 	if( this->npc == NULL )
 	{
 		this->instance = instance;
-		this->npc = oCGame::GetGame()->CreateNPC(zSTRING(instance.C_String()), this->pos[0], this->pos[1], this->pos[2]);
+		this->npc = oCGame::GetGame()->CreateNPC(zSTRING(instance.c_str()), this->pos[0], this->pos[1], this->pos[2]);
 		//Sprawdzenie czy nie jest botem
 		if( this->npc->IsMonster() || this->npc->IsGoblin() || this->npc->IsHalfMonster() ) //Sprawdzenie czy nie jest zdolny do auto ataku xd
 			this->npc->SetAI(NULL); //Po takim zabiegu niestety animki scinaja
-		this->npc->name[0] = zSTRING(RakString("%s (%d)", this->name.C_String(), this->GetID()).C_String());
+		this->npc->name[0] = zSTRING((this->name + " (" + std::to_string(this->GetID()) + ")").c_str());
 
 	}
 };
@@ -59,12 +59,12 @@ void CPlayer::Respawn()
 	{
 		// Old creating new NPC :)
 		/*oCNpc* old_npc = this->npc;
-		oCNpc* new_npc = oCGame::GetGame()->CreateNPC(zSTRING(this->instance.C_String()), 0, -3000, 0);
+		oCNpc* new_npc = oCGame::GetGame()->CreateNPC(zSTRING(this->instance.c_str()), 0, -3000, 0);
 		if( new_npc )
 		{
 			this->npc = new_npc;
 			this->npc->SetAttribute(NPC_ATR_HITPOINTS_MAX, this->maxhealth);
-			this->npc->name[0] = zSTRING(RakString("%s (%d)", this->name.C_String(), this->GetID()).C_String());
+			this->npc->name[0] = zSTRING((this->name + " (" + std::to_string(this->GetID()) + ")").c_str());
 			//Ubieranie zbroi i broni (w CRepair)
 			old_npc->DestroyNpc();
 		}*/
@@ -75,9 +75,9 @@ void CPlayer::Respawn()
 	}
 	else
 	{
-		this->npc = oCGame::GetGame()->CreateNPC(zSTRING(this->instance.C_String()), 0, -3000, 0);
+		this->npc = oCGame::GetGame()->CreateNPC(zSTRING(this->instance.c_str()), 0, -3000, 0);
 		this->npc->SetAttribute(NPC_ATR_HITPOINTS_MAX, this->maxhealth);
-		this->npc->name[0] = zSTRING(RakString("%s (%d)", this->name.C_String(), this->GetID()).C_String());
+		this->npc->name[0] = zSTRING((this->name + " (" + std::to_string(this->GetID()) + ")").c_str());
 		//Ubieranie zbroi i broni (w CRepair)
 	}
 };
@@ -135,7 +135,7 @@ void CPlayer::RefreshTemporaryAnimation()
 
 void CPlayer::RefreshPositions()
 {
-	if( GetTimeMS() < timerSlide )
+	if( g1o::network::NowMilliseconds() < timerSlide )
 	{
 		if( isSlideAllowed )
 		{
@@ -167,17 +167,17 @@ void CPlayer::RefreshPositions()
 			}
 		}
 	}
-	else if( GetTimeMS() > timerSlide )
+	else if( g1o::network::NowMilliseconds() > timerSlide )
 	{
 		if( isSlideAllowed == false )
 		{
 			isSlideAllowed = true;
-			timerSlide = GetTimeMS() + 1000; //Ślizg
+			timerSlide = g1o::network::NowMilliseconds() + 1000; //Ślizg
 		}
 		else
 		{
 			isSlideAllowed = false;
-			timerSlide = GetTimeMS() + 300; //Przerwa
+			timerSlide = g1o::network::NowMilliseconds() + 300; //Przerwa
 		}
 	}
 };
@@ -192,16 +192,16 @@ void CPlayer::RefreshAngle()
 
 void CPlayer::RefreshArmor()
 {
-	if( GetTimeMS() > timerArmor )
+	if( g1o::network::NowMilliseconds() > timerArmor )
 	{
 		if( npc->GetAttribute(NPC_ATR_HITPOINTS) > 0 && npc->IsUnconscious() == 0 && npc->IsHuman() == 1 )
 		{
 			oCItem* armor = npc->GetEquippedArmor();
 			if( armor )
 			{
-				if(strcmp(armorInstance.C_String(), armor->GetInstanceName().ToChar()) != 0)
+				if(strcmp(armorInstance.c_str(), armor->GetInstanceName().ToChar()) != 0)
 				{
-					if(strcmp(armorInstance.C_String(), "NULL") == 0)
+					if(strcmp(armorInstance.c_str(), "NULL") == 0)
 					{
 						SPDLOG_TRACE("Remove armor");
 						npc->UnequipItem(armor);
@@ -214,7 +214,7 @@ void CPlayer::RefreshArmor()
 						npc->UnequipItem(armor);
 						npc->_DoDropVob(armor);
 						armor->RemoveVobFromWorld();
-						armor = npc->CreateItem(zSTRING(armorInstance.C_String()), 1);
+						armor = npc->CreateItem(zSTRING(armorInstance.c_str()), 1);
 						if(armor)
 							npc->Equip(armor);
 					}
@@ -222,22 +222,22 @@ void CPlayer::RefreshArmor()
 			}
 			else if( !armor )
 			{
-				if(strcmp(armorInstance.C_String(), "NULL") != 0)
+				if(strcmp(armorInstance.c_str(), "NULL") != 0)
 				{
 					SPDLOG_TRACE("Equip armor");
-					armor = npc->CreateItem(zSTRING(armorInstance.C_String()), 1);
+					armor = npc->CreateItem(zSTRING(armorInstance.c_str()), 1);
 					if(armor)
 						npc->Equip(armor);
 				}
 			}
 		}
-		timerArmor = GetTimeMS() + 3000;
+		timerArmor = g1o::network::NowMilliseconds() + 3000;
 	}
 };
 
 void CPlayer::RefreshHealth()
 {
-	if( GetTimeMS() > timerHealth )
+	if( g1o::network::NowMilliseconds() > timerHealth )
 	{
 		if( health > 0 )
 		{
@@ -255,13 +255,13 @@ void CPlayer::RefreshHealth()
 				npc->SetAttribute(NPC_ATR_HITPOINTS,health);
 			}
 		}
-		timerHealth = GetTimeMS() + 1200;
+		timerHealth = g1o::network::NowMilliseconds() + 1200;
 	}
 };
 
 void CPlayer::RefreshWeapon()
 {
-	if( GetTimeMS() > timerWeapon )
+	if( g1o::network::NowMilliseconds() > timerWeapon )
 	{
 		if (npc->GetAttribute(NPC_ATR_HITPOINTS) > 0 && !npc->IsUnconscious() && npc->IsHuman() == 1)
 		{
@@ -270,14 +270,14 @@ void CPlayer::RefreshWeapon()
 				oCItem* melee = npc->GetEquippedMeleeWeapon();
 				if( melee )
 				{
-					if( strcmp(meleeWeaponInstance.C_String(), "NULL") == 0 )
+					if( strcmp(meleeWeaponInstance.c_str(), "NULL") == 0 )
 					{
 						npc->UnequipItem(melee);
 					}
-					else if( strcmp(meleeWeaponInstance.C_String(), melee->GetInstanceName().ToChar()) != 0 )
+					else if( strcmp(meleeWeaponInstance.c_str(), melee->GetInstanceName().ToChar()) != 0 )
 					{
 						npc->UnequipItem(melee);
-						oCItem* new_melee = npc->CreateItem(zSTRING(meleeWeaponInstance.C_String()), 1);
+						oCItem* new_melee = npc->CreateItem(zSTRING(meleeWeaponInstance.c_str()), 1);
 						if( new_melee )
 						{
 							npc->Equip(new_melee);
@@ -286,9 +286,9 @@ void CPlayer::RefreshWeapon()
 				}
 				else
 				{
-					if( strcmp( meleeWeaponInstance.C_String(), "NULL") != 0 )
+					if( strcmp( meleeWeaponInstance.c_str(), "NULL") != 0 )
 					{
-						oCItem* new_melee = npc->CreateItem(zSTRING(meleeWeaponInstance.C_String()), 1);
+						oCItem* new_melee = npc->CreateItem(zSTRING(meleeWeaponInstance.c_str()), 1);
 						if( new_melee )
 							npc->Equip(new_melee);
 					}
@@ -300,14 +300,14 @@ void CPlayer::RefreshWeapon()
 				oCItem* ranged = npc->GetEquippedRangedWeapon();
 				if( ranged )
 				{
-					if( strcmp(rangedWeaponInstance.C_String(), "NULL") == 0 )
+					if( strcmp(rangedWeaponInstance.c_str(), "NULL") == 0 )
 					{
 						npc->UnequipItem(ranged);
 					}
-					else if( strcmp(rangedWeaponInstance.C_String(), ranged->GetInstanceName().ToChar()) != 0 )
+					else if( strcmp(rangedWeaponInstance.c_str(), ranged->GetInstanceName().ToChar()) != 0 )
 					{
 						npc->UnequipItem(ranged);
-						oCItem* new_ranged = npc->CreateItem(zSTRING(rangedWeaponInstance.C_String()), 1);
+						oCItem* new_ranged = npc->CreateItem(zSTRING(rangedWeaponInstance.c_str()), 1);
 						if( new_ranged )
 						{
 							npc->Equip(new_ranged);
@@ -316,16 +316,16 @@ void CPlayer::RefreshWeapon()
 				}
 				else
 				{
-					if( strcmp( rangedWeaponInstance.C_String(), "NULL") != 0 )
+					if( strcmp( rangedWeaponInstance.c_str(), "NULL") != 0 )
 					{
-						oCItem* new_ranged = npc->CreateItem(zSTRING(rangedWeaponInstance.C_String()), 1);
+						oCItem* new_ranged = npc->CreateItem(zSTRING(rangedWeaponInstance.c_str()), 1);
 						if( new_ranged )
 							npc->Equip(new_ranged);
 					}
 				}
 			}
 		}
-		timerWeapon = GetTimeMS() + 3000;
+		timerWeapon = g1o::network::NowMilliseconds() + 3000;
 	}
 };
 
@@ -339,15 +339,15 @@ void CPlayer::RefreshWeaponMode()
 		{
 			npc->SetWeaponMode((oCNpc_WeaponMode)weaponMode);
 			// Repair hand item
-			if (strcmp(leftHand.C_String(), "NULL") != 0 && !npc->GetLeftHand())
+			if (strcmp(leftHand.c_str(), "NULL") != 0 && !npc->GetLeftHand())
 			{
-				oCItem *item = npc->CreateItem(zSTRING(leftHand.C_String()), 1);
+				oCItem *item = npc->CreateItem(zSTRING(leftHand.c_str()), 1);
 				if (item)
 					npc->SetLeftHand(item);
 			}
-			if (strcmp(rightHand.C_String(), "NULL") != 0 && !npc->GetRightHand())
+			if (strcmp(rightHand.c_str(), "NULL") != 0 && !npc->GetRightHand())
 			{
-				oCItem *item = npc->CreateItem(zSTRING(rightHand.C_String()), 1);
+				oCItem *item = npc->CreateItem(zSTRING(rightHand.c_str()), 1);
 				if (item)
 					npc->SetRightHand(item);
 			}

@@ -1,12 +1,10 @@
 #include "..\\stdafx.h"
 
-void ItemRPC::HandleItemRPC(CNetwork* network, Packet* packet)
+void ItemRPC::HandleItemRPC(CNetwork* network, PacketReader& stream)
 {
-	BitStream stream(packet->data,packet->length,false);
-	stream.IgnoreBytes(1);
-
-	MessageID eItemRPC;
-	stream.Read(eItemRPC);
+	EItemRPC eItemRPC{};
+	if (!stream.Read(eItemRPC))
+		return;
 	switch(eItemRPC)
 	{
 	case CREATE_ITEM: CreateItem(stream); break;
@@ -14,29 +12,26 @@ void ItemRPC::HandleItemRPC(CNetwork* network, Packet* packet)
 	}
 };
 
-void ItemRPC::CreateItem(BitStream& stream)
+void ItemRPC::CreateItem(PacketReader& stream)
 {
 	SPDLOG_TRACE("ItemRPC::CreateItem()");
-	size_t itemID;
-	RakString itemInstance;
-	size_t amount;
-	float x, y, z;
-	
-	stream.Read(itemID);
-	stream.Read(itemInstance);
-	stream.Read(amount);
-	stream.Read(x);
-	stream.Read(y);
-	stream.Read(z);
+	std::uint32_t itemID = 0;
+	std::string itemInstance;
+	std::uint32_t amount = 0;
+	float x = 0.0f, y = 0.0f, z = 0.0f;
+	if (!stream.Read(itemID) || !stream.Read(itemInstance, 256) || !stream.Read(amount) || amount == 0 ||
+		!stream.Read(x) || !stream.Read(y) || !stream.Read(z) || !stream.Empty())
+		return;
 
 	itemManager.CreateItem(itemInstance, zVEC3(x,y,z), amount, itemID);
 };
 
-void ItemRPC::DestroyItem(BitStream& stream)
+void ItemRPC::DestroyItem(PacketReader& stream)
 {
 	SPDLOG_TRACE("ItemRPC::DestroyItem()");
-	size_t itemID;
-	stream.Read(itemID);
+	std::uint32_t itemID = 0;
+	if (!stream.Read(itemID) || !stream.Empty())
+		return;
 
 	itemManager.DestroyItem(itemID);
 };

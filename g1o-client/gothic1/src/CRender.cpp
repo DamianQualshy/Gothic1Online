@@ -15,7 +15,7 @@ void CRender::Render()
 		const g1o::LaunchSession& session = core.GetLaunchSession();
 
 		if( net -> IsInitiated() == true && net -> IsConnected() == false)
-			net -> Connect(RakString(session.serverAddress.c_str()), session.serverPort); //Nawiązywanie połączenia
+			net -> Connect(std::string(session.serverAddress.c_str()), session.serverPort); //Nawiązywanie połączenia
 		gothicGame->bIsFirstFrame = false;
 	}
 	//Render chat

@@ -10,15 +10,15 @@ HWND CGothicWindow::GetGothicWindowHandle()
 	return Gothic_I_Classic::hWndApp; //hWndApp
 };
 
-RakString CGothicWindow::GetGothicWindowName()
+std::string CGothicWindow::GetGothicWindowName()
 {
 	char windowName[256];
 	GetWindowText(GetGothicWindowHandle(), windowName, sizeof(windowName));
 	return windowName;
 };
 
-void CGothicWindow::SetGothicWindowName(RakString& windowName)
+void CGothicWindow::SetGothicWindowName(const std::string& windowName)
 {
-	SetWindowText(GetGothicWindowHandle(), windowName);
+	SetWindowText(GetGothicWindowHandle(), windowName.c_str());
 };
 

@@ -2,8 +2,8 @@
 #ifndef GO_SHAREDINCLUDES_H
 #define GO_SHAREDINCLUDES_H
 
-//Silnik sieciowy
-#include "RaknetIncludes.h"
+// Networking and packet serialization
+#include "Network/Packet.h"
 //Implementacja listy
 #include "List/List.h"
 //Biblioteki obliczeniowe (funkcje podajemy razem z przestrzeniami nazw) goMath::getdistance3d..

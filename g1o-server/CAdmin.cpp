@@ -8,87 +8,87 @@ CAdmin::~CAdmin()
 {
 };
 
-void CAdmin::HandleAdminCommand(CPlayer* player, RakString command)
+void CAdmin::HandleAdminCommand(CPlayer* player, std::string command)
 {
 	if( player )
 	{
 		CNetwork* n = core.GetNetwork();
-		size_t pos = -1;
-		if( (pos = command.Find(" ")) != (size_t)-1 )
+		const size_t pos = command.find(' ');
+		if (pos != std::string::npos)
 		{
 			SPDLOG_INFO("[admin] param found!");
-			RakString cmd = command;
-			cmd.Erase(pos, cmd.GetLength()-pos);
-			RakString params = command;
-			params.Erase(0, pos+1);
+			std::string cmd = command;
+			cmd.erase(pos, cmd.size()-pos);
+			std::string params = command;
+			params.erase(0, pos+1);
 
 			if( player->isAdmin == false )
 			{
-				if(	cmd.StrCmp("login") == 0 )
+				if (cmd == "login")
 				{
-					if( params.StrCmp(core.GetConfig()->GetAdminPassword()) == 0 )
+					if (params == core.GetConfig()->GetAdminPassword())
 					{
 						player->isAdmin = true;
-						BitStream s;
-						s.Write((MessageID)GO_CHAT);
-						s.Write((MessageID)CHAT_MESSAGE);
-						s.Write(RakString("(SERVER): Admin access granted!"));
-						n->GetPeer()->Send(&s, LOW_PRIORITY, RELIABLE, 0 , player->GetAddress(), false);
+						PacketWriter s;
+						s.Write(GO_CHAT);
+						s.Write(CHAT_MESSAGE);
+						s.Write(std::string("(SERVER): Admin access granted!"));
+						n->Send(player->GetConnection(), s);
 					}
 					else
 					{
-						BitStream s;
-						s.Write((MessageID)GO_CHAT);
-						s.Write((MessageID)CHAT_MESSAGE);
-						s.Write(RakString("(SERVER): Bad admin password."));
-						n->GetPeer()->Send(&s, LOW_PRIORITY, RELIABLE, 0 , player->GetAddress(), false);
+						PacketWriter s;
+						s.Write((std::uint8_t)GO_CHAT);
+						s.Write((std::uint8_t)CHAT_MESSAGE);
+						s.Write(std::string("(SERVER): Bad admin password."));
+						n->Send(player->GetConnection(), s);
 					}
 				}
 			}
 			else
 			{
-				if( cmd.StrCmp("say") == 0 )
+				if (cmd == "say")
 				{
-					BitStream s;
-					s.Write((MessageID)GO_CHAT);
-					s.Write((MessageID)CHAT_MESSAGE);
-					s.Write(RakString("(SERVER): ")+params);
+					PacketWriter s;
+					s.Write((std::uint8_t)GO_CHAT);
+					s.Write((std::uint8_t)CHAT_MESSAGE);
+					s.Write(std::string("(SERVER): ")+params);
 
-					n->SendToAll(s,LOW_PRIORITY,RELIABLE);
+					n->SendToAll(s, k_nSteamNetworkingSend_Reliable);
 				}
-				else if( cmd.StrCmp("ban") == 0 )
+				else if (cmd == "ban")
 				{
 					CPlayer* banplayer = playerManager.GetPlayer(params);
 					if( banplayer )
 					{
 						if( core.GetBanSystem()->BanPlayer(banplayer, BAN_LIST) == true )
 						{
-							BitStream s;
-							s.Write((MessageID)GO_CHAT);
-							s.Write((MessageID)CHAT_MESSAGE);
-							s.Write(RakString("(SERVER): Player %s has been silent-banned", params.C_String()));
+							PacketWriter s;
+							s.Write((std::uint8_t)GO_CHAT);
+							s.Write((std::uint8_t)CHAT_MESSAGE);
+							s.Write(std::string("(SERVER): Player ") + params + " has been silent-banned");
 
-							n->GetPeer()->Send(&s, LOW_PRIORITY, RELIABLE, 0 , player->GetAddress(), false);
+							n->Send(player->GetConnection(), s);
 						}
 						else
 						{
-							BitStream s;
-							s.Write((MessageID)GO_CHAT);
-							s.Write((MessageID)CHAT_MESSAGE);
-							s.Write(RakString("(SERVER): Error, cannot ban player. Maybe he isn't exists?"));
+							PacketWriter s;
+							s.Write((std::uint8_t)GO_CHAT);
+							s.Write((std::uint8_t)CHAT_MESSAGE);
+							s.Write(std::string("(SERVER): Error, cannot ban player. Maybe he isn't exists?"));
 
-							n->GetPeer()->Send(&s, LOW_PRIORITY, RELIABLE, 0 , player->GetAddress(), false);
+							n->Send(player->GetConnection(), s);
 						}
 					}
 				}
 				else
 				{
-					SEvent::AdminCommand(player->GetID(), cmd.C_String());
+					SEvent::AdminCommand(player->GetID(), cmd.c_str());
 				}
 			}
-			command.FreeMemory();
-			cmd.FreeMemory();
-			params.FreeMemory();
+			command.clear();
+			cmd.clear();
+			params.clear();
 		}
 	}
 };

@@ -1,13 +1,12 @@
 #include "..\\stdafx.h"
 
-void ChatRPC::HandleChatRPC(CNetwork* network, Packet* packet)
+void ChatRPC::HandleChatRPC(CNetwork* network, PacketReader& stream)
 {
 	SPDLOG_TRACE("ChatRPC::HandleChatRPC()");
-	BitStream stream(packet->data,packet->length,false);
-	stream.IgnoreBytes(1);
-	
-	MessageID eChatRPC;
-	stream.Read(eChatRPC);
+
+	EChatRPC eChatRPC{};
+	if (!stream.Read(eChatRPC))
+		return;
 
 	switch(eChatRPC)
 	{
@@ -16,24 +15,24 @@ void ChatRPC::HandleChatRPC(CNetwork* network, Packet* packet)
 	}
 };
 
-void ChatRPC::ServerMessage(CNetwork* network, BitStream& stream)
+void ChatRPC::ServerMessage(CNetwork* network, PacketReader& stream)
 {
 	SPDLOG_TRACE("ChatRPC::ServerMessage()");
-	RakString message;
-	stream.Read(message);
+	std::string message;
+	if (!stream.Read(message, 4096) || !stream.Empty())
+		return;
 
 	core.GetChat()->AddLine(message, zCOLOR(255,255,255,255)); //Biały xd
 };
 
-void ChatRPC::MessageRGB(CNetwork* network, BitStream& stream)
+void ChatRPC::MessageRGB(CNetwork* network, PacketReader& stream)
 {
 	SPDLOG_TRACE("ChatRPC::MessageRGB()");
-	RakString message;
-	int r,g,b;
-	stream.Read(message);
-	stream.Read(r);
-	stream.Read(g);
-	stream.Read(b);
+	std::string message;
+	int r = 0, g = 0, b = 0;
+	if (!stream.Read(message, 4096) || !stream.Read(r) || !stream.Read(g) || !stream.Read(b) ||
+		!stream.Empty() || r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255)
+		return;
 
 	core.GetChat()->AddLine(message, zCOLOR(r,g,b,255));
 };
